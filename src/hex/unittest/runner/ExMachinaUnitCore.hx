@@ -73,6 +73,9 @@ class ExMachinaUnitCore implements ITestRunner implements ITestRunnerListener
     {
         if ( this._hasNextClassDescriptor() )
         {
+			this._dispatcher.dispatchEvent( event );
+            Assert.resetAssertionLog();
+			
             this._runner.removeListener( this );
             this._runNext();
         }

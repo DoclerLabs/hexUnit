@@ -40,15 +40,15 @@ class ConsoleNotifier implements ITestRunnerListener
     public function onStartRun( e : TestRunnerEvent ) : Void
     {
         this._tabs = "";
-        this._log( this.setColor( "<<< Start Tests run >>>", "blue+bold+underline" ) );
+        this._log( this.setColor( "<<< Start " + e.getDescriptor().className + " tests run >>>", "blue+bold+underline" ) );
         this._addTab();
     }
 
     public function onEndRun( e : TestRunnerEvent ) : Void
     {
         this._removeTab();
-        this._log( this.setColor( "<<< End Tests run >>>", "blue+bold+underline" ) );
-        this._log( this.setColor( "Assertions count: " + Assert.getAssertionCount(), "bold" )  );
+        this._log( this.setColor( "<<< End tests run >>>", "blue+bold+underline" ) );
+        this._log( this.setColor( "Assertions count: " + Assert.getAssertionCount() + "\n", "bold" )  );
     }
 
     public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
