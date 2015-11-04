@@ -156,6 +156,28 @@ class Assert
             Assert.fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
         }
     }
+	
+	public static function assertArrayContains( expected : Array<Dynamic>, value : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
+    {
+        Assert._LOG_ASSERT( userMessage );
+		
+		var numElement : Int = 0;
+		for ( valueElement in value )
+		{
+			for ( expectedElement in expected )
+			{
+				if ( valueElement == expectedElement )
+				{
+					numElement++;
+				}
+			}
+		}
+		
+		if ( numElement != expected.length )
+        {
+            Assert.fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
+        }
+    }
 
     /**
      * Asserts that 'expected' and 'actual' are not equal

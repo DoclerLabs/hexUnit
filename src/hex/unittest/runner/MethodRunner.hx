@@ -1,14 +1,13 @@
 package hex.unittest.runner;
 
-import hex.error.IllegalArgumentException;
-import hex.event.EventDispatcher;
-import hex.error.Exception;
-import hex.event.BasicEvent;
-import hex.unittest.event.MethodRunnerEvent;
 import haxe.Timer;
-import hex.unittest.event.IMethodRunnerListener;
-
+import hex.error.Exception;
+import hex.error.IllegalArgumentException;
+import hex.event.BasicEvent;
+import hex.event.EventDispatcher;
 import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.event.IMethodRunnerListener;
+import hex.unittest.event.MethodRunnerEvent;
 
 /**
  * ...
@@ -120,11 +119,14 @@ class MethodRunner
         this._passThroughArgs   = passThroughArgs;
         this._timeout           = timeout;
 
-        Timer.delay( MethodRunner._fireTimeout, timeout );
+		this._timer = new Timer( timeout );
+		this._timer.run = MethodRunner._fireTimeout;
     }
 
     public static function _asyncCallbackHandler( ?event : BasicEvent ) : Void
     {
+		MethodRunner._CURRENT_RUNNER._timer.stop();
+		
         var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
 
         var args : Array<Dynamic> = [];
@@ -155,7 +157,8 @@ class MethodRunner
 
     private static function _fireTimeout() : Void
     {
+		MethodRunner._CURRENT_RUNNER._timer.stop();
         var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
-        methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.TIMEOUT, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed() ) );
+        methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.TIMEOUT, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed(), new Exception( "Test timeout" ) ) );
     }
 }
