@@ -242,6 +242,32 @@ class Assert
             Assert.fail( "Expected '" + expectedExceptionType +"' but was '" + exceptionCaught + "'", userMessage, posInfos );
         }
     }
+	
+	/**
+     * Asserts that setting value to property throws 'expectedException'
+     */
+    public static function assertSetPropertyThrows( expectedException : Class<Exception>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+	{
+		Assert._LOG_ASSERT( userMessage );
+
+        var expectedExceptionType : String      = Type.getClassName( expectedException );
+        var exceptionCaught : Exception         = null;
+
+        try
+        {
+			Reflect.setProperty( instance, propertyName, value );
+		}
+		catch ( e : Exception )
+        {
+            exceptionCaught = e;
+        }
+		
+		if ( exceptionCaught == null || ( exceptionCaught != null && ( Type.getClass( exceptionCaught ) != expectedException ) ) )
+        {
+            Assert.fail( "Expected '" + expectedExceptionType +"' but was '" + exceptionCaught + "'", userMessage, posInfos );
+        }
+		
+	}
 
     private static function fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void
     {
