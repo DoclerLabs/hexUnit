@@ -20,7 +20,7 @@ import js.Lib;
 class BrowserUnitTestNotifier implements ITestRunnerListener
 {
     private var _trace  : Dynamic;
-    private var _tabs   : String;
+    private var _tabs   : Int = 0;
 	
 	private static var _TRACE : Dynamic = haxe.Log.trace;
 	private var console:Element;
@@ -48,7 +48,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		/*var span:SpanElement = Browser.document.createSpanElement(this._tabs + message + "\n");
 		span.innerText = message;*/
 		
-		element.style.marginLeft = (this._tabs.length * 30) + "px";
+		element.style.marginLeft = (this._tabs * 30) + "px";
 		element.appendChild( Browser.document.createTextNode("\n") );
 		this.console.appendChild( element );
 		
@@ -57,17 +57,17 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     private function _addTab() : Void
     {
-        this._tabs += "\t";
+        this._tabs++;
     }
 
     private function _removeTab() : Void
     {
-        this._tabs = this._tabs.substr( 0, this._tabs.length-1 );
+        this._tabs--;
     }
 
     public function onStartRun( e : TestRunnerEvent ) : Void
     {
-        this._tabs = "";
+        this._tabs = 0;
         this._log( this.createElement( "<<< Start " + e.getDescriptor().className + " tests run >>>", "yellow+bold+h3" ) );
         this._addTab();
     }
@@ -157,19 +157,6 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     public function onTimeout( e : TestRunnerEvent ) : Void
     {
-        /*var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-        var description : String = methodDescriptor.description;
-        var message : String = "[" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
-		
-		var fail: Element = this.createElement( "✘ ", "red" );
-		
-        this._log( this.encapsulateElements( [fail, this.createElement( message, "red" ) ] ) );
-        this._addTab();
-        this._addTab();
-        this._log( this.createElement( e.getError().message, "red+bold" ) );
-        this._removeTab();
-        this._removeTab();*/
-		
 		this.onFail( e );
     }
 	
