@@ -12,6 +12,7 @@ import haxe.PosInfos;
 class Assert
 {
     private static var _assertCount             : Int = 0;
+    private static var _assertFailedCount       : Int = 0;
     private static var _lastAssertionLog        : String = "";
     private static var _assertionLogs           : Array<String> = [];
 
@@ -28,6 +29,14 @@ class Assert
     public static function getAssertionCount() : Int
     {
         return Assert._assertCount;
+    }
+	
+	/**
+     * Returns the number of assertions that have been made
+     */
+    public static function getAssertionFailedCount() : Int
+    {
+        return Assert._assertFailedCount;
     }
 
     /**
@@ -52,6 +61,7 @@ class Assert
     public static function resetAssertionLog() : Void
     {
         Assert._assertCount         = 0;
+        Assert._assertFailedCount         = 0;
         Assert._lastAssertionLog    = "";
         Assert._assertionLogs       = [];
     }
@@ -271,6 +281,7 @@ class Assert
 
     private static function fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void
     {
+		Assert._assertFailedCount++;
         throw new AssertException( assertMessage + ( userMessage.length < 0 ? ": " + userMessage : "" ), posInfos );
     }
 }

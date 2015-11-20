@@ -1,5 +1,6 @@
 package hex.unittest.runner;
 
+import haxe.Timer;
 import hex.event.BasicEvent;
 import hex.event.IEvent;
 import hex.event.LightweightListenerDispatcher;
@@ -175,6 +176,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         var classDescriptor : TestClassDescriptor = this._classDescriptors.first();
         this._dispatcher.dispatchEvent( new TestRunnerEvent( eventType, this, classDescriptor, e.getTimeElapsed(), e.getError() ) );
         this._tryToRunTearDown( classDescriptor );
-        this._runTestClass( classDescriptor );
+		
+		Timer.delay( function( ) { _runTestClass( classDescriptor ); }, 1 );
     }
 }

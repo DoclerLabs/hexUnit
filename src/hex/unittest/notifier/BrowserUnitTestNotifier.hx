@@ -27,14 +27,20 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     public function new( targetId:String )
     {
+		this.setConsole( targetId );
+		
+		this.setGlobalResultSuccess( );
+    }
+	
+	private function setConsole( targetId:String ) : Void
+	{
 		this.console = Browser.document.getElementById( targetId );
 		this.console.style.backgroundColor = "#060606";
 		this.console.style.whiteSpace = "pre";
 		this.console.style.fontFamily = "Lucida Console";
 		this.console.style.position = "relative";
-		
-		this.setGlobalResultSuccess( );
-    }
+		this.console.style.fontSize = "11px";
+	}
 
     private function _log( element : Element ) : Void
     {
@@ -44,7 +50,9 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		
 		element.style.marginLeft = (this._tabs.length * 30) + "px";
 		element.appendChild( Browser.document.createTextNode("\n") );
-		console.appendChild( element );
+		this.console.appendChild( element );
+		
+		this.console.scrollTop = this.console.scrollHeight;
     }
 
     private function _addTab() : Void
@@ -60,14 +68,35 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
     public function onStartRun( e : TestRunnerEvent ) : Void
     {
         this._tabs = "";
-        this._log( this.createElement( "<<< Start " + e.getDescriptor().className + " tests run >>>", "blue+bold" ) );
+        this._log( this.createElement( "<<< Start " + e.getDescriptor().className + " tests run >>>", "yellow+bold+h3" ) );
         this._addTab();
     }
 
     public function onEndRun( e : TestRunnerEvent ) : Void
     {
         this._removeTab();
-        this._log( this.createElement( "<<< Test runs finished: " + Assert.getAssertionCount() + " >>>", "blue+bold+h4" ) );
+		
+		Browser.console.log( Assert.getAssertionFailedCount() );
+		
+		var successfulCount:Int = Assert.getAssertionCount() - Assert.getAssertionFailedCount();
+		
+		var beginning:Element = this.createElement( "<<< Test runs finished :: ", "yellow+bold+h3" );
+		var all:Element = this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
+		var successfull:Element = this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
+		var failed:Element = this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
+		var ending:Element = this.createElement( ">>>", "yellow+bold+h3" );
+		
+		var list:Array<Element> = new Array<Element>();
+		list.push( beginning );
+		list.push( all );
+		if ( successfulCount > 0 ) 
+			list.push( successfull );
+		if ( Assert.getAssertionFailedCount() > 0 ) 
+			list.push( failed );
+		list.push( ending );
+		
+		
+        this._log( this.encapsulateElements( list ) );
 		
 		this.addRuler();
 		
@@ -76,7 +105,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
     {
-        this._log( this.createElement( "Suite class: '" + e.getDescriptor().className + "'", "white+bold+h4" ) );
+        this._log( this.createElement( "Test suite: '" + e.getDescriptor().className + "'", "white+bold+h4" ) );
         this._addTab();
     }
 
@@ -87,7 +116,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     public function onTestClassStartRun( e : TestRunnerEvent ) : Void
     {
-        this._log( this.createElement( "Test class: '" + e.getDescriptor().className + "'", "darkwhite+h5" ) );
+        this._log( this.createElement( "Test class: '" + e.getDescriptor().className + "'", "darkwhite+h5+bold" ) );
         this._addTab();
     }
 
@@ -210,22 +239,30 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
             case "blue":
                 element.style.color = "#4999d4";
 				
+			case "yellow":
+                element.style.color = "#ffcf18";
+				
 			case "darkgrey":
-                element.style.color = "#424242";
+                element.style.color = "#727272";
 				
 			case "lightgrey":
-				element.style.color = "#999999";
+				element.style.color = "#d9d9d9";
 				
 			case "darkwhite":
-				element.style.color = "#e2e2e2";
+				element.style.color = "#e6e6e6";
 				
 			case "white":
 				element.style.color = "#e2e2e2";
 				
+			case "h3":
+				element.style.fontSize = "14px";
+				element.style.lineHeight = "30px";
+				
 			case "h4":
-				element.style.lineHeight = "50px";
+				element.style.fontSize = "13px";
+				element.style.lineHeight = "30px";
 			case "h5":
-				element.style.lineHeight = "40px";
+				element.style.lineHeight = "25px";
         }
     }
 	
