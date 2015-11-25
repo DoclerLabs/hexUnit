@@ -1,5 +1,6 @@
 package hex.unittest.notifier;
 
+import hex.error.Exception;
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestMethodDescriptor;
@@ -50,7 +51,13 @@ class ConsoleNotifier implements ITestRunnerListener
     {
         this._removeTab();
         this._log( this.setColor( "<<< End tests run >>>", "blue+bold+underline" ) );
-        this._log( this.setColor( "Assertions count: " + Assert.getAssertionCount() + "\n", "bold" )  );
+        this._log( this.setColor( "Assertions passed: " + Assert.getAssertionCount() + "\n", "bold" )  );
+		
+		if ( Assert.getAssertionFailedCount() > 0 )
+		{
+			this._log( this.setColor( "Assertions failed: " + Assert.getAssertionFailedCount() + "\n", "red+bold" )  );
+			throw ( new Exception( "Assertions failed: " + Assert.getAssertionFailedCount() ) );
+		}
     }
 
     public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
