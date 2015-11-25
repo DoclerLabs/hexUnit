@@ -9,3 +9,9 @@ install:
 
 script:
   - haxe build-js.hxml           && node bin/MainUnitTest.js
+  
+notifications:
+  email:
+    recipients:
+      - francis_bourre@me.com
+      - peterphonix@gmail.com
