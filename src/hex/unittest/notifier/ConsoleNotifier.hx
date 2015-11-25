@@ -12,13 +12,15 @@ import hex.unittest.event.TestRunnerEvent;
  */
 class ConsoleNotifier implements ITestRunnerListener
 {
-    private var _trace  : Dynamic;
-    private var _tabs   : String;
+    private var _trace  			: Dynamic;
+    private var _tabs   			: String;
+    private var _errorBubbling   	: Bool;
 	
 	private static var _TRACE : Dynamic = haxe.Log.trace;
 
-    public function new()
+    public function new( errorBubbling : Bool = false )
     {
+		this._errorBubbling = errorBubbling;
         this._trace = untyped Reflect.field( js.Boot, "__trace" );
     }
 
@@ -92,6 +94,11 @@ class ConsoleNotifier implements ITestRunnerListener
         this._log( this.setColor( e.getError().toString(), "red+bold" ) );
         this._log( this.setColor( e.getError().message + ": " + Assert.getLastAssertionLog(), "red" ) );
         this._removeTab();
+		
+		if ( this._errorBubbling )
+		{
+			throw( e.getError() );
+		}
     }
 
     public function onTimeout( e : TestRunnerEvent ) : Void
