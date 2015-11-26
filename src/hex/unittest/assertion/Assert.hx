@@ -230,7 +230,7 @@ class Assert
     /**
      * Asserts method call throws 'expectedException'
      */
-    public static function assertMethodCallThrows( expectedException : Class<Exception>, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function assertMethodCallThrows( expectedException : Class<Exception>, scope : Dynamic, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -239,7 +239,7 @@ class Assert
 
         try
         {
-            var scope : Dynamic = Reflect.field( methodReference, "scope" );
+            //var scope : Dynamic = Reflect.field( methodReference, "scope" );
             Reflect.callMethod( scope, methodReference, args );
         }
         catch ( e : Exception )
