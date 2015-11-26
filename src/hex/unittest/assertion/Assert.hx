@@ -210,13 +210,13 @@ class Assert
         Assert._LOG_ASSERT( userMessage );
 
         var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Dynamic         = null;
+        var exceptionCaught : Exception         = null;
 
         try
         {
             Type.createInstance( type, args );
         }
-        catch ( e : Dynamic )
+        catch ( e : Exception )
         {
             exceptionCaught = e;
         }
@@ -235,14 +235,14 @@ class Assert
         Assert._LOG_ASSERT( userMessage );
 
         var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Dynamic         	= null;
+        var exceptionCaught : Exception         	= null;
 
         try
         {
             //var scope : Dynamic = Reflect.field( methodReference, "scope" );
             Reflect.callMethod( scope, methodReference, args );
         }
-        catch ( e : Dynamic )
+        catch ( e : Exception )
         {
             exceptionCaught = e;
         }
@@ -261,13 +261,13 @@ class Assert
 		Assert._LOG_ASSERT( userMessage );
 
         var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Dynamic         = null;
+        var exceptionCaught : Exception         = null;
 
         try
         {
 			Reflect.setProperty( instance, propertyName, value );
 		}
-		catch ( e : Dynamic )
+		catch ( e : Exception )
         {
             exceptionCaught = e;
         }
