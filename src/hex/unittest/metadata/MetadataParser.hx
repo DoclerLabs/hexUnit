@@ -149,12 +149,12 @@ class MetadataParser
 
             if ( Reflect.hasField( field, MetadataList.BEFORE_CLASS ) )
             {
-                testDescriptor.beforeClass = Reflect.field( testDescriptor.type, fieldName );
+                testDescriptor.beforeClassFieldName = fieldName;
             }
 
             if ( Reflect.hasField( field, MetadataList.AFTER_CLASS ) )
             {
-                testDescriptor.afterClass = Reflect.field( testDescriptor.type, fieldName );
+                testDescriptor.afterClassFieldName = fieldName;
             }
         }
     }
@@ -178,19 +178,19 @@ class MetadataParser
                 switch( tag )
                 {
                     case MetadataList.BEFORE_CLASS :
-                        testDescriptor.beforeClass = func;
+                        testDescriptor.beforeClassFieldName = fieldName;
                         break;
 
                     case MetadataList.AFTER_CLASS :
-                        testDescriptor.afterClass = func;
+                        testDescriptor.afterClassFieldName = fieldName;
                         break;
 
                     case MetadataList.SETUP :
-                        testDescriptor.setUp = func;
+                        testDescriptor.setUpFieldName = fieldName;
                         break;
 
                     case MetadataList.TEARDOWN :
-                        testDescriptor.tearDown = func;
+                        testDescriptor.tearDownFieldName = fieldName;
                         break;
 
                     case MetadataList.TEST :
