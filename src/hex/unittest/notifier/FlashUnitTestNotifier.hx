@@ -1,11 +1,9 @@
 package hex.unittest.notifier;
 
 import flash.display.Sprite;
-import flash.text.Font;
 import flash.text.StyleSheet;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import flash.utils.Object;
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestMethodDescriptor;
@@ -26,8 +24,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 	private var target:Sprite;
 	private var successMarker:Sprite;
 	private var styleSheet:StyleSheet;
-	
-	private var courierFont:Class<Font>;
+	private var _styleList:Map<String,Bool> = new Map<String,Bool>();
 
     public function new( target:Sprite )
     {
@@ -72,8 +69,6 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		
 		
 		this.console.htmlText = this.console.htmlText + element;
-		this.console.styleSheet = null;
-		this.console.styleSheet = this.styleSheet;
 		this.console.scrollV = this.console.maxScrollV;
     }
 
@@ -119,8 +114,6 @@ class FlashUnitTestNotifier implements ITestRunnerListener
         this._log( this.encapsulateElements( list ) );
 		
 		this.addRuler();
-		
-        //this._log( this.createElement( "Assertions count: " + Assert.getAssertionCount() + "\n", "bold" )  );
     }
 
     public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
@@ -198,14 +191,16 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		var colorId:String = color.split("+").join("_");
 		
 		var span:String = "<span class=\"" + colorId + "\">" + message + "</span>";
-		//var span:String = message;
 		
 		
-		var style:Dynamic = { };
-		this.setAttributes( style, color );
 		
-		
-        this.styleSheet.setStyle( "." + colorId, style );
+		if ( this._styleList["." + colorId] == null )
+		{
+			var style:Dynamic = { };
+			this.setAttributes( style, color );
+			this.styleSheet.setStyle( "." + colorId, style );
+			this._styleList["." + colorId] = true;
+		}
 		
 
         return span;

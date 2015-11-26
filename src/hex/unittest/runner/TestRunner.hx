@@ -22,6 +22,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
     private var _dispatcher                 : LightweightListenerDispatcher<ITestRunnerListener, TestRunnerEvent>;
     private var _classDescriptors           : GenericStack<TestClassDescriptor>;
     private var _executedDescriptors        : Map<TestClassDescriptor, Bool>;
+	private var _lastRender					: Float = 0;
 
     public function new( classDescriptor : TestClassDescriptor )
     {
@@ -177,6 +178,14 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         this._dispatcher.dispatchEvent( new TestRunnerEvent( eventType, this, classDescriptor, e.getTimeElapsed(), e.getError() ) );
         this._tryToRunTearDown( classDescriptor );
 		
-		Timer.delay( function( ) { _runTestClass( classDescriptor ); }, 1 );
+		if ( Date.now().getTime() - this._lastRender > 100 )
+		{
+			this._lastRender = Date.now().getTime();
+			Timer.delay( function( ) { _runTestClass( classDescriptor ); }, 1 );
+		}
+		else
+		{
+			_runTestClass( classDescriptor );
+		}
     }
 }
