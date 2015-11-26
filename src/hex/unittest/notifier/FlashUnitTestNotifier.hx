@@ -1,8 +1,10 @@
 package hex.unittest.notifier;
 
 import flash.display.Sprite;
+import flash.text.Font;
 import flash.text.StyleSheet;
 import flash.text.TextField;
+import flash.text.TextFormat;
 import flash.utils.Object;
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
@@ -24,6 +26,8 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 	private var target:Sprite;
 	private var successMarker:Sprite;
 	private var styleSheet:StyleSheet;
+	
+	private var courierFont:Class<Font>;
 
     public function new( target:Sprite )
     {
@@ -45,6 +49,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		this.console.wordWrap = true;
 		this.console.selectable = true;
 		this.console.multiline = true;
+		this.console.defaultTextFormat = new TextFormat("Lucida Console", 11);
 		target.addChild(this.console);
 		
 		this.styleSheet = new StyleSheet();
@@ -56,23 +61,19 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 
     private function _log( element : String ) : Void
     {
-        //Reflect.callMethod( untyped js.Boot, this._trace, [ this._tabs + message] );
-		/*var span:SpanElement = Browser.document.createSpanElement(this._tabs + message + "\n");
-		span.innerText = message;*/
-		
 		var buffer:String = '';
 
-		for (i in 0...this._tabs) 
+		for (i in 0...this._tabs*4) 
 		{
 			buffer += "&nbsp;";
 		}
 		
-		
 		element = buffer + element + "<br/>";
 		
 		
-		this.console.htmlText += element;
-
+		this.console.htmlText = this.console.htmlText + element;
+		this.console.styleSheet = null;
+		this.console.styleSheet = this.styleSheet;
 		this.console.scrollV = this.console.maxScrollV;
     }
 
@@ -89,7 +90,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
     public function onStartRun( e : TestRunnerEvent ) : Void
     {
         this._tabs = 0;
-        this._log( this.createElement( "<<< Start " + e.getDescriptor().className + " tests run >>>", "yellow+bold+h3" ) );
+        this._log( this.createElement( "[[[ Start " + e.getDescriptor().className + " tests run ]]]", "yellow+bold+h3" ) );
         this._addTab();
     }
 
@@ -99,11 +100,11 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		
 		var successfulCount:Int = Assert.getAssertionCount() - Assert.getAssertionFailedCount();
 		
-		var beginning:String = this.createElement( "<<< Test runs finished :: ", "yellow+bold+h3" );
+		var beginning:String = this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
 		var all:String = this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
 		var successfull:String = this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
 		var failed:String = this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
-		var ending:String = this.createElement( ">>>", "yellow+bold+h3" );
+		var ending:String = this.createElement( "]]]", "yellow+bold+h3" );
 		
 		var list:Array<String> = new Array<String>();
 		list.push( beginning );
@@ -193,13 +194,22 @@ class FlashUnitTestNotifier implements ITestRunnerListener
         var result : String = "";
 		
 		//message = StringTools.htmlEscape( message );
-		var span:String = "<span class=\"" + color + "\">" + message + "</span>";
 		
-		var style:Object = { };
+		var colorId:String = color.split("+").join("_");
+		
+		var span:String = "<span class=\"" + colorId + "\">" + message + "</span>";
+		//var span:String = message;
+		
+		
+		var style:Dynamic = { };
 		this.setAttributes( style, color );
 		
-        this.styleSheet.setStyle( color, style );
 		
+        this.styleSheet.setStyle( "." + colorId, style );
+		
+		trace(span, style );
+		/*this.console.styleSheet = null;
+		this.console.styleSheet = this.styleSheet;*/
 		
 
         return span;
@@ -210,7 +220,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		return elementList.join("");
 	}
 	
-	private function setAttributes( style:Object, color: String ) : Void
+	private function setAttributes( style:Dynamic, color: String ) : Void
 	{
 		var colorAttributes : Array<String> = color.split( "+" );
 		
@@ -220,7 +230,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
         }
 	}
 	
-	private function setAttribute( style:Object, attr:String ) : Void
+	private function setAttribute( style:Dynamic, attr:String ) : Void
 	{
 		
         switch( attr )
@@ -260,14 +270,15 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 				
 			case "h3":
 				style.fontSize = "14px";
-				style.lineHeight = "30px";
+				style.leading = 30;
 				
 			case "h4":
 				style.fontSize = "13px";
-				style.lineHeight = "30px";
+				style.leading = "30px";
 			case "h5":
-				style.lineHeight = "25px";
+				style.leading = "25px";
         }
+		
     }
 	
 	private function setGlobalResultSuccess( ) : Void
