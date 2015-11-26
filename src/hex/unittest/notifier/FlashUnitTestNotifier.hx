@@ -207,10 +207,6 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		
         this.styleSheet.setStyle( "." + colorId, style );
 		
-		trace(span, style );
-		/*this.console.styleSheet = null;
-		this.console.styleSheet = this.styleSheet;*/
-		
 
         return span;
     }
