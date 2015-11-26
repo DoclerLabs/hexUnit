@@ -68,7 +68,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
     public function onStartRun( e : TestRunnerEvent ) : Void
     {
         this._tabs = 0;
-        this._log( this.createElement( "<<< Start " + e.getDescriptor().className + " tests run >>>", "yellow+bold+h3" ) );
+        this._log( this.createElement( "[[[ Start " + e.getDescriptor().className + " tests run ]]]", "yellow+bold+h3" ) );
         this._addTab();
     }
 
@@ -80,11 +80,11 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		
 		var successfulCount:Int = Assert.getAssertionCount() - Assert.getAssertionFailedCount();
 		
-		var beginning:Element = this.createElement( "<<< Test runs finished :: ", "yellow+bold+h3" );
+		var beginning:Element = this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
 		var all:Element = this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
 		var successfull:Element = this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
 		var failed:Element = this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
-		var ending:Element = this.createElement( ">>>", "yellow+bold+h3" );
+		var ending:Element = this.createElement( "]]]", "yellow+bold+h3" );
 		
 		var list:Array<Element> = new Array<Element>();
 		list.push( beginning );
@@ -175,7 +175,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		
 		//message = StringTools.htmlEscape( message );
 		var span:SpanElement = Browser.document.createSpanElement();
-		span.innerText = message;
+		span.textContent = message;
 		
         this.setAttributes( span, color );
 
