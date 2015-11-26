@@ -108,33 +108,33 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
 
     private function _tryToRunSetUp( classDescriptor : TestClassDescriptor ) : Void
     {
-        if ( classDescriptor.setUp )
+        if ( classDescriptor.setUpFieldName != null )
         {
-            Reflect.callMethod( classDescriptor.instance, classDescriptor.setUp, [] );
+            Reflect.callMethod( classDescriptor.instance, Reflect.field( classDescriptor.instance, classDescriptor.setUpFieldName ), [] );
         }
     }
 
     private function _tryToRunTearDown( classDescriptor : TestClassDescriptor ) : Void
     {
-        if ( classDescriptor.tearDown )
+        if ( classDescriptor.tearDownFieldName != null )
         {
-            Reflect.callMethod( classDescriptor.instance, classDescriptor.tearDown, [] );
+            Reflect.callMethod( classDescriptor.instance, Reflect.field( classDescriptor.instance, classDescriptor.tearDownFieldName ), [] );
         }
     }
 
     private function _tryToRunBeforeClass( classDescriptor : TestClassDescriptor ) : Void
     {
-        if ( classDescriptor.beforeClass )
+        if ( classDescriptor.beforeClassFieldName != null )
         {
-            Reflect.callMethod( classDescriptor.type, classDescriptor.beforeClass, [] );
+            Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.instance, classDescriptor.beforeClassFieldName ), [] );
         }
     }
 
     private function _tryToRunAfterClass( classDescriptor : TestClassDescriptor ) : Void
     {
-        if ( classDescriptor.afterClass )
+        if ( classDescriptor.afterClassFieldName != null )
         {
-            Reflect.callMethod( classDescriptor.type, classDescriptor.afterClass, [] );
+            Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.instance, classDescriptor.afterClassFieldName ), [] );
         }
     }
 

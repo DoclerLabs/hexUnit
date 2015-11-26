@@ -32,22 +32,22 @@ class TestClassDescriptor
     /**
 	 * The life cycle method to be called once, setUp tests in the class are executed.
 	 */
-    public var beforeClass : Dynamic;
+    public var beforeClassFieldName : String;
 
     /**
 	 * The life cycle method to be called once, tearDown tests in the class are executed.
 	 */
-    public var afterClass : Dynamic;
+    public var afterClassFieldName : String;
 
     /**
 	 * The life cycle method to be called once, setUp each test in the class is executed.
 	 */
-    public var setUp : Dynamic;
+    public var setUpFieldName : String;
 
     /**
 	 * The life cycle method to be called once, tearDown each test in the class is executed.
 	 */
-    public var tearDown : Dynamic;
+    public var tearDownFieldName : String;
 
     private var _classDescriptors   : Array<TestClassDescriptor>;
     private var _methodDescriptors  : Array<TestMethodDescriptor>;
