@@ -235,14 +235,14 @@ class Assert
         Assert._LOG_ASSERT( userMessage );
 
         var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Exception         = null;
+        var exceptionCaught : Dynamic         	= null;
 
         try
         {
             //var scope : Dynamic = Reflect.field( methodReference, "scope" );
             Reflect.callMethod( scope, methodReference, args );
         }
-        catch ( e : Exception )
+        catch ( e : Dynamic )
         {
             exceptionCaught = e;
         }
