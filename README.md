@@ -12,19 +12,19 @@ OOP Unit testing framework written in Haxe.
 
 - Tests and suites are generated with annotations. No inheritance and implementation needed.
 - Asynchronous testing.
-- Solution event based: Define your own console/system to display/write your results.
+- Solution event based. Define your own console/system to display/write your results.
 - Compatible with NodeJS for Travis integration.
 
 
 ## List of metadatas
-- test
-- async
-- ignore
-- setUp
-- tearDown
-- beforeClass
-- afterClass
-- suite
+- @test
+- @async
+- @ignore
+- @setUp
+- @tearDown
+- @beforeClass
+- @afterClass
+- @suite
 
 
 ## Assertions provided
