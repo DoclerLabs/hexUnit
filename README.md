@@ -74,6 +74,7 @@ var emu : ExMachinaUnitCore = new ExMachinaUnitCore();
 emu.addListener( new BrowserUnitTestNotifier( "console" ) );
 emu.addTestMethod( InjectorTest, "get_instance_errors_for_unmapped_class" );
 emu.run();
+```
 
 
 ## Suite example (you can mix tests classes with suites)
