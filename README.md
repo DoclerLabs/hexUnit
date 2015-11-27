@@ -16,7 +16,7 @@ OOP Unit testing framework written in Haxe.
 - Asynchronous testing.
 - Solution event based. Define your own console/system to display/write your results.
 - Compatible with NodeJS for Travis integration.
-- Test only one method
+- Possibility to test only one method (For shortcut IDE integration)
 
 
 ## List of metadatas
@@ -112,5 +112,23 @@ class DomainTest
         var domain : Domain = new Domain( "testConstructorWithNameValues" );
         Assert.assertConstructorCallThrows( IllegalArgumentException, Domain, ["testConstructorWithNameValues"], "" );
     }
+}
+```
+
+
+## Asynchronous test example
+```haxe
+@async( "Test every command was executed" )
+public function testHasRunEveryCommand() : Void
+{
+	this._macroExecutor.add( MockAsyncCommand );
+	Assert.failTrue( this._macroExecutor.hasRunEveryCommand, "'hasRunEveryCommand' should return false" );
+	this._macroExecutor.executeNextCommand();
+	Timer.delay( MethodRunner.asyncHandler( this._onTestHasRunEveryCommand ), 100 );
+}
+
+private function _onTestHasRunEveryCommand() : Void
+{
+	Assert.assertTrue( this._macroExecutor.hasRunEveryCommand, "'hasRunEveryCommand' should return true" );
 }
 ```
