@@ -109,6 +109,19 @@ class TestClassDescriptor
             throw new NoSuchElementException( "nextMethod call on '" + this.toString() + "' failed." );
         }
     }
+	
+	public function keepOnlyThisMethod( methodName : String ) : Void
+	{
+		for ( descriptor in this._methodDescriptors )
+		{
+			if ( descriptor.methodName == methodName )
+			{
+				this._methodDescriptors = [];
+				this._methodDescriptors.push( descriptor );
+				break;
+			}
+		}
+	}
 
     public function currentClassDescriptor() : TestClassDescriptor
     {

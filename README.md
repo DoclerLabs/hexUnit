@@ -14,6 +14,7 @@ OOP Unit testing framework written in Haxe.
 - Asynchronous testing.
 - Solution event based. Define your own console/system to display/write your results.
 - Compatible with NodeJS for Travis integration.
+- Test only one method
 
 
 ## List of metadatas
@@ -57,25 +58,30 @@ emu.run();
 ```
 
 
-## How to run framework tests inside NodeJS
+## How to run tests with NodeJS (you can mix tests classes with suites)
 ```haxe
 var emu : ExMachinaUnitCore = new ExMachinaUnitCore();
 emu.addListener( new ConsoleNotifier(false) );
-emu.addTest( HexMVCSuite );
+emu.addTest( InjectorTest );
 emu.addTest( HexCoreSuite );
-emu.addTest( HexInjectSuite );
-emu.addTest( HexMachinaSuite );
-emu.addTest( HexUnitSuite );
 emu.run();
 ```
 
 
-## Suite example
+## How to test only one method
+```haxe
+var emu : ExMachinaUnitCore = new ExMachinaUnitCore();
+emu.addListener( new BrowserUnitTestNotifier( "console" ) );
+emu.addTestMethod( InjectorTest, "get_instance_errors_for_unmapped_class" );
+emu.run();
+
+
+## Suite example (you can mix tests classes with suites)
 ```haxe
 class AsyncSuite
 {
 	@suite("Async suite")
-    public var list : Array<Class<Dynamic>> = [AsyncCommandEventTest, AsyncCommandTest, AsyncCommandUtilTest ];
+    public var list : Array<Class<Dynamic>> = [AsyncCommandSuite, AsyncCommandTest];
 }
 ```
 

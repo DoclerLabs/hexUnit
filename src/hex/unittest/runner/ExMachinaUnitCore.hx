@@ -40,6 +40,11 @@ class ExMachinaUnitCore implements ITestRunner implements ITestRunnerListener
     {
         this._classDescriptors.push( this._parser.parse( testableClass ) );
     }
+	
+	public function addTestMethod( testableClass : Class<Dynamic>, methodName : String )
+    {
+		this._classDescriptors.push( this._parser.parseMethod( testableClass, methodName ) );
+	}
 
     public function toString() : String
     {

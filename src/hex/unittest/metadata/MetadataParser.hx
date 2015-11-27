@@ -23,6 +23,14 @@ class MetadataParser
         this._parse( descriptor );
         return descriptor;
     }
+	
+	public function parseMethod( type : Class<Dynamic>, methodName : String ) : TestClassDescriptor
+    {
+		var descriptor : TestClassDescriptor = new TestClassDescriptor( type );
+		this._parse( descriptor );
+		descriptor.keepOnlyThisMethod( methodName );
+		return descriptor;
+	}
 
     private function _parse( descriptor : TestClassDescriptor ) : Void
     {
