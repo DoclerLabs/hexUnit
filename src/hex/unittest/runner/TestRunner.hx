@@ -25,9 +25,9 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
 	private var _lastRender					: Float = 0;
 	
 	#if flash
-	public var _renderDelay					: Float = 150;
+	static public var RENDER_DELAY 			: Float = 150;
 	#else
-	public var _renderDelay					: Float = 50;
+	static public var RENDER_DELAY			: Float = 50;
 	#end
 
     public function new( classDescriptor : TestClassDescriptor )
@@ -184,7 +184,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         this._dispatcher.dispatchEvent( new TestRunnerEvent( eventType, this, classDescriptor, e.getTimeElapsed(), e.getError() ) );
         this._tryToRunTearDown( classDescriptor );
 		
-		if ( Date.now().getTime() - this._lastRender > this._renderDelay )
+		if ( Date.now().getTime() - this._lastRender > TestRunner.RENDER_DELAY )
 		{
 			this._lastRender = Date.now().getTime();
 			Timer.delay( function( ) { _runTestClass( classDescriptor ); }, 1 );
