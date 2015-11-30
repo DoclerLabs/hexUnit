@@ -79,6 +79,11 @@ emu.run();
 ```
 
 
+## FlashDevelop integration
+Macro designed for FlashDevelop to run only one unit test class or a test function (instead of a whole suit)
+You can download it [here](https://github.com/DoclerLabs/hex3rdPartyTools/tree/master/utilities/unittest/FlashDevelopMacro) 
+
+
 ## Suite example (you can mix tests classes with suites)
 ```haxe
 class AsyncSuite
