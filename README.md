@@ -47,6 +47,11 @@ OOP Unit testing framework written in Haxe.
 - assertSetPropertyThrows
 
 
+## FlashDevelop integration
+Macro designed for FlashDevelop to run only one unit test class or a test function (instead of a whole suit)
+You can download it [here](https://github.com/DoclerLabs/hex3rdPartyTools/tree/master/utilities/unittest/FlashDevelopMacro) 
+
+
 ## How to run framework tests inside the browser
 ```haxe
 var emu : ExMachinaUnitCore = new ExMachinaUnitCore();
@@ -77,11 +82,6 @@ emu.addListener( new BrowserUnitTestNotifier( "console" ) );
 emu.addTestMethod( InjectorTest, "get_instance_errors_for_unmapped_class" );
 emu.run();
 ```
-
-
-## FlashDevelop integration
-Macro designed for FlashDevelop to run only one unit test class or a test function (instead of a whole suit)
-You can download it [here](https://github.com/DoclerLabs/hex3rdPartyTools/tree/master/utilities/unittest/FlashDevelopMacro) 
 
 
 ## Suite example (you can mix tests classes with suites)
