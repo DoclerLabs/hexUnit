@@ -54,6 +54,10 @@ class TraceNotifier implements ITestRunnerListener
 			this._log( "Assertions failed: " + Assert.getAssertionFailedCount() + "\n" );
 			throw ( new Exception( "Assertions failed: " + Assert.getAssertionFailedCount() ) );
 		}
+		
+		#if flash
+		flash.system.System.exit( 0 );
+		#end
     }
 
     public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
