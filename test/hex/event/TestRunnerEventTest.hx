@@ -39,11 +39,17 @@ class TestRunnerEventTest
         var type : String = "type";
         var descriptor : TestClassDescriptor = new TestClassDescriptor( TestRunnerEventTest );
 		var target : TestRunner = new TestRunner( descriptor );
-        var e : TestRunnerEvent = new TestRunnerEvent( type, target, descriptor );
+		var ex : Exception = new Exception( "error" );
+        var e : TestRunnerEvent = new TestRunnerEvent( type, target, descriptor, 150, ex );
         var clonedEvent : TestRunnerEvent = cast e.clone();
+		
+		Assert.assertIsType( clonedEvent, TestRunnerEvent, "'clonedEvent' should be an instance of 'TestRunnerEvent' class" );
 
         Assert.assertEquals( type, clonedEvent.type, "'clone' method should return cloned event with same 'type' property" );
         Assert.assertEquals( target, clonedEvent.target, "'clone' method should return cloned event with same 'target' property" );
+		Assert.assertEquals( descriptor, e.getDescriptor(), "'getDescriptor' accessor should return property passed to constructor" );
+        Assert.assertEquals( 150, e.getTimeElapsed(), "'getTimeElapsed' accessor should return property passed to constructor" );
+		Assert.assertEquals( ex, e.getError(), "'getError' accessor should return property passed to constructor" );
     }
 	
 	@test( "Test parameters passed to constructor with accessors" )

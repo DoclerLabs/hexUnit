@@ -50,4 +50,9 @@ class TestRunnerEvent  extends BasicEvent
     {
         return this._timeElapsed;
     }
+	
+	override public function clone() : BasicEvent
+	{
+		return new TestRunnerEvent( this.type, this.target, this._descriptor, this._timeElapsed, this._error );
+	}
 }

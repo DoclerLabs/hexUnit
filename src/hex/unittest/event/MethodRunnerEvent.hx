@@ -49,4 +49,9 @@ class MethodRunnerEvent extends BasicEvent
     {
         return this._timeElapsed;
     }
+	
+	override public function clone() : BasicEvent
+    {
+        return new MethodRunnerEvent( this.type, this.target, this._descriptor, this._timeElapsed, this._error );
+    }
 }
