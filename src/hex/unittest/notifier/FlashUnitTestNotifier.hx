@@ -1,6 +1,8 @@
 package hex.unittest.notifier;
 
+import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+import flash.Lib;
 import flash.text.StyleSheet;
 import flash.text.TextField;
 import flash.text.TextFormat;
@@ -16,41 +18,42 @@ import hex.unittest.event.TestRunnerEvent;
  */
 class FlashUnitTestNotifier implements ITestRunnerListener
 {
-    private var _trace  : Dynamic;
-    private var _tabs   : Int = 0;
+	private static var _TRACE 		: Dynamic = haxe.Log.trace;
 	
-	private static var _TRACE : Dynamic = haxe.Log.trace;
-	private var console:TextField;
-	private var target:Sprite;
-	private var successMarker:Sprite;
-	private var styleSheet:StyleSheet;
-	private var _styleList:Map<String,Bool> = new Map<String,Bool>();
+    private var _trace  			: Dynamic;
+    private var _tabs   			: Int = 0;
 
-    public function new( target:Sprite )
+	private var console				: TextField;
+	private var target				: DisplayObjectContainer;
+	private var successMarker		: Sprite;
+	private var styleSheet			: StyleSheet;
+	private var _styleList			: Map<String,Bool> = new Map<String,Bool>();
+
+    public function new( target : DisplayObjectContainer = null )
     {
-		this.setConsole( target );
-		
+		this.setConsole( target !=null ? target : Lib.current.stage );
 		this.setGlobalResultSuccess( );
     }
 	
-	private function setConsole( target:Sprite ) : Void
+	private function setConsole( target : DisplayObjectContainer ) : Void
 	{
-		this.target = target;
-		this.console = new TextField();
-		this.console.background = true;
-		this.console.backgroundColor = 0x060606;
-		this.console.x = 50;
-		this.console.height = target.stage.stageHeight;
-		this.console.width = target.stage.stageWidth - this.console.x;
-		this.console.textColor = 0xffffff;
-		this.console.wordWrap = true;
-		this.console.selectable = true;
-		this.console.multiline = true;
-		this.console.defaultTextFormat = new TextFormat("Lucida Console", 11);
-		target.addChild(this.console);
+		this.target 					= target;
+		this.console 					= new TextField();
+		this.console.background 		= true;
+		this.console.backgroundColor 	= 0x060606;
+		this.console.x 					= 50;
+		this.console.height 			= target.stage.stageHeight;
+		this.console.width 				= target.stage.stageWidth - this.console.x;
+		this.console.textColor 			= 0xffffff;
+		this.console.wordWrap 			= true;
+		this.console.selectable 		= true;
+		this.console.multiline 			= true;
+		this.console.defaultTextFormat 	= new TextFormat( "Lucida Console", 11 );
 		
-		this.styleSheet = new StyleSheet();
-		this.console.styleSheet = this.styleSheet;
+		target.addChild( this.console );
+		
+		this.styleSheet 				= new StyleSheet();
+		this.console.styleSheet 		= this.styleSheet;
 		
 		this.successMarker = new Sprite();
 		this.target.addChild( this.successMarker );
@@ -60,13 +63,12 @@ class FlashUnitTestNotifier implements ITestRunnerListener
     {
 		var buffer:String = '';
 
-		for (i in 0...this._tabs*4) 
+		for ( i in 0...this._tabs * 4 ) 
 		{
 			buffer += "&nbsp;";
 		}
 		
 		element = buffer + element + "<br/>";
-		
 		
 		this.console.htmlText = this.console.htmlText + element;
 		this.console.scrollV = this.console.maxScrollV;
@@ -95,24 +97,29 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		
 		var successfulCount:Int = Assert.getAssertionCount() - Assert.getAssertionFailedCount();
 		
-		var beginning:String = this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
-		var all:String = this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
-		var successfull:String = this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
-		var failed:String = this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
-		var ending:String = this.createElement( "]]]", "yellow+bold+h3" );
+		var beginning : String 		= this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
+		var all : String 			= this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
+		var successfull : String 	= this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
+		var failed : String 		= this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
+		var ending : String 		= this.createElement( "]]]", "yellow+bold+h3" );
 		
-		var list:Array<String> = new Array<String>();
+		var list : Array<String> = new Array<String>();
 		list.push( beginning );
 		list.push( all );
+		
 		if ( successfulCount > 0 ) 
+		{
 			list.push( successfull );
+		}
+		
+		
 		if ( Assert.getAssertionFailedCount() > 0 ) 
+		{
 			list.push( failed );
+		}
+		
 		list.push( ending );
-		
-		
         this._log( this.encapsulateElements( list ) );
-		
 		this.addRuler();
     }
 
@@ -141,10 +148,8 @@ class FlashUnitTestNotifier implements ITestRunnerListener
     public function onSuccess( e : TestRunnerEvent ) : Void
     {
 		var success: String = this.createElement( "✔ ", "green" );
-		
 		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
 		var func : String = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
-        
         this.generateMessage( success, func, e );
     }
 	
@@ -185,16 +190,10 @@ class FlashUnitTestNotifier implements ITestRunnerListener
     public function createElement( message : String, color : String ) : String
     {
         var result : String = "";
-		
-		//message = StringTools.htmlEscape( message );
-		
 		var colorId:String = color.split("+").join("_");
-		
 		var span:String = "<span class=\"" + colorId + "\">" + message + "</span>";
 		
-		
-		
-		if ( this._styleList["." + colorId] == null )
+		if ( this._styleList[ "." + colorId ] == null )
 		{
 			var style:Dynamic = { };
 			this.setAttributes( style, color );
@@ -206,9 +205,9 @@ class FlashUnitTestNotifier implements ITestRunnerListener
         return span;
     }
 	
-	private function encapsulateElements( elementList:Array<String> ):String
+	private function encapsulateElements( elementList : Array<String> ) : String
 	{
-		return elementList.join("");
+		return elementList.join( "" );
 	}
 	
 	private function setAttributes( style:Dynamic, color: String ) : Void
@@ -221,9 +220,8 @@ class FlashUnitTestNotifier implements ITestRunnerListener
         }
 	}
 	
-	private function setAttribute( style:Dynamic, attr:String ) : Void
+	private function setAttribute( style : Dynamic, attr : String ) : Void
 	{
-		
         switch( attr )
         {
             case "bold":
@@ -275,15 +273,15 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 	private function setGlobalResultSuccess( ) : Void
 	{
 		this.successMarker.graphics.clear();
-		this.successMarker.graphics.beginFill(0x2f8a11);
-		this.successMarker.graphics.drawRect(0, 0, this.console.x, target.stage.stageHeight);
+		this.successMarker.graphics.beginFill( 0x2f8a11 );
+		this.successMarker.graphics.drawRect( 0, 0, this.console.x, target.stage.stageHeight );
 	}
 	
 	private function setGlobalResultFailed( ) : Void
 	{
 		this.successMarker.graphics.clear();
-		this.successMarker.graphics.beginFill(0xe62323);
-		this.successMarker.graphics.drawRect(0, 0, this.console.x, target.stage.stageHeight);
+		this.successMarker.graphics.beginFill( 0xe62323 );
+		this.successMarker.graphics.drawRect( 0, 0, this.console.x, target.stage.stageHeight );
 	}
 	
 	private function addRuler() : Void
@@ -291,8 +289,5 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		this.console.htmlText += "----------------------<br/>";
 	}
 	
-	public function handleEvent( e : IEvent ) : Void
-		
-	{
-	}
+	public function handleEvent( e : IEvent ) : Void {}
 }
