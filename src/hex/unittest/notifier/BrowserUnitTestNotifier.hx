@@ -24,6 +24,8 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 	
 	private static var _TRACE : Dynamic = haxe.Log.trace;
 	private var console:Element;
+	
+	private var netTimeElapsed:Float;
 
     public function new( targetId:String )
     {
@@ -70,6 +72,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
         this._tabs = 0;
         this._log( this.createElement( "[[[ Start " + e.getDescriptor().className + " tests run ]]]", "yellow+bold+h3" ) );
         this._addTab();
+		this.netTimeElapsed = 0;
     }
 
     public function onEndRun( e : TestRunnerEvent ) : Void
@@ -84,7 +87,8 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		var all:Element = this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
 		var successfull:Element = this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
 		var failed:Element = this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
-		var ending:Element = this.createElement( "]]]", "yellow+bold+h3" );
+		
+		var ending:Element = this.createElement( " in " + this.netTimeElapsed + "ms :: ]]]", "yellow+bold+h3" );
 		
 		var list:Array<Element> = new Array<Element>();
 		list.push( beginning );
@@ -165,6 +169,8 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
         var description : String = e.getDescriptor().currentMethodDescriptor().description;
 		
         var message : Element = this.createElement( (description.length > 0 ? description : "") + " [" + e.getTimeElapsed() + "ms]", "darkgrey" );
+		
+		this.netTimeElapsed += e.getTimeElapsed();
 		
         this._log( this.encapsulateElements( [icon, func, message] ) );
 	}
