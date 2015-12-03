@@ -3,6 +3,7 @@ package hex.unittest.notifier;
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestRunnerListener;
 import hex.unittest.event.TestRunnerEvent;
 import js.Browser;
@@ -152,7 +153,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
         this._addTab();
         this._addTab();
         this._log( this.createElement( e.getError().toString(), "red+bold" ) );
-        this._log( this.createElement( e.getError().message + ": " + Assert.getLastAssertionLog(), "red" ) );
+        this._log( this.createElement( e.getError().message + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ), "red" ) );
         this._removeTab();
         this._removeTab();
 		

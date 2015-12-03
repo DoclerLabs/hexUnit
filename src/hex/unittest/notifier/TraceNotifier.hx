@@ -4,6 +4,7 @@ import hex.error.Exception;
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestRunnerListener;
 import hex.unittest.event.TestRunnerEvent;
 
@@ -99,7 +100,7 @@ class TraceNotifier implements ITestRunnerListener
         this._log( message );
         this._addTab();
         this._log( e.getError().toString() );
-        this._log( e.getError().message + ": " + Assert.getLastAssertionLog() );
+        this._log( e.getError().message + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
         this._removeTab();
 		
 		if ( this._errorBubbling )

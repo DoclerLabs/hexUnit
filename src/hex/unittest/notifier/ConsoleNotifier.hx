@@ -4,6 +4,7 @@ import hex.error.Exception;
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestRunnerListener;
 import hex.unittest.event.TestRunnerEvent;
 
@@ -99,7 +100,7 @@ class ConsoleNotifier implements ITestRunnerListener
         this._log( this.setColor( message, "red" ) );
         this._addTab();
         this._log( this.setColor( e.getError().toString(), "red+bold" ) );
-        this._log( this.setColor( e.getError().message + ": " + Assert.getLastAssertionLog(), "red" ) );
+        this._log( this.setColor( e.getError().message + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ), "red" ) );
         this._removeTab();
 		
 		if ( this._errorBubbling )
