@@ -61,7 +61,7 @@ class Assert
     public static function resetAssertionLog() : Void
     {
         Assert._assertCount         = 0;
-        Assert._assertFailedCount         = 0;
+        Assert._assertFailedCount   = 0;
         Assert._lastAssertionLog    = "";
         Assert._assertionLogs       = [];
     }
@@ -69,7 +69,7 @@ class Assert
     /**
      * Asserts that 'value' is true
      */
-    public static function assertTrue( value : Bool, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isTrue( value : Bool, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -82,7 +82,7 @@ class Assert
     /**
      * Asserts that 'value' is false
      */
-    public static function failTrue( value : Bool, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isFalse( value : Bool, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -95,7 +95,7 @@ class Assert
     /**
      * Asserts that 'value' is null
      */
-    public static function assertIsNull( value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isNull( value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -108,7 +108,7 @@ class Assert
     /**
      * Asserts that 'value' is not null
      */
-    public static function failIsNull( value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isNotNull( value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -121,7 +121,7 @@ class Assert
     /**
      * Asserts that 'value' is type of 'type'
      */
-    public static function assertIsType( value : Dynamic, type : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isInstanceOf( value : Dynamic, type : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -134,7 +134,7 @@ class Assert
     /**
      * Asserts that 'value' is not type of 'type'
      */
-    public static function failIsType( value : Dynamic, type : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isNotInstanceOf( value : Dynamic, type : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -147,7 +147,7 @@ class Assert
     /**
      * Asserts that 'expected' and 'actual' are equal
      */
-    public static function assertEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function equals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -157,7 +157,7 @@ class Assert
         }
     }
 	
-	public static function assertDeepEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+	public static function deepEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -167,7 +167,7 @@ class Assert
         }
     }
 	
-	public static function assertArrayContains( expected : Array<Dynamic>, value : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
+	public static function arrayContains( expected : Array<Dynamic>, value : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 		
@@ -192,7 +192,7 @@ class Assert
     /**
      * Asserts that 'expected' and 'actual' are not equal
      */
-    public static function failEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function notEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -205,7 +205,7 @@ class Assert
     /**
      * Asserts class constructor call throws 'expectedException'
      */
-    public static function assertConstructorCallThrows( expectedException : Class<Exception>, type : Class<Dynamic>, args : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function constructorCallThrows( expectedException : Class<Exception>, type : Class<Dynamic>, args : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -230,7 +230,7 @@ class Assert
     /**
      * Asserts method call throws 'expectedException'
      */
-    public static function assertMethodCallThrows( expectedException : Class<Exception>, scope : Dynamic, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function methodCallThrows( expectedException : Class<Exception>, scope : Dynamic, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -239,7 +239,6 @@ class Assert
 
         try
         {
-            //var scope : Dynamic = Reflect.field( methodReference, "scope" );
             Reflect.callMethod( scope, methodReference, args );
         }
         catch ( e : Exception )
@@ -256,7 +255,7 @@ class Assert
 	/**
      * Asserts that setting value to property throws 'expectedException'
      */
-    public static function assertSetPropertyThrows( expectedException : Class<Exception>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function setPropertyThrows( expectedException : Class<Exception>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
 	{
 		Assert._LOG_ASSERT( userMessage );
 
