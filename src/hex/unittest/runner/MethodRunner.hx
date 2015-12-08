@@ -138,7 +138,7 @@ class MethodRunner
 
         if ( methodRunner._passThroughArgs != null )
         {
-            args.concat( methodRunner._passThroughArgs );
+            args = args.concat( methodRunner._passThroughArgs );
         }
 
         try
