@@ -47,11 +47,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     private function _log( element : Element ) : Void
     {
-        //Reflect.callMethod( untyped js.Boot, this._trace, [ this._tabs + message] );
-		/*var span:SpanElement = Browser.document.createSpanElement(this._tabs + message + "\n");
-		span.innerText = message;*/
-		
-		element.style.marginLeft = (this._tabs * 30) + "px";
+        element.style.marginLeft = (this._tabs * 30) + "px";
 		element.appendChild( Browser.document.createTextNode("\n") );
 		this.console.appendChild( element );
 		
@@ -104,13 +100,11 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
         this._log( this.encapsulateElements( list ) );
 		
 		this.addRuler();
-		
-        //this._log( this.createElement( "Assertions count: " + Assert.getAssertionCount() + "\n", "bold" )  );
     }
 
     public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
     {
-        this._log( this.createElement( "Test suite: '" + e.getDescriptor().className + "'", "white+bold+h4" ) );
+        this._log( this.createElement( "Test suite: '" + e.getDescriptor().getName() + "'", "white+bold+h4" ) );
         this._addTab();
     }
 
@@ -179,8 +173,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
     public function createElement( message : String, color : String ) : Element
     {
         var result : String = "";
-		
-		//message = StringTools.htmlEscape( message );
+
 		var span:SpanElement = Browser.document.createSpanElement();
 		span.textContent = message;
 		
@@ -282,7 +275,6 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 	}
 	
 	public function handleEvent( e : IEvent ) : Void
-		
 	{
 	}
 }

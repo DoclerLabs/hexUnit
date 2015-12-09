@@ -63,7 +63,7 @@ class TraceNotifier implements ITestRunnerListener
 
     public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
     {
-        this._log( "Suite class '" + e.getDescriptor().className + "'" );
+        this._log( "Suite class '" + e.getDescriptor().getName() + "'" );
         this._addTab();
     }
 

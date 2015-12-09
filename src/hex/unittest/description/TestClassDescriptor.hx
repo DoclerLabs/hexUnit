@@ -53,18 +53,31 @@ class TestClassDescriptor
     private var _methodDescriptors  : Array<TestMethodDescriptor>;
     private var _classIndex         : Int;
     private var _methodIndex        : Int;
+	
+    private var _name        		: String;
 
     public function new( type : Class<Dynamic> )
     {
         this.instance           = Type.createEmptyInstance( type );
         this.type               = type;
         this.className          = Type.getClassName( type );
-
+		this._name 				= "";
+		
         this._classDescriptors  = [];
         this._methodDescriptors = [];
         this._classIndex        = 0;
         this._methodIndex       = 0;
     }
+	
+	public function getName() : String
+	{
+		return this._name;
+	}
+	
+	public function setName( name : String ) : Void
+	{
+		this._name = name;
+	}
 
     public function addTestMethodDescriptor( methodDescriptor : TestMethodDescriptor ) : Void
     {

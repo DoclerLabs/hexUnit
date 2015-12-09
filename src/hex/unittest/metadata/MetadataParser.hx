@@ -60,6 +60,8 @@ class MetadataParser
                 {
                     if ( !isSuiteClass )
                     {
+						var metadatas : Array<Dynamic> = Reflect.field( metadataField, MetadataList.SUITE );
+						descriptor.setName( metadatas[0] );
                         isSuiteClass = descriptor.isSuiteClass = true;
                         descriptor.instance = Type.createInstance( descriptor.type, [] );
                     }
