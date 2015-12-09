@@ -104,7 +104,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
     {
-        this._log( this.createElement( "Test suite: '" + e.getDescriptor().getName() + "'", "white+bold+h4" ) );
+        this._log( this.createElement( e.getDescriptor().getName() + ": '" + e.getDescriptor().className + "'", "white+bold+h4" ) );
         this._addTab();
     }
 
