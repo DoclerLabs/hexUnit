@@ -51,7 +51,17 @@ class MethodRunner
         }
         else
         {
-            MethodRunner.registerAsyncMethodRunner( this );
+			try
+			{
+				MethodRunner.registerAsyncMethodRunner( this );
+			}
+			catch ( e : IllegalArgumentException )
+			{
+				this._endTime = Date.now().getTime();
+                this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), e ) );
+				return;
+			}
+            
             try
             {
                 Reflect.callMethod( this._scope, this._methodReference, [] );
@@ -145,20 +155,22 @@ class MethodRunner
         {
             Reflect.callMethod( methodRunner._scope, methodRunner._callback, args );
             methodRunner._endTime = Date.now().getTime();
+			MethodRunner._CURRENT_RUNNER = null;
             methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.SUCCESS, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed() ) );
         }
         catch ( e : Exception )
         {
+			MethodRunner._CURRENT_RUNNER = null;
             methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed(), e ) );
         }
-
-        MethodRunner._CURRENT_RUNNER = null;
+        
     }
 
     private static function _fireTimeout() : Void
     {
 		MethodRunner._CURRENT_RUNNER._timer.stop();
         var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
+		MethodRunner._CURRENT_RUNNER = null;
         methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.TIMEOUT, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed(), new Exception( "Test timeout" ) ) );
     }
 }
