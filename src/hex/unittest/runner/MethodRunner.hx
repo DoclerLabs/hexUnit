@@ -43,7 +43,7 @@ class MethodRunner
                 this._endTime = Date.now().getTime();
                 this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.SUCCESS, this, this._methodDescriptor, this.getTimeElapsed() ) );
             }
-            catch ( e : Exception )
+            catch ( e : Dynamic )
             {
                 this._endTime = Date.now().getTime();
                 this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), e ) );
@@ -66,7 +66,7 @@ class MethodRunner
             {
                 Reflect.callMethod( this._scope, this._methodReference, [] );
             }
-            catch ( e : Exception )
+            catch ( e : Dynamic )
             {
                 this._endTime = Date.now().getTime();
                 this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), e ) );

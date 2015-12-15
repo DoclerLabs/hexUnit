@@ -9,10 +9,7 @@ import hex.unittest.event.TestRunnerEvent;
 import js.Browser;
 import js.html.Element;
 import js.html.HRElement;
-import js.html.HtmlElement;
 import js.html.SpanElement;
-import js.html.Text;
-import js.Lib;
 
 /**
  * ...
@@ -20,22 +17,20 @@ import js.Lib;
  */
 class BrowserUnitTestNotifier implements ITestRunnerListener
 {
-    private var _trace  : Dynamic;
-    private var _tabs   : Int = 0;
+    private var _trace  		: Dynamic;
+    private var _tabs   		: Int = 0;
+	private var console 		: Element;
+	private var netTimeElapsed	: Float;
 	
-	private static var _TRACE : Dynamic = haxe.Log.trace;
-	private var console:Element;
-	
-	private var netTimeElapsed:Float;
+	private static var _TRACE 	: Dynamic = haxe.Log.trace;
 
-    public function new( targetId:String )
+    public function new( targetId : String )
     {
 		this.setConsole( targetId );
-		
 		this.setGlobalResultSuccess( );
     }
 	
-	private function setConsole( targetId:String ) : Void
+	private function setConsole( targetId : String ) : Void
 	{
 		this.console = Browser.document.getElementById( targetId );
 		this.console.style.backgroundColor = "#060606";
@@ -75,30 +70,31 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
     public function onEndRun( e : TestRunnerEvent ) : Void
     {
         this._removeTab();
+
+		var successfulCount : Int 	= Assert.getAssertionCount() - Assert.getAssertionFailedCount();
 		
-		Browser.console.log( Assert.getAssertionFailedCount() );
-		
-		var successfulCount:Int = Assert.getAssertionCount() - Assert.getAssertionFailedCount();
-		
-		var beginning:Element = this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
-		var all:Element = this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
-		var successfull:Element = this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
-		var failed:Element = this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
-		
-		var ending:Element = this.createElement( " in " + this.netTimeElapsed + "ms :: ]]]", "yellow+bold+h3" );
+		var beginning : Element 	= this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
+		var all : Element 			= this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
+		var successfull : Element 	= this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
+		var failed : Element 		= this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
+		var ending : Element 		= this.createElement( " in " + this.netTimeElapsed + "ms :: ]]]", "yellow+bold+h3" );
 		
 		var list:Array<Element> = new Array<Element>();
 		list.push( beginning );
 		list.push( all );
+		
 		if ( successfulCount > 0 ) 
+		{
 			list.push( successfull );
+		}
+		
 		if ( Assert.getAssertionFailedCount() > 0 ) 
+		{
 			list.push( failed );
+		}
+		
 		list.push( ending );
-		
-		
         this._log( this.encapsulateElements( list ) );
-		
 		this.addRuler();
     }
 
@@ -127,10 +123,8 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
     public function onSuccess( e : TestRunnerEvent ) : Void
     {
 		var success: Element = this.createElement( "✔ ", "green" );
-		
 		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
 		var func : Element = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
-        
         this.generateMessage( success, func, e );
     }
 	
@@ -139,7 +133,6 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
     {
         var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
 		var func : Element = this.createElement( methodDescriptor.methodName + "() ", "red" );
-		
 		var fail: Element = this.createElement( "✘ ", "red" );
 		
         this.generateMessage( fail, func, e );
@@ -162,23 +155,17 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 	private function generateMessage( icon:Element, func:Element, e : TestRunnerEvent ) : Void
 	{
         var description : String = e.getDescriptor().currentMethodDescriptor().description;
-		
         var message : Element = this.createElement( (description.length > 0 ? description : "") + " [" + e.getTimeElapsed() + "ms]", "darkgrey" );
-		
 		this.netTimeElapsed += e.getTimeElapsed();
-		
         this._log( this.encapsulateElements( [icon, func, message] ) );
 	}
 
     public function createElement( message : String, color : String ) : Element
     {
         var result : String = "";
-
-		var span:SpanElement = Browser.document.createSpanElement();
+		var span : SpanElement = Browser.document.createSpanElement();
 		span.textContent = message;
-		
         this.setAttributes( span, color );
-
         return span;
     }
 	
@@ -205,7 +192,6 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 	
 	private function setAttribute( element:Element, attr:String ) : Void
 	{
-		
         switch( attr )
         {
             case "bold":
@@ -248,12 +234,13 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 			case "h4":
 				element.style.fontSize = "13px";
 				element.style.lineHeight = "30px";
+				
 			case "h5":
 				element.style.lineHeight = "25px";
         }
     }
 	
-	private function setGlobalResultSuccess( ) : Void
+	private function setGlobalResultSuccess() : Void
 	{
 		this.console.style.borderLeft = "50px solid #2f8a11";
 	}
@@ -271,10 +258,8 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		ruler.style.borderTop = "1px solid #555";
 		ruler.style.margin = "15px 0px 15px 0px";
 		
-		this.console.appendChild(ruler);
+		this.console.appendChild( ruler );
 	}
 	
-	public function handleEvent( e : IEvent ) : Void
-	{
-	}
+	public function handleEvent( e : IEvent ) : Void {}
 }
