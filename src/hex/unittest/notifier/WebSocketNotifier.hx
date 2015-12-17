@@ -26,6 +26,7 @@ class WebSocketNotifier implements ITestRunnerListener
 	{
 		this._url = url;
 		this._clientId = this.generateUUID();
+		this._dispatcher = new LightweightClosureDispatcher<WebSocketNotifierEvent>();
 		this._connect( );
 	}
 	
@@ -37,6 +38,7 @@ class WebSocketNotifier implements ITestRunnerListener
 	private function _connect():Void
 	{
 		this._webSocket = new WebSocket(this._url);
+		trace("conn"); 
 		this._addWebSocketListeners( this._webSocket );
 	}
 	
