@@ -16,6 +16,8 @@ import js.html.WebSocket;
  */
 class WebSocketNotifier implements ITestRunnerListener
 {
+	static public inline var version:String = "0.1.1";
+	
 	private var _url:String;
 	private var _webSocket:WebSocket;
 	private var _clientId:String;
@@ -38,7 +40,6 @@ class WebSocketNotifier implements ITestRunnerListener
 	private function _connect():Void
 	{
 		this._webSocket = new WebSocket(this._url);
-		trace("conn"); 
 		this._addWebSocketListeners( this._webSocket );
 	}
 	
@@ -92,6 +93,7 @@ class WebSocketNotifier implements ITestRunnerListener
 		var message:Dynamic = {
 			messageId: this.generateUUID(),
 			clientType: "webSocketTestNotifier",
+			clinentVersion: WebSocketNotifier.version,
 			clientId: this._clientId,
 			messageType: messageType,
 			data: data
