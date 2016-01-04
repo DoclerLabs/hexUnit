@@ -146,7 +146,7 @@ class WebSocketNotifier implements ITestRunnerListener
 			successfulAssertionCount: Assert.getAssertionCount() - Assert.getAssertionFailedCount(),
 			assertionFailedCount: Assert.getAssertionFailedCount(),
 			assertionCount: Assert.getAssertionCount(),
-			timeElasped: this.netTimeElapsed
+			timeElapsed: this.netTimeElapsed
 		}
 		
 		this.sendMessage( "endRun", data  );
@@ -162,7 +162,7 @@ class WebSocketNotifier implements ITestRunnerListener
 			description: methodDescriptor.description,
 			isAsync: methodDescriptor.isAsync,
 			isIgnored: methodDescriptor.isIgnored,
-			timeElasped: event.getTimeElapsed(),
+			timeElapsed: event.getTimeElapsed(),
 
 
 			fileName: "under_construction",
