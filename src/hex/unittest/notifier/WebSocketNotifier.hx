@@ -3,6 +3,7 @@ package hex.unittest.notifier;
 import haxe.Json;
 import hex.event.IEvent;
 import hex.event.LightweightClosureDispatcher;
+import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestMethodDescriptor;
 import hex.unittest.event.ITestRunnerListener;
 import hex.unittest.event.TestRunnerEvent;
@@ -148,7 +149,7 @@ class WebSocketNotifier implements ITestRunnerListener
 			timeElasped: this.netTimeElapsed
 		}
 		
-		this.sendMessage( "endRun", data );
+		this.sendMessage( "endRun", data  );
 	}
 	
 	public function onSuccess(event:TestRunnerEvent):Void 
@@ -202,22 +203,31 @@ class WebSocketNotifier implements ITestRunnerListener
 	
 	public function onSuiteClassStartRun(event:TestRunnerEvent):Void 
 	{
+		var data:Dynamic = {
+			className: e.getDescriptor().className,
+			suiteName: e.getDescriptor().getName()
+		};
 		
+		this.sendMessage( "testSuiteStartRun", data );
 	}
 	
 	public function onSuiteClassEndRun(event:TestRunnerEvent):Void 
 	{
-		
+		this.sendMessage( "testSuiteEndRun", data );
 	}
 	
 	public function onTestClassStartRun(event:TestRunnerEvent):Void 
 	{
+		var data:Dynamic = {
+			className: e.getDescriptor().className
+		};
 		
+		this.sendMessage( "testClassStartRun", data );
 	}
 	
 	public function onTestClassEndRun(event:TestRunnerEvent):Void 
 	{
-		
+		this.sendMessage( "testClassEndRun", {} );
 	}
 	
 	public function handleEvent(e:IEvent):Void 
