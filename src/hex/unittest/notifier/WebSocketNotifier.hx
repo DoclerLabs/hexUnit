@@ -204,8 +204,8 @@ class WebSocketNotifier implements ITestRunnerListener
 	public function onSuiteClassStartRun(event:TestRunnerEvent):Void 
 	{
 		var data:Dynamic = {
-			className: e.getDescriptor().className,
-			suiteName: e.getDescriptor().getName()
+			className: event.getDescriptor().className,
+			suiteName: event.getDescriptor().getName()
 		};
 		
 		this.sendMessage( "testSuiteStartRun", data );
@@ -213,13 +213,13 @@ class WebSocketNotifier implements ITestRunnerListener
 	
 	public function onSuiteClassEndRun(event:TestRunnerEvent):Void 
 	{
-		this.sendMessage( "testSuiteEndRun", data );
+		this.sendMessage( "testSuiteEndRun", {} );
 	}
 	
 	public function onTestClassStartRun(event:TestRunnerEvent):Void 
 	{
 		var data:Dynamic = {
-			className: e.getDescriptor().className
+			className: event.getDescriptor().className
 		};
 		
 		this.sendMessage( "testClassStartRun", data );
