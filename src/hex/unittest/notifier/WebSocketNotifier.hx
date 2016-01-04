@@ -162,6 +162,7 @@ class WebSocketNotifier implements ITestRunnerListener
 			description: methodDescriptor.description,
 			isAsync: methodDescriptor.isAsync,
 			isIgnored: methodDescriptor.isIgnored,
+			timeElasped: event.getTimeElapsed(),
 
 
 			fileName: "under_construction",
@@ -183,6 +184,7 @@ class WebSocketNotifier implements ITestRunnerListener
 			description: methodDescriptor.description,
 			isAsync: methodDescriptor.isAsync,
 			isIgnored: methodDescriptor.isIgnored,
+			timeElasped: event.getTimeElapsed(),
 
 
 			fileName: event.getError().posInfos.fileName,
