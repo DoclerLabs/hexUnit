@@ -26,6 +26,7 @@ class WebSocketNotifier implements ITestRunnerListener
 	
 	private var _cache:Array<String> = new Array<String>();
 	private var _connected:Bool = false;
+	private var netTimeElapsed	: Float;
 
 	public function new(url:String) 
 	{
@@ -129,16 +130,25 @@ class WebSocketNotifier implements ITestRunnerListener
 		}
 	}
 	
-	/* INTERFACE hex.unittest.event.ITestRunnerListener */
 	
 	public function onStartRun(event:TestRunnerEvent):Void 
 	{
+		
+		this.netTimeElapsed = 0;
+		
 		this.sendMessage( "startRun", {} );
 	}
 	
 	public function onEndRun(event:TestRunnerEvent):Void 
 	{
-		this.sendMessage( "endRun", {} );
+		var data:Dynamic = { 
+			successfulAssertionCount: Assert.getAssertionCount() - Assert.getAssertionFailedCount(),
+			assertionFailedCount: Assert.getAssertionFailedCount(),
+			assertionCount: Assert.getAssertionCount(),
+			timeElasped: this.netTimeElapsed
+		}
+		
+		this.sendMessage( "endRun", data );
 	}
 	
 	public function onSuccess(event:TestRunnerEvent):Void 
@@ -156,6 +166,8 @@ class WebSocketNotifier implements ITestRunnerListener
 			fileName: "under_construction",
 			lineNumber:0
 		};
+		
+		this.netTimeElapsed += event.getTimeElapsed();
 
 		this.sendMessage( "testCaseRunSuccess", data );
 	}
@@ -177,13 +189,15 @@ class WebSocketNotifier implements ITestRunnerListener
 
 			success: false,
 			errorMsg: event.getError().message };
+			
+		this.netTimeElapsed += event.getTimeElapsed();
 
 		this.sendMessage( "testCaseRunFailed", data );
 	}
 	
 	public function onTimeout(event:TestRunnerEvent):Void 
 	{
-		
+		this.onFail(event);
 	}
 	
 	public function onSuiteClassStartRun(event:TestRunnerEvent):Void 
