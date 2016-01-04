@@ -23,6 +23,9 @@ class WebSocketNotifier implements ITestRunnerListener
 	private var _clientId:String;
 	
 	private var _dispatcher:LightweightClosureDispatcher<WebSocketNotifierEvent>;
+	
+	private var _cache:Array<String> = new Array<String>();
+	private var _connected:Bool = false;
 
 	public function new(url:String) 
 	{
@@ -70,12 +73,27 @@ class WebSocketNotifier implements ITestRunnerListener
 		trace("WebSocketServiceJS.onOpen");
 		
 		this._dispatcher.dispatchEvent(new WebSocketNotifierEvent(WebSocketNotifierEvent.CONNECTED, this));
+		this._connected = true;
+		
+		this.flush( );
 		//TODO: dispatch when it'c ready
+	}
+	
+	private function flush():Void
+	{
+		var l:UInt = this._cache.length;
+		for (i in 0 ... l ) 
+		{
+			this._webSocket.send( this._cache[i] );
+		}
+		
+		this._cache = new Array<String>();
 	}
 	
 	private function onClose(e:CloseEvent):Void 
 	{
 		trace("WebSocketNotifier.onClose", e.reason, e.code);
+		this._connected = false;
 	}
 	
 	private function onError(e:Event):Void 
@@ -93,13 +111,22 @@ class WebSocketNotifier implements ITestRunnerListener
 		var message:Dynamic = {
 			messageId: this.generateUUID(),
 			clientType: "webSocketTestNotifier",
-			clinentVersion: WebSocketNotifier.version,
+			clientVersion: WebSocketNotifier.version,
 			clientId: this._clientId,
 			messageType: messageType,
 			data: data
 		};
 		
-		this._webSocket.send( Json.stringify(message) );
+		var stringified:String = Json.stringify(message);
+		
+		if ( this._connected )
+		{
+			this._webSocket.send( stringified );
+		}
+		else
+		{
+			this._cache.push( stringified );
+		}
 	}
 	
 	/* INTERFACE hex.unittest.event.ITestRunnerListener */
