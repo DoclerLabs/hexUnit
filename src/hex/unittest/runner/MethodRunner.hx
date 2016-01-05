@@ -3,6 +3,7 @@ package hex.unittest.runner;
 import haxe.Timer;
 import hex.error.Exception;
 import hex.error.IllegalArgumentException;
+import hex.error.IllegalStateException;
 import hex.event.BasicEvent;
 import hex.event.EventDispatcher;
 import hex.unittest.description.TestMethodDescriptor;
@@ -101,7 +102,15 @@ class MethodRunner
 
     public static function asyncHandler( methodReference : Dynamic, ?passThroughArgs : Array<Dynamic>, timeout : Int = 1500 ) : Dynamic
     {
-        MethodRunner._CURRENT_RUNNER.setCallback( methodReference, passThroughArgs, timeout );
+		try
+		{
+			MethodRunner._CURRENT_RUNNER.setCallback( methodReference, passThroughArgs, timeout );
+		}
+		catch ( e : Dynamic )
+		{
+			throw new IllegalStateException( "Asynchronous test failed. Maybe you forgot to add '@async' metadata to your test ?" );
+		}
+		
         return MethodRunner._asyncCallbackHandler;
     }
 
