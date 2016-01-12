@@ -44,6 +44,7 @@ class WebSocketNotifier implements ITestRunnerListener
 	
 	private function _connect():Void
 	{
+		trace("WebSocketServiceJS._connect", this._url);
 		this._webSocket = new WebSocket(this._url);
 		this._addWebSocketListeners( this._webSocket );
 	}
@@ -78,7 +79,6 @@ class WebSocketNotifier implements ITestRunnerListener
 		this._connected = true;
 		
 		this.flush( );
-		//TODO: dispatch when it'c ready
 	}
 	
 	private function flush():Void
