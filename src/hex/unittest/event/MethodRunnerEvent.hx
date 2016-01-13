@@ -2,7 +2,6 @@ package hex.unittest.event;
 
 import hex.unittest.description.TestMethodDescriptor;
 import hex.unittest.runner.MethodRunner;
-import hex.error.Exception;
 import hex.event.BasicEvent;
 
 /**
@@ -19,9 +18,9 @@ class MethodRunnerEvent extends BasicEvent
 
     private var _descriptor             : TestMethodDescriptor;
     private var _timeElapsed            : Float;
-    private var _error                  : Exception;
+    private var _error                  : Dynamic;
 
-    public function new ( type : String, target : MethodRunner, descriptor : TestMethodDescriptor, timeElapsed : Float, ?error : Exception )
+    public function new ( type : String, target : MethodRunner, descriptor : TestMethodDescriptor, timeElapsed : Float, ?error : Dynamic )
     {
         super( type, target );
 
@@ -40,7 +39,7 @@ class MethodRunnerEvent extends BasicEvent
         return this._descriptor;
     }
 
-    public function getError() : Exception
+    public function getError() : Dynamic
     {
         return this._error;
     }
@@ -49,7 +48,7 @@ class MethodRunnerEvent extends BasicEvent
     {
         return this._timeElapsed;
     }
-	
+
 	override public function clone() : BasicEvent
     {
         return new MethodRunnerEvent( this.type, this.target, this._descriptor, this._timeElapsed, this._error );
