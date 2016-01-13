@@ -55,4 +55,5 @@ script:
 notifications:
   email:
     recipients:
-      - laurent@geturl.net
+      - francis_bourre@me.com
+      - peterphonix@gmail.com
