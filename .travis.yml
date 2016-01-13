@@ -51,9 +51,8 @@ install:
 script:
   - haxe build-js.hxml           && node bin/MainUnitTest.js
   - haxe build-flash.hxml -D fdb && haxe flash/run.hxml bin/MainUnitTest.swf
-  
+
 notifications:
   email:
     recipients:
-      - francis_bourre@me.com
-      - peterphonix@gmail.com
+      - laurent@geturl.net
