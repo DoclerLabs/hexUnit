@@ -146,6 +146,11 @@ class MethodRunner
     {
 		var f:Array<Dynamic>->Void = function( rest:Array<Dynamic> ):Void
 		{
+			if ( MethodRunner._CURRENT_RUNNER == null )
+			{
+				throw new IllegalStateException( "AsyncHandler has been called after '@async' test was released. Try to remove all your listeners in '@tearDown' method to fix this error" );
+			}
+			
 			MethodRunner._CURRENT_RUNNER._timer.stop();
 		
 			var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
