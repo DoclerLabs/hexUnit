@@ -111,7 +111,7 @@ class MethodRunner
 			throw new IllegalStateException( "Asynchronous test failed. Maybe you forgot to add '@async' metadata to your test ?" );
 		}
 		
-        return MethodRunner._asyncCallbackHandler;
+        return MethodRunner._createAsyncCallbackHandler();
     }
 
     public static function registerAsyncMethodRunner( runner : MethodRunner ) : Void
@@ -142,37 +142,41 @@ class MethodRunner
 		this._timer.run = MethodRunner._fireTimeout;
     }
 
-    public static function _asyncCallbackHandler( ?event : BasicEvent ) : Void
+    public static function _createAsyncCallbackHandler( ) : Array<Dynamic>->Void
     {
-		MethodRunner._CURRENT_RUNNER._timer.stop();
+		var f:Array<Dynamic>->Void = function( rest:Array<Dynamic> ):Void
+		{
+			MethodRunner._CURRENT_RUNNER._timer.stop();
 		
-        var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
+			var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
 
-        var args : Array<Dynamic> = [];
+			var args : Array<Dynamic> = [];
 
-        if ( event != null )
-        {
-            args.push( event );
-        }
+			if ( rest != null )
+			{
+				args = args.concat( rest );
+			}
 
-        if ( methodRunner._passThroughArgs != null )
-        {
-            args = args.concat( methodRunner._passThroughArgs );
-        }
+			if ( methodRunner._passThroughArgs != null )
+			{
+				args = args.concat( methodRunner._passThroughArgs );
+			}
 
-        try
-        {
-            Reflect.callMethod( methodRunner._scope, methodRunner._callback, args );
-            methodRunner._endTime = Date.now().getTime();
-			MethodRunner._CURRENT_RUNNER = null;
-            methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.SUCCESS, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed() ) );
-        }
-        catch ( e : Exception )
-        {
-			MethodRunner._CURRENT_RUNNER = null;
-            methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed(), e ) );
-        }
+			try
+			{
+				Reflect.callMethod( methodRunner._scope, methodRunner._callback, args );
+				methodRunner._endTime = Date.now().getTime();
+				MethodRunner._CURRENT_RUNNER = null;
+				methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.SUCCESS, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed() ) );
+			}
+			catch ( e : Exception )
+			{
+				MethodRunner._CURRENT_RUNNER = null;
+				methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed(), e ) );
+			}
+		}
         
+		return Reflect.makeVarArgs(f);
     }
 
     private static function _fireTimeout() : Void
