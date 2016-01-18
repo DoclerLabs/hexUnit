@@ -166,7 +166,7 @@ class WebSocketNotifier implements ITestRunnerListener
 
 
 			fileName: "under_construction",
-			lineNumber:0
+			lineNumber: 0
 		};
 		
 		this.netTimeElapsed += event.getTimeElapsed();
@@ -187,8 +187,8 @@ class WebSocketNotifier implements ITestRunnerListener
 			timeElasped: event.getTimeElapsed(),
 
 
-			fileName: event.getError().posInfos.fileName,
-			lineNumber: event.getError().posInfos.lineNumber,
+			fileName: event.getError().posInfos != null ? event.getError().posInfos.fileName : "unknown",
+			lineNumber: event.getError().posInfos != null ? event.getError().posInfos.lineNumber : 0,
 
 			success: false,
 			errorMsg: event.getError().message };
