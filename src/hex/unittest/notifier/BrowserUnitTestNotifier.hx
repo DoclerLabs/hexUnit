@@ -22,6 +22,9 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 	private var console 		: Element;
 	private var netTimeElapsed	: Float;
 	
+	private var _successfulCount	: UInt = 0;
+	private var _failedCount 	: UInt = 0;
+	
 	private static var _TRACE 	: Dynamic = haxe.Log.trace;
 
     public function new( targetId : String )
@@ -61,6 +64,8 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     public function onStartRun( e : TestRunnerEvent ) : Void
     {
+		this._successfulCount = 0;
+		this._failedCount = 0;
         this._tabs = 0;
         this._log( this.createElement( "[[[ Start " + e.getDescriptor().className + " tests run ]]]", "yellow+bold+h3" ) );
         this._addTab();
@@ -71,24 +76,22 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
     {
         this._removeTab();
 
-		var successfulCount : Int 	= Assert.getAssertionCount() - Assert.getAssertionFailedCount();
-		
 		var beginning : Element 	= this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
-		var all : Element 			= this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
-		var successfull : Element 	= this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
-		var failed : Element 		= this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
+		var all : Element 			= this.createElement( this._successfulCount + this._failedCount + " overall :: ", "white+bold+h3" );
+		var successfull : Element 	= this.createElement( this._successfulCount + " successul :: ", "green+bold+h3" );
+		var failed : Element 		= this.createElement( this._failedCount + " failed :: ", "red+bold+h3" );
 		var ending : Element 		= this.createElement( " in " + this.netTimeElapsed + "ms :: ]]]", "yellow+bold+h3" );
 		
 		var list:Array<Element> = new Array<Element>();
 		list.push( beginning );
 		list.push( all );
 		
-		if ( successfulCount > 0 ) 
+		if ( this._successfulCount > 0 ) 
 		{
 			list.push( successfull );
 		}
 		
-		if ( Assert.getAssertionFailedCount() > 0 ) 
+		if ( this._failedCount > 0 ) 
 		{
 			list.push( failed );
 		}
@@ -122,6 +125,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     public function onSuccess( e : TestRunnerEvent ) : Void
     {
+		this._successfulCount++;
 		var success: Element = this.createElement( "✔ ", "green" );
 		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
 		var func : Element = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
@@ -131,6 +135,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 
     public function onFail( e : TestRunnerEvent ) : Void
     {
+		this._failedCount++;
         var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
 		var func : Element = this.createElement( methodDescriptor.methodName + "() ", "red" );
 		var fail: Element = this.createElement( "✘ ", "red" );
