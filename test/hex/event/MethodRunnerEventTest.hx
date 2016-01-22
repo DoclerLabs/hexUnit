@@ -12,7 +12,7 @@ import hex.unittest.runner.MethodRunner;
  */
 class MethodRunnerEventTest
 {
-	@test( "Test 'type' parameter passed to constructor" )
+	@Test( "Test 'type' parameter passed to constructor" )
     public function testType() : Void
     {
         var type : String = "type";
@@ -23,7 +23,7 @@ class MethodRunnerEventTest
         Assert.equals( type, e.type, "'type' property should be the same passed to constructor" );
     }
 
-    @test( "Test 'target' parameter passed to constructor" )
+    @Test( "Test 'target' parameter passed to constructor" )
     public function testTarget() : Void
     {
         var methodDescriptor : TestMethodDescriptor = new TestMethodDescriptor( "methodDescriptor", true, true );
@@ -33,7 +33,7 @@ class MethodRunnerEventTest
         Assert.equals( target, e.target, "'target' property should be the same passed to constructor" );
     }
 
-    @test( "Test clone method" )
+    @Test( "Test clone method" )
     public function testClone() : Void
     {
         var type : String = "type";
@@ -52,7 +52,7 @@ class MethodRunnerEventTest
 		Assert.equals( ex, e.getError(), "'getError' accessor should return property passed to constructor" );
     }
 	
-	@test( "Test parameters passed to constructor with accessors" )
+	@Test( "Test parameters passed to constructor with accessors" )
     public function testAccessors() : Void
     {
 		var ex : Exception = new Exception( "error" );

@@ -6,6 +6,6 @@ package hex.event;
  */
 class EventSuite
 {
-	@suite( "Event suite" )
+	@Suite( "Event suite" )
     public var list : Array<Class<Dynamic>> = [MethodRunnerEventTest, TestRunnerEventTest];
 }

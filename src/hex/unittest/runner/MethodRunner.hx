@@ -108,7 +108,7 @@ class MethodRunner
 		}
 		catch ( e : Dynamic )
 		{
-			throw new IllegalStateException( "Asynchronous test failed. Maybe you forgot to add '@async' metadata to your test ?" );
+			throw new IllegalStateException( "Asynchronous test failed. Maybe you forgot to add '@Async' metadata to your test ?" );
 		}
 		
         return MethodRunner._createAsyncCallbackHandler();
@@ -148,7 +148,7 @@ class MethodRunner
 		{
 			if ( MethodRunner._CURRENT_RUNNER == null )
 			{
-				throw new IllegalStateException( "AsyncHandler has been called after '@async' test was released. Try to remove all your listeners in '@tearDown' method to fix this error" );
+				throw new IllegalStateException( "AsyncHandler has been called after '@Async' test was released. Try to remove all your listeners in '@After' method to fix this error" );
 			}
 			
 			MethodRunner._CURRENT_RUNNER._timer.stop();

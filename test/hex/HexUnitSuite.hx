@@ -8,6 +8,6 @@ import hex.event.EventSuite;
  */
 class HexUnitSuite
 {
-	@suite( "HexUnit suite" )
+	@Suite( "HexUnit suite" )
     public var list : Array<Class<Dynamic>> = [EventSuite];
 }

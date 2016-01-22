@@ -9,47 +9,47 @@ class MetadataList
     /**
 	 * Metadata marking method to be called setUp all tests in a class.
 	 */
-    public inline static var BEFORE_CLASS : String = "beforeClass";
+    public inline static var BEFORE_CLASS : String = "BeforeClass";
 
     /**
 	 * Metadata marking method to be called tearDown all tests in a class.
 	 */
-    public inline static var AFTER_CLASS : String = "afterClass";
+    public inline static var AFTER_CLASS : String = "AfterClass";
 
     /**
 	 * Metadata marking method to be called setUp each test in a class.
 	 */
-    public inline static var SETUP : String = "setUp";
+    public inline static var BEFORE : String = "Before";
 
     /**
 	 * Metadata marking method to be called tearDown each test in a class.
 	 */
-    public inline static var TEARDOWN : String = "tearDown";
+    public inline static var AFTER : String = "After";
 
     /**
 	 * Metadata marking test method in class.
 	 */
-    public inline static var TEST : String = "test";
+    public inline static var TEST : String = "Test";
 
     /**
      * Metadata marking asynchronous test method in class.
      */
-    public inline static var ASYNC : String = "async";
+    public inline static var ASYNC : String = "Async";
 
     /**
      * Metadata marking a test method to ignore.
      */
-    public inline static var IGNORE : String = "ignore";
+    public inline static var IGNORE : String = "Ignore";
 
     /**
      * Metadata marking a test method to ignore.
      */
-    public inline static var SUITE : String = "suite";
+    public inline static var SUITE : String = "Suite";
 
     /**
 	 * Array of valid metadatas for instance methods.
 	 */
-    public static var INSTANCE_METADATA = [ SETUP, TEARDOWN, TEST, ASYNC ];
+    public static var INSTANCE_METADATA = [ BEFORE, AFTER, TEST, ASYNC ];
 
     /**
 	 * Array of valid metadatas for instance methods.

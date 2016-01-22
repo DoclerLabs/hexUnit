@@ -195,11 +195,11 @@ class MetadataParser
                         testDescriptor.afterClassFieldName = fieldName;
                         break;
 
-                    case MetadataList.SETUP :
+                    case MetadataList.BEFORE :
                         testDescriptor.setUpFieldName = fieldName;
                         break;
 
-                    case MetadataList.TEARDOWN :
+                    case MetadataList.AFTER :
                         testDescriptor.tearDownFieldName = fieldName;
                         break;
 
