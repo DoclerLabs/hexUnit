@@ -1,7 +1,6 @@
 package hex.unittest.event;
 
 import hex.event.BasicEvent;
-import hex.error.Exception;
 import hex.unittest.runner.TestRunner;
 import hex.unittest.description.TestClassDescriptor;
 
@@ -19,10 +18,10 @@ class TestRunnerEvent  extends BasicEvent
     public static inline var TEST_CLASS_END_RUN     : String = "onTestClassEndRun";
 
     private var _descriptor                         : TestClassDescriptor;
-    private var _error                              : Exception;
+    private var _error                              : Dynamic;
     private var _timeElapsed                        : Float;
 
-    public function new ( type : String, target : TestRunner, descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception )
+    public function new ( type : String, target : TestRunner, descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Dynamic )
     {
         super( type, target );
 
@@ -41,7 +40,7 @@ class TestRunnerEvent  extends BasicEvent
         return this._descriptor;
     }
 
-    public function getError() : Exception
+    public function getError() : Dynamic
     {
         return this._error;
     }
@@ -50,7 +49,7 @@ class TestRunnerEvent  extends BasicEvent
     {
         return this._timeElapsed;
     }
-	
+
 	override public function clone() : BasicEvent
 	{
 		return new TestRunnerEvent( this.type, this.target, this._descriptor, this._timeElapsed, this._error );
