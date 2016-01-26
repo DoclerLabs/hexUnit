@@ -82,7 +82,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		var failed : Element 		= this.createElement( this._failedCount + " failed :: ", "red+bold+h3" );
 		var ending : Element 		= this.createElement( " in " + this.netTimeElapsed + "ms :: ]]]", "yellow+bold+h3" );
 		
-		var list= new Array<Element>();
+		var list = new Array<Element>();
 		list.push( beginning );
 		list.push( all );
 		
