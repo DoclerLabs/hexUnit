@@ -20,31 +20,31 @@ OOP Unit testing framework written in Haxe.
 
 
 ## List of metadatas
-- @test
-- @async
-- @ignore
-- @setUp
-- @tearDown
-- @beforeClass
-- @afterClass
-- @suite
+- @Test
+- @Async
+- @Ignore
+- @Before
+- @After
+- @BeforeClass
+- @AfterClass
+- @Suite
 
 
 ## Assertions provided
 
-- assertTrue
-- ailTrue
-- assertIsNull
-- failIsNull
-- assertIsType
-- failIsType
-- assertEquals
-- assertDeepEquals
-- assertArrayContains
-- failEquals
-- assertConstructorCallThrows
-- assertMethodCallThrows
-- assertSetPropertyThrows
+- isTrue
+- isFalse
+- isNull
+- isNotNull
+- isInstanceOf
+- isNotInstanceOf
+- equals
+- deepEquals
+- arrayContains
+- notEquals
+- constructorCallThrows
+- methodCallThrows
+- setPropertyThrows
 
 
 ## FlashDevelop integration
@@ -54,7 +54,7 @@ You can download it [here](https://github.com/DoclerLabs/hex3rdPartyTools/tree/m
 
 ## How to run framework tests inside the browser
 ```haxe
-var emu : ExMachinaUnitCore = new ExMachinaUnitCore();
+var emu = new ExMachinaUnitCore();
 emu.addListener( new BrowserUnitTestNotifier( "console" ) );
 emu.addTest( HexMVCSuite );
 emu.addTest( HexCoreSuite );
@@ -67,7 +67,7 @@ emu.run();
 
 ## How to run tests with NodeJS (you can mix tests classes with suites)
 ```haxe
-var emu : ExMachinaUnitCore = new ExMachinaUnitCore();
+var emu = new ExMachinaUnitCore();
 emu.addListener( new ConsoleNotifier(false) );
 emu.addTest( InjectorTest );
 emu.addTest( HexCoreSuite );
@@ -77,7 +77,7 @@ emu.run();
 
 ## How to test only one method
 ```haxe
-var emu : ExMachinaUnitCore = new ExMachinaUnitCore();
+var emu = new ExMachinaUnitCore();
 emu.addListener( new BrowserUnitTestNotifier( "console" ) );
 emu.addTestMethod( InjectorTest, "get_instance_errors_for_unmapped_class" );
 emu.run();
@@ -88,7 +88,7 @@ emu.run();
 ```haxe
 class AsyncSuite
 {
-	@suite("Async suite")
+	@Suite("Async suite")
     public var list : Array<Class<Dynamic>> = [AsyncCommandSuite, AsyncCommandTest];
 }
 ```
@@ -98,24 +98,24 @@ class AsyncSuite
 ```haxe
 class DomainTest
 {
-    @test( "Test 'name' property passed to constructor" )
+    @Test( "Test 'name' property passed to constructor" )
     public function testConstructor() : Void
     {
-        var domain : Domain = new Domain( "testConstructor" );
-        Assert.assertEquals( "testConstructor", domain.getName(), "'name' property should be the same passed to constructor" );
+        var domain = new Domain( "testConstructor" );
+        Assert.equals( "testConstructor", domain.getName(), "'name' property should be the same passed to constructor" );
     }
 
-    @test( "Test null 'name' value passed to constructor" )
+    @Test( "Test null 'name' value passed to constructor" )
     public function testConstructorNullException() : Void
     {
-        Assert.assertConstructorCallThrows( NullPointerException, Domain, [], "" );
+        Assert.constructorCallThrows( NullPointerException, Domain, [], "" );
     }
 
-    @test( "Test using twice the same 'name' value" )
+    @Test( "Test using twice the same 'name' value" )
     public function testConstructorWithNameValues() : Void
     {
-        var domain : Domain = new Domain( "testConstructorWithNameValues" );
-        Assert.assertConstructorCallThrows( IllegalArgumentException, Domain, ["testConstructorWithNameValues"], "" );
+        var domain = new Domain( "testConstructorWithNameValues" );
+        Assert.constructorCallThrows( IllegalArgumentException, Domain, ["testConstructorWithNameValues"], "" );
     }
 }
 ```
@@ -123,7 +123,7 @@ class DomainTest
 
 ## Asynchronous test example
 ```haxe
-@async( "Test every command was executed" )
+@Async( "Test every command was executed" )
 public function testHasRunEveryCommand() : Void
 {
 	this._macroExecutor.add( MockAsyncCommand );
@@ -134,6 +134,6 @@ public function testHasRunEveryCommand() : Void
 
 private function _onTestHasRunEveryCommand() : Void
 {
-	Assert.assertTrue( this._macroExecutor.hasRunEveryCommand, "'hasRunEveryCommand' should return true" );
+	Assert.isTrue( this._macroExecutor.hasRunEveryCommand, "'hasRunEveryCommand' should return true" );
 }
 ```
