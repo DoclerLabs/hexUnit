@@ -32,7 +32,7 @@ class MetadataParser
 		return descriptor;
 	}
 
-    private function _parse( descriptor : TestClassDescriptor ) : Void
+    function _parse( descriptor : TestClassDescriptor ) : Void
     {
         if ( !this._isSuite( descriptor ) )
         {
@@ -42,7 +42,7 @@ class MetadataParser
         }
     }
 
-    private function _isSuite( descriptor : TestClassDescriptor  ) : Bool
+    function _isSuite( descriptor : TestClassDescriptor  ) : Bool
     {
         var isSuiteClass : Bool = false;
 
@@ -80,7 +80,7 @@ class MetadataParser
         return isSuiteClass;
     }
 
-    private function _collectMetadata( inherintanceChain : Array<Class<Dynamic>> ) : Dynamic
+    function _collectMetadata( inherintanceChain : Array<Class<Dynamic>> ) : Dynamic
     {
         var meta = {};
         while ( inherintanceChain.length > 0 )
@@ -133,7 +133,7 @@ class MetadataParser
         return meta;
     }
 
-    private function _scanTestClass( testDescriptor : TestClassDescriptor, fieldMeta : Dynamic ) : Void
+    function _scanTestClass( testDescriptor : TestClassDescriptor, fieldMeta : Dynamic ) : Void
     {
         var fieldNames = Reflect.fields( fieldMeta );
         for ( fieldName in fieldNames )
@@ -149,7 +149,7 @@ class MetadataParser
         this._searchForStaticMetadata( testDescriptor );
     }
 
-    private function _searchForStaticMetadata( testDescriptor : TestClassDescriptor ) : Void
+    function _searchForStaticMetadata( testDescriptor : TestClassDescriptor ) : Void
     {
         var staticMetadata = Meta.getStatics( testDescriptor.type );
         var fields = Reflect.fields( staticMetadata  );
@@ -169,7 +169,7 @@ class MetadataParser
         }
     }
 
-    private function _searchForInstanceMetadata( testDescriptor : TestClassDescriptor, fieldName : String, func : Dynamic, funcMeta : Dynamic ) : Void
+    function _searchForInstanceMetadata( testDescriptor : TestClassDescriptor, fieldName : String, func : Dynamic, funcMeta : Dynamic ) : Void
     {
         for ( tag in MetadataList.INSTANCE_METADATA )
         {

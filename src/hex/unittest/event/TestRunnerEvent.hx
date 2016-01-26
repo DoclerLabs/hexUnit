@@ -18,9 +18,9 @@ class TestRunnerEvent  extends BasicEvent
     public static inline var TEST_CLASS_START_RUN   : String = "onTestClassStartRun";
     public static inline var TEST_CLASS_END_RUN     : String = "onTestClassEndRun";
 
-    private var _descriptor                         : TestClassDescriptor;
-    private var _error                              : Exception;
-    private var _timeElapsed                        : Float;
+    var _descriptor                         : TestClassDescriptor;
+    var _error                              : Exception;
+    var _timeElapsed                        : Float;
 
     public function new ( type : String, target : TestRunner, descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception )
     {

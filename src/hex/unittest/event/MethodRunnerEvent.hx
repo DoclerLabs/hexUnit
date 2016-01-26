@@ -17,9 +17,9 @@ class MethodRunnerEvent extends BasicEvent
     public static inline var START_RUN  : String = "onStartRun";
     public static inline var END_RUN    : String = "onEndRun";
 
-    private var _descriptor             : TestMethodDescriptor;
-    private var _timeElapsed            : Float;
-    private var _error                  : Exception;
+    var _descriptor             : TestMethodDescriptor;
+    var _timeElapsed            : Float;
+    var _error                  : Exception;
 
     public function new ( type : String, target : MethodRunner, descriptor : TestMethodDescriptor, timeElapsed : Float, ?error : Exception )
     {

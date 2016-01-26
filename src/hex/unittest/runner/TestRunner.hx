@@ -19,10 +19,10 @@ import hex.unittest.event.ITestRunnerListener;
  */
 class TestRunner implements ITestRunner implements IMethodRunnerListener
 {
-    private var _dispatcher                 : LightweightListenerDispatcher<ITestRunnerListener, TestRunnerEvent>;
-    private var _classDescriptors           : GenericStack<TestClassDescriptor>;
-    private var _executedDescriptors        : Map<TestClassDescriptor, Bool>;
-	private var _lastRender					: Float = 0;
+    var _dispatcher                 : LightweightListenerDispatcher<ITestRunnerListener, TestRunnerEvent>;
+    var _classDescriptors           : GenericStack<TestClassDescriptor>;
+    var _executedDescriptors        : Map<TestClassDescriptor, Bool>;
+	var _lastRender					: Float = 0;
 	
 	#if flash
 	static public var RENDER_DELAY 			: Float = 150;
@@ -46,7 +46,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         this._runClassDescriptor( this._classDescriptors.first() );
     }
 
-    private function _runClassDescriptor( classDescriptor : TestClassDescriptor ) : Void
+    function _runClassDescriptor( classDescriptor : TestClassDescriptor ) : Void
     {
         if ( classDescriptor != null )
         {
@@ -79,7 +79,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         }
     }
 
-    private function _runSuiteClass( classDescriptor : TestClassDescriptor ) : Void
+    function _runSuiteClass( classDescriptor : TestClassDescriptor ) : Void
     {
         if ( classDescriptor.hasNextClass() )
         {
@@ -95,7 +95,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         }
     }
 
-    private function _runTestClass( classDescriptor : TestClassDescriptor ) : Void
+    function _runTestClass( classDescriptor : TestClassDescriptor ) : Void
     {
         if ( classDescriptor.hasNextMethod() )
         {
@@ -113,7 +113,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         }
     }
 
-    private function _tryToRunSetUp( classDescriptor : TestClassDescriptor ) : Void
+    function _tryToRunSetUp( classDescriptor : TestClassDescriptor ) : Void
     {
         if ( classDescriptor.setUpFieldName != null )
         {
@@ -121,7 +121,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         }
     }
 
-    private function _tryToRunTearDown( classDescriptor : TestClassDescriptor ) : Void
+    function _tryToRunTearDown( classDescriptor : TestClassDescriptor ) : Void
     {
         if ( classDescriptor.tearDownFieldName != null )
         {
@@ -129,7 +129,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         }
     }
 
-    private function _tryToRunBeforeClass( classDescriptor : TestClassDescriptor ) : Void
+    function _tryToRunBeforeClass( classDescriptor : TestClassDescriptor ) : Void
     {
         if ( classDescriptor.beforeClassFieldName != null )
         {
@@ -137,7 +137,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         }
     }
 
-    private function _tryToRunAfterClass( classDescriptor : TestClassDescriptor ) : Void
+    function _tryToRunAfterClass( classDescriptor : TestClassDescriptor ) : Void
     {
         if ( classDescriptor.afterClassFieldName != null )
         {
@@ -178,7 +178,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         this._endTestMethodCall( e, TestRunnerEvent.TIMEOUT );
     }
 
-    private function _endTestMethodCall( e : MethodRunnerEvent, eventType : String ) : Void
+    function _endTestMethodCall( e : MethodRunnerEvent, eventType : String ) : Void
     {
         var classDescriptor : TestClassDescriptor = this._classDescriptors.first();
         this._dispatcher.dispatchEvent( new TestRunnerEvent( eventType, this, classDescriptor, e.getTimeElapsed(), e.getError() ) );

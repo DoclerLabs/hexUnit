@@ -19,15 +19,15 @@ class WebSocketNotifier implements ITestRunnerListener
 {
 	static public inline var version:String = "0.1.1";
 	
-	private var _url:String;
-	private var _webSocket:WebSocket;
-	private var _clientId:String;
+	var _url:String;
+	var _webSocket:WebSocket;
+	var _clientId:String;
 	
-	private var _dispatcher:LightweightClosureDispatcher<WebSocketNotifierEvent>;
+	var _dispatcher:LightweightClosureDispatcher<WebSocketNotifierEvent>;
 	
-	private var _cache:Array<String> = new Array<String>();
-	private var _connected:Bool = false;
-	private var netTimeElapsed	: Float;
+	var _cache:Array<String> = new Array<String>();
+	var _connected:Bool = false;
+	var netTimeElapsed	: Float;
 
 	public function new(url:String) 
 	{
@@ -42,20 +42,20 @@ class WebSocketNotifier implements ITestRunnerListener
 		this._dispatcher.addEventListener( eventType, callback );
 	}
 	
-	private function _connect():Void
+	function _connect():Void
 	{
 		trace("WebSocketServiceJS._connect", this._url);
 		this._webSocket = new WebSocket(this._url);
 		this._addWebSocketListeners( this._webSocket );
 	}
 	
-	private function _close():Void
+	function _close():Void
 	{
 		this._webSocket.close(0,"testOver");
 		this._removeWebSocketListeners(this._webSocket);
 	}
 	
-	private function _addWebSocketListeners( webSocket:WebSocket ):Void
+	function _addWebSocketListeners( webSocket:WebSocket ):Void
 	{
 		webSocket.addEventListener( "open", this.onOpen );
 		webSocket.addEventListener( "close", this.onClose );
@@ -63,7 +63,7 @@ class WebSocketNotifier implements ITestRunnerListener
 		webSocket.addEventListener( "message", this.onMessage );
 	}
 	
-	private function _removeWebSocketListeners( webSocket:WebSocket ):Void
+	function _removeWebSocketListeners( webSocket:WebSocket ):Void
 	{
 		webSocket.removeEventListener( "open", this.onOpen );
 		webSocket.removeEventListener( "close", this.onClose );
@@ -71,7 +71,7 @@ class WebSocketNotifier implements ITestRunnerListener
 		webSocket.removeEventListener( "message", this.onMessage );
 	}
 	
-	private function onOpen(e:Event):Void 
+	function onOpen(e:Event):Void 
 	{
 		trace("WebSocketServiceJS.onOpen");
 		
@@ -81,7 +81,7 @@ class WebSocketNotifier implements ITestRunnerListener
 		this.flush( );
 	}
 	
-	private function flush():Void
+	function flush():Void
 	{
 		var l:UInt = this._cache.length;
 		for (i in 0 ... l ) 
@@ -92,23 +92,23 @@ class WebSocketNotifier implements ITestRunnerListener
 		this._cache = new Array<String>();
 	}
 	
-	private function onClose(e:CloseEvent):Void 
+	function onClose(e:CloseEvent):Void 
 	{
 		trace("WebSocketNotifier.onClose", e.reason, e.code);
 		this._connected = false;
 	}
 	
-	private function onError(e:Event):Void 
+	function onError(e:Event):Void 
 	{
 		trace("WebSocketNotifier.onError", e);
 	}
 	
-	private function onMessage(e:Event):Void 
+	function onMessage(e:Event):Void 
 	{
 		trace("WebSocketNotifier.onMessage");
 	}
 	
-	private function sendMessage( messageType:String, data:Dynamic ):Void
+	function sendMessage( messageType:String, data:Dynamic ):Void
 	{
 		var message:Dynamic = {
 			messageId: this.generateUUID(),
@@ -237,7 +237,7 @@ class WebSocketNotifier implements ITestRunnerListener
 		
 	}
 	
-	private function generateUUID():String
+	function generateUUID():String
 	{
 		var text:String = "";
 		var possible:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

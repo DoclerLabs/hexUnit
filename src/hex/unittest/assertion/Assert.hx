@@ -11,12 +11,12 @@ import haxe.PosInfos;
  */
 class Assert
 {
-    private static var _assertCount             : Int = 0;
-    private static var _assertFailedCount       : Int = 0;
-    private static var _lastAssertionLog        : String = "";
-    private static var _assertionLogs           : Array<String> = [];
+    static var _assertCount             : Int = 0;
+    static var _assertFailedCount       : Int = 0;
+    static var _lastAssertionLog        : String = "";
+    static var _assertionLogs           : Array<String> = [];
 
-    private static function _LOG_ASSERT( userMessage : String ) : Void
+    static function _LOG_ASSERT( userMessage : String ) : Void
     {
         Assert._assertCount++;
         Assert._lastAssertionLog = userMessage;
@@ -278,7 +278,7 @@ class Assert
 		
 	}
 
-    private static function fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void
+    static function fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void
     {
 		Assert._assertFailedCount++;
         throw new AssertException( assertMessage + ( userMessage.length < 0 ? ": " + userMessage : "" ), posInfos );

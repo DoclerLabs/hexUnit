@@ -14,25 +14,25 @@ import hex.unittest.event.TestRunnerEvent;
  */
 class TraceNotifier implements ITestRunnerListener
 {
-    private var _tabs   			: String;
-    private var _errorBubbling   	: Bool;
+    var _tabs   			: String;
+    var _errorBubbling   	: Bool;
 
     public function new( errorBubbling : Bool = false )
     {
 		this._errorBubbling = errorBubbling;
     }
 
-    private function _log( message : String ) : Void
+    function _log( message : String ) : Void
     {
         trace( this._tabs + message );
     }
 
-    private function _addTab() : Void
+    function _addTab() : Void
     {
         this._tabs += "\t";
     }
 
-    private function _removeTab() : Void
+    function _removeTab() : Void
     {
         this._tabs = this._tabs.substr( 0, this._tabs.length-1 );
     }

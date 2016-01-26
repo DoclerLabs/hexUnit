@@ -16,11 +16,11 @@ import hex.unittest.metadata.MetadataParser;
  */
 class ExMachinaUnitCore implements ITestRunner implements ITestRunnerListener
 {
-    private var _dispatcher                 : LightweightListenerDispatcher<ITestRunnerListener, TestRunnerEvent>;
-    private var _parser                     : MetadataParser;
-    private var _classDescriptors           : Array<TestClassDescriptor>;
-    private var _runner                     : TestRunner;
-    private var _currentClassDescriptor     : Int;
+    var _dispatcher                 : LightweightListenerDispatcher<ITestRunnerListener, TestRunnerEvent>;
+    var _parser                     : MetadataParser;
+    var _classDescriptors           : Array<TestClassDescriptor>;
+    var _runner                     : TestRunner;
+    var _currentClassDescriptor     : Int;
 
     public function new()
     {
@@ -129,19 +129,19 @@ class ExMachinaUnitCore implements ITestRunner implements ITestRunnerListener
     /**
      *
      **/
-    private function _runNext() : Void
+    function _runNext() : Void
     {
         this._runner = new TestRunner( this._nextClassDescriptor() );
         this._runner.addListener( this );
         this._runner.run();
     }
 
-    private function _nextClassDescriptor() : TestClassDescriptor
+    function _nextClassDescriptor() : TestClassDescriptor
     {
         return this._classDescriptors[ this._currentClassDescriptor++ ];
     }
 
-    private function _hasNextClassDescriptor() : Bool
+    function _hasNextClassDescriptor() : Bool
     {
         return this._currentClassDescriptor < this._classDescriptors.length;
     }

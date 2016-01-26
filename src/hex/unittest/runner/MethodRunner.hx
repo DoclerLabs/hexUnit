@@ -16,13 +16,13 @@ import hex.unittest.event.MethodRunnerEvent;
  */
 class MethodRunner
 {
-    private var _scope                  : Dynamic;
-    private var _methodReference        : Dynamic;
-    private var _methodDescriptor       : TestMethodDescriptor;
-    private var _dispatcher             : EventDispatcher<IMethodRunnerListener, BasicEvent>;
+    var _scope                  : Dynamic;
+    var _methodReference        : Dynamic;
+    var _methodDescriptor       : TestMethodDescriptor;
+    var _dispatcher             : EventDispatcher<IMethodRunnerListener, BasicEvent>;
 
-    private var _startTime              : Float;
-    private var _endTime                : Float;
+    var _startTime              : Float;
+    var _endTime                : Float;
 
     public function new( scope : Dynamic, methodDescriptor : TestMethodDescriptor )
     {
@@ -98,7 +98,7 @@ class MethodRunner
     /**
      * Async handling
      */
-    private static var _CURRENT_RUNNER : MethodRunner;
+    static var _CURRENT_RUNNER : MethodRunner;
 
     public static function asyncHandler( methodReference : Dynamic, ?passThroughArgs : Array<Dynamic>, timeout : Int = 1500 ) : Dynamic
     {
@@ -127,10 +127,10 @@ class MethodRunner
         }
     }
 
-    private var _callback           : Dynamic;
-    private var _passThroughArgs    : Array<Dynamic>;
-    private var _timeout            : Int;
-    private var _timer              : Timer;
+    var _callback           : Dynamic;
+    var _passThroughArgs    : Array<Dynamic>;
+    var _timeout            : Int;
+    var _timer              : Timer;
 
     public function setCallback( methodReference : Dynamic, ?passThroughArgs : Array<Dynamic>, timeout : Int = 1500 ) : Void
     {
@@ -184,7 +184,7 @@ class MethodRunner
 		return Reflect.makeVarArgs(f);
     }
 
-    private static function _fireTimeout() : Void
+    static function _fireTimeout() : Void
     {
 		MethodRunner._CURRENT_RUNNER._timer.stop();
         var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;

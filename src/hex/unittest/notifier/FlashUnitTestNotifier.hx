@@ -19,16 +19,16 @@ import hex.unittest.event.TestRunnerEvent;
  */
 class FlashUnitTestNotifier implements ITestRunnerListener
 {
-	private static var _TRACE 		: Dynamic = haxe.Log.trace;
+	static var _TRACE 		: Dynamic = haxe.Log.trace;
 	
-    private var _trace  			: Dynamic;
-    private var _tabs   			: Int = 0;
+    var _trace  			: Dynamic;
+    var _tabs   			: Int = 0;
 
-	private var console				: TextField;
-	private var target				: DisplayObjectContainer;
-	private var successMarker		: Sprite;
-	private var styleSheet			: StyleSheet;
-	private var _styleList			: Map<String,Bool> = new Map<String,Bool>();
+	var console				: TextField;
+	var target				: DisplayObjectContainer;
+	var successMarker		: Sprite;
+	var styleSheet			: StyleSheet;
+	var _styleList			: Map<String,Bool> = new Map<String,Bool>();
 
     public function new( target : DisplayObjectContainer = null )
     {
@@ -36,7 +36,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		this.setGlobalResultSuccess( );
     }
 	
-	private function setConsole( target : DisplayObjectContainer ) : Void
+	function setConsole( target : DisplayObjectContainer ) : Void
 	{
 		this.target 					= target;
 		this.console 					= new TextField();
@@ -60,7 +60,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		this.target.addChild( this.successMarker );
 	}
 
-    private function _log( element : String ) : Void
+    function _log( element : String ) : Void
     {
 		var buffer:String = '';
 
@@ -75,12 +75,12 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		this.console.scrollV = this.console.maxScrollV;
     }
 
-    private function _addTab() : Void
+    function _addTab() : Void
     {
         this._tabs++;
     }
 
-    private function _removeTab() : Void
+    function _removeTab() : Void
     {
         this._tabs--;
     }
@@ -179,7 +179,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		this.onFail( e );
     }
 	
-	private function generateMessage( icon:String, func:String, e : TestRunnerEvent ) : Void
+	function generateMessage( icon:String, func:String, e : TestRunnerEvent ) : Void
 	{
         var description : String = e.getDescriptor().currentMethodDescriptor().description;
 		
@@ -206,12 +206,12 @@ class FlashUnitTestNotifier implements ITestRunnerListener
         return span;
     }
 	
-	private function encapsulateElements( elementList : Array<String> ) : String
+	function encapsulateElements( elementList : Array<String> ) : String
 	{
 		return elementList.join( "" );
 	}
 	
-	private function setAttributes( style:Dynamic, color: String ) : Void
+	function setAttributes( style:Dynamic, color: String ) : Void
 	{
 		var colorAttributes : Array<String> = color.split( "+" );
 		
@@ -221,7 +221,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
         }
 	}
 	
-	private function setAttribute( style : Dynamic, attr : String ) : Void
+	function setAttribute( style : Dynamic, attr : String ) : Void
 	{
         switch( attr )
         {
@@ -271,21 +271,21 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		
     }
 	
-	private function setGlobalResultSuccess( ) : Void
+	function setGlobalResultSuccess( ) : Void
 	{
 		this.successMarker.graphics.clear();
 		this.successMarker.graphics.beginFill( 0x2f8a11 );
 		this.successMarker.graphics.drawRect( 0, 0, this.console.x, target.stage.stageHeight );
 	}
 	
-	private function setGlobalResultFailed( ) : Void
+	function setGlobalResultFailed( ) : Void
 	{
 		this.successMarker.graphics.clear();
 		this.successMarker.graphics.beginFill( 0xe62323 );
 		this.successMarker.graphics.drawRect( 0, 0, this.console.x, target.stage.stageHeight );
 	}
 	
-	private function addRuler() : Void
+	function addRuler() : Void
 	{
 		this.console.htmlText += "----------------------<br/>";
 	}

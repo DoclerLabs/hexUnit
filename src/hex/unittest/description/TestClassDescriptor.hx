@@ -49,12 +49,12 @@ class TestClassDescriptor
 	 */
     public var tearDownFieldName : String;
 
-    private var _classDescriptors   : Array<TestClassDescriptor>;
-    private var _methodDescriptors  : Array<TestMethodDescriptor>;
-    private var _classIndex         : Int;
-    private var _methodIndex        : Int;
+    var _classDescriptors   : Array<TestClassDescriptor>;
+    var _methodDescriptors  : Array<TestMethodDescriptor>;
+    var _classIndex         : Int;
+    var _methodIndex        : Int;
 	
-    private var _name        		: String;
+    var _name        		: String;
 
     public function new( type : Class<Dynamic> )
     {

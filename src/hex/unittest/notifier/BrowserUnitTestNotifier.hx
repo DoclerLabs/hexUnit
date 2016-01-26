@@ -17,15 +17,15 @@ import js.html.SpanElement;
  */
 class BrowserUnitTestNotifier implements ITestRunnerListener
 {
-    private var _trace  		: Dynamic;
-    private var _tabs   		: Int = 0;
-	private var console 		: Element;
-	private var netTimeElapsed	: Float;
+    var _trace  		: Dynamic;
+    var _tabs   		: Int = 0;
+	var console 		: Element;
+	var netTimeElapsed	: Float;
 	
-	private var _successfulCount	: UInt = 0;
-	private var _failedCount 	: UInt = 0;
+	var _successfulCount	: UInt = 0;
+	var _failedCount 	: UInt = 0;
 	
-	private static var _TRACE 	: Dynamic = haxe.Log.trace;
+	static var _TRACE 	: Dynamic = haxe.Log.trace;
 
     public function new( targetId : String )
     {
@@ -33,7 +33,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		this.setGlobalResultSuccess( );
     }
 	
-	private function setConsole( targetId : String ) : Void
+	function setConsole( targetId : String ) : Void
 	{
 		this.console = Browser.document.getElementById( targetId );
 		this.console.style.backgroundColor = "#060606";
@@ -43,7 +43,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		this.console.style.fontSize = "11px";
 	}
 
-    private function _log( element : Element ) : Void
+    function _log( element : Element ) : Void
     {
         element.style.marginLeft = (this._tabs * 30) + "px";
 		element.appendChild( Browser.document.createTextNode("\n") );
@@ -52,12 +52,12 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		this.console.scrollTop = this.console.scrollHeight;
     }
 
-    private function _addTab() : Void
+    function _addTab() : Void
     {
         this._tabs++;
     }
 
-    private function _removeTab() : Void
+    function _removeTab() : Void
     {
         this._tabs--;
     }
@@ -157,7 +157,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		this.onFail( e );
     }
 	
-	private function generateMessage( icon:Element, func:Element, e : TestRunnerEvent ) : Void
+	function generateMessage( icon:Element, func:Element, e : TestRunnerEvent ) : Void
 	{
         var description : String = e.getDescriptor().currentMethodDescriptor().description;
         var message : Element = this.createElement( (description.length > 0 ? description : "") + " [" + e.getTimeElapsed() + "ms]", "darkgrey" );
@@ -174,7 +174,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
         return span;
     }
 	
-	private function encapsulateElements( elementList:Array<Element> ):Element
+	function encapsulateElements( elementList:Array<Element> ):Element
 	{
 		var container:SpanElement = Browser.document.createSpanElement();
 		
@@ -186,7 +186,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		return container;
 	}
 	
-	private function setAttributes( element:Element, color: String ) : Void
+	function setAttributes( element:Element, color: String ) : Void
 	{
 		var colorAttributes : Array<String> = color.split( "+" );
         for ( attr in colorAttributes )
@@ -195,7 +195,7 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
         }
 	}
 	
-	private function setAttribute( element:Element, attr:String ) : Void
+	function setAttribute( element:Element, attr:String ) : Void
 	{
         switch( attr )
         {
@@ -245,17 +245,17 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
         }
     }
 	
-	private function setGlobalResultSuccess() : Void
+	function setGlobalResultSuccess() : Void
 	{
 		this.console.style.borderLeft = "50px solid #2f8a11";
 	}
 	
-	private function setGlobalResultFailed( ) : Void
+	function setGlobalResultFailed( ) : Void
 	{
 		this.console.style.borderLeft = "50px solid #e62323";
 	}
 	
-	private function addRuler() : Void
+	function addRuler() : Void
 	{
 		var ruler:HRElement = Browser.document.createHRElement();
 		ruler.style.border = "0";

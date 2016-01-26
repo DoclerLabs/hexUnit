@@ -14,11 +14,11 @@ import hex.unittest.event.TestRunnerEvent;
  */
 class ConsoleNotifier implements ITestRunnerListener
 {
-    private var _trace  			: Dynamic;
-    private var _tabs   			: String;
-    private var _errorBubbling   	: Bool;
+    var _trace  			: Dynamic;
+    var _tabs   			: String;
+    var _errorBubbling   	: Bool;
 	
-	private static var _TRACE : Dynamic = haxe.Log.trace;
+	static var _TRACE : Dynamic = haxe.Log.trace;
 
     public function new( errorBubbling : Bool = false )
     {
@@ -26,17 +26,17 @@ class ConsoleNotifier implements ITestRunnerListener
         this._trace = untyped Reflect.field( js.Boot, "__trace" );
     }
 
-    private function _log( message : String ) : Void
+    function _log( message : String ) : Void
     {
         Reflect.callMethod( untyped js.Boot, this._trace, [ this._tabs + message] );
     }
 
-    private function _addTab() : Void
+    function _addTab() : Void
     {
         this._tabs += "\t";
     }
 
-    private function _removeTab() : Void
+    function _removeTab() : Void
     {
         this._tabs = this._tabs.substr( 0, this._tabs.length-1 );
     }
