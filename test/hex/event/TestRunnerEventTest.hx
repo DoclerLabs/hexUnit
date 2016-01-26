@@ -16,9 +16,9 @@ class TestRunnerEventTest
     public function testType() : Void
     {
         var type : String = "type";
-		var descriptor : TestClassDescriptor = new TestClassDescriptor( TestRunnerEventTest );
-		var target : TestRunner = new TestRunner( descriptor );
-        var e : TestRunnerEvent = new TestRunnerEvent( type, target, descriptor );
+		var descriptor = new TestClassDescriptor( TestRunnerEventTest );
+		var target = new TestRunner( descriptor );
+        var e = new TestRunnerEvent( type, target, descriptor );
 		
         Assert.equals( type, e.type, "'type' property should be the same passed to constructor" );
     }
@@ -26,9 +26,9 @@ class TestRunnerEventTest
     @Test( "Test 'target' parameter passed to constructor" )
     public function testTarget() : Void
     {
-        var descriptor : TestClassDescriptor = new TestClassDescriptor( TestRunnerEventTest );
-		var target : TestRunner = new TestRunner( descriptor );
-        var e : TestRunnerEvent = new TestRunnerEvent( "", target, descriptor );
+        var descriptor = new TestClassDescriptor( TestRunnerEventTest );
+		var target = new TestRunner( descriptor );
+        var e = new TestRunnerEvent( "", target, descriptor );
 
         Assert.equals( target, e.target, "'target' property should be the same passed to constructor" );
     }
@@ -37,10 +37,10 @@ class TestRunnerEventTest
     public function testClone() : Void
     {
         var type : String = "type";
-        var descriptor : TestClassDescriptor = new TestClassDescriptor( TestRunnerEventTest );
-		var target : TestRunner = new TestRunner( descriptor );
-		var ex : Exception = new Exception( "error" );
-        var e : TestRunnerEvent = new TestRunnerEvent( type, target, descriptor, 150, ex );
+        var descriptor = new TestClassDescriptor( TestRunnerEventTest );
+		var target = new TestRunner( descriptor );
+		var ex = new Exception( "error" );
+        var e = new TestRunnerEvent( type, target, descriptor, 150, ex );
         var clonedEvent : TestRunnerEvent = cast e.clone();
 		
 		Assert.isInstanceOf( clonedEvent, TestRunnerEvent, "'clonedEvent' should be an instance of 'TestRunnerEvent' class" );
@@ -55,10 +55,10 @@ class TestRunnerEventTest
 	@Test( "Test parameters passed to constructor with accessors" )
     public function testAccessors() : Void
     {
-		var descriptor : TestClassDescriptor = new TestClassDescriptor( TestRunnerEventTest );
-		var target : TestRunner = new TestRunner( descriptor );
-		var ex : Exception = new Exception( "error" );
-        var e : TestRunnerEvent = new TestRunnerEvent( "eventType", target, descriptor, 150, ex );
+		var descriptor = new TestClassDescriptor( TestRunnerEventTest );
+		var target = new TestRunner( descriptor );
+		var ex = new Exception( "error" );
+        var e = new TestRunnerEvent( "eventType", target, descriptor, 150, ex );
 
         Assert.equals( target, e.getRunner(), "'getRunner' accessor should return property passed to constructor" );
         Assert.equals( descriptor, e.getDescriptor(), "'getDescriptor' accessor should return property passed to constructor" );

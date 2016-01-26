@@ -25,7 +25,7 @@ class WebSocketNotifier implements ITestRunnerListener
 	
 	var _dispatcher:LightweightClosureDispatcher<WebSocketNotifierEvent>;
 	
-	var _cache:Array<String> = new Array<String>();
+	var _cache= new Array<String>();
 	var _connected:Bool = false;
 	var netTimeElapsed	: Float;
 

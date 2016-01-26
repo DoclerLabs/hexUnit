@@ -28,7 +28,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 	var target				: DisplayObjectContainer;
 	var successMarker		: Sprite;
 	var styleSheet			: StyleSheet;
-	var _styleList			: Map<String,Bool> = new Map<String,Bool>();
+	var _styleList			= new Map<String,Bool>();
 
     public function new( target : DisplayObjectContainer = null )
     {
@@ -104,7 +104,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		var failed : String 		= this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
 		var ending : String 		= this.createElement( "]]]", "yellow+bold+h3" );
 		
-		var list : Array<String> = new Array<String>();
+		var list = new Array<String>();
 		list.push( beginning );
 		list.push( all );
 		

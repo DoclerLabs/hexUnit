@@ -16,9 +16,9 @@ class MethodRunnerEventTest
     public function testType() : Void
     {
         var type : String = "type";
-		var methodDescriptor : TestMethodDescriptor = new TestMethodDescriptor( "methodDescriptor", true, true );
-		var target : MethodRunner = new MethodRunner( this, methodDescriptor );
-        var e : MethodRunnerEvent = new MethodRunnerEvent( type, target, methodDescriptor, 10 );
+		var methodDescriptor = new TestMethodDescriptor( "methodDescriptor", true, true );
+		var target = new MethodRunner( this, methodDescriptor );
+        var e = new MethodRunnerEvent( type, target, methodDescriptor, 10 );
 		
         Assert.equals( type, e.type, "'type' property should be the same passed to constructor" );
     }
@@ -26,9 +26,9 @@ class MethodRunnerEventTest
     @Test( "Test 'target' parameter passed to constructor" )
     public function testTarget() : Void
     {
-        var methodDescriptor : TestMethodDescriptor = new TestMethodDescriptor( "methodDescriptor", true, true );
-		var target : MethodRunner = new MethodRunner( this, methodDescriptor );
-        var e : MethodRunnerEvent = new MethodRunnerEvent( "", target, methodDescriptor, 10 );
+        var methodDescriptor = new TestMethodDescriptor( "methodDescriptor", true, true );
+		var target = new MethodRunner( this, methodDescriptor );
+        var e = new MethodRunnerEvent( "", target, methodDescriptor, 10 );
 
         Assert.equals( target, e.target, "'target' property should be the same passed to constructor" );
     }
@@ -37,10 +37,10 @@ class MethodRunnerEventTest
     public function testClone() : Void
     {
         var type : String = "type";
-		var methodDescriptor : TestMethodDescriptor = new TestMethodDescriptor( "methodDescriptor", true, true );
-		var target : MethodRunner = new MethodRunner( this, methodDescriptor );
-		var ex : Exception = new Exception( "error" );
-        var e : MethodRunnerEvent = new MethodRunnerEvent( type, target, methodDescriptor, 10, ex );
+		var methodDescriptor = new TestMethodDescriptor( "methodDescriptor", true, true );
+		var target = new MethodRunner( this, methodDescriptor );
+		var ex = new Exception( "error" );
+        var e = new MethodRunnerEvent( type, target, methodDescriptor, 10, ex );
         var clonedEvent : MethodRunnerEvent = cast e.clone();
 		
 		Assert.isInstanceOf( clonedEvent, MethodRunnerEvent, "'clonedEvent' should be an instance of 'MethodRunnerEvent' class" );
@@ -55,10 +55,10 @@ class MethodRunnerEventTest
 	@Test( "Test parameters passed to constructor with accessors" )
     public function testAccessors() : Void
     {
-		var ex : Exception = new Exception( "error" );
-		var methodDescriptor : TestMethodDescriptor = new TestMethodDescriptor( "methodDescriptor", true, true );
-		var target : MethodRunner = new MethodRunner( this, methodDescriptor );
-        var e : MethodRunnerEvent = new MethodRunnerEvent( "eventType", target, methodDescriptor, 10, ex );
+		var ex = new Exception( "error" );
+		var methodDescriptor = new TestMethodDescriptor( "methodDescriptor", true, true );
+		var target = new MethodRunner( this, methodDescriptor );
+        var e = new MethodRunnerEvent( "eventType", target, methodDescriptor, 10, ex );
 
         Assert.equals( target, e.getRunner(), "'getRunner' accessor should return property passed to constructor" );
         Assert.equals( methodDescriptor, e.getDescriptor(), "'getDescriptor' accessor should return property passed to constructor" );

@@ -19,14 +19,14 @@ class MetadataParser
 
     public function parse( type : Class<Dynamic> ) : TestClassDescriptor
     {
-        var descriptor : TestClassDescriptor = new TestClassDescriptor( type );
+        var descriptor = new TestClassDescriptor( type );
         this._parse( descriptor );
         return descriptor;
     }
 	
 	public function parseMethod( type : Class<Dynamic>, methodName : String ) : TestClassDescriptor
     {
-		var descriptor : TestClassDescriptor = new TestClassDescriptor( type );
+		var descriptor = new TestClassDescriptor( type );
 		this._parse( descriptor );
 		descriptor.keepOnlyThisMethod( methodName );
 		return descriptor;
@@ -69,7 +69,7 @@ class MetadataParser
                     var suites : Array<Class<Dynamic>> = Reflect.field( descriptor.instance, fieldName );
                     for ( testClass in suites )
                     {
-                        var classDescriptor : TestClassDescriptor = new TestClassDescriptor( testClass );
+                        var classDescriptor = new TestClassDescriptor( testClass );
                         descriptor.addTestClassDescriptor( classDescriptor );
                         this._parse( classDescriptor );
                     }
