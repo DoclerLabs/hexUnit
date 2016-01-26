@@ -47,7 +47,16 @@ class MethodRunner
             catch ( e : Dynamic )
             {
                 this._endTime = Date.now().getTime();
-                this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), e ) );
+				if ( !Std.is( e, Exception ) )
+				{
+					var err : Exception = new Exception( e.message, e.posInfos );
+					this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), err ) );
+				}
+				else
+				{
+					this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), e ) );
+				}
+                
             }
         }
         else
