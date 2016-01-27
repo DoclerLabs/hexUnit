@@ -127,7 +127,7 @@ class Assert
 
         if ( !Std.is( value, type ) )
         {
-            Assert.fail( "Expected '" + Stringifier.stringify( value ) + "' was of type '" + Type.getClassName( type ) + "'", userMessage, posInfos );
+            Assert.fail( "Expected '" + Type.getClassName( type ) + "' was of type '" + Stringifier.stringify( value ) + "'", userMessage, posInfos );
         }
     }
 
