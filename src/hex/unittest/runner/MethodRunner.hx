@@ -1,5 +1,6 @@
 package hex.unittest.runner;
 
+import haxe.CallStack;
 import haxe.Timer;
 import hex.error.Exception;
 import hex.error.IllegalArgumentException;
@@ -49,7 +50,7 @@ class MethodRunner
                 this._endTime = Date.now().getTime();
 				if ( !Std.is( e, Exception ) )
 				{
-					var err : Exception = new Exception( e.message, e.posInfos );
+					var err : Exception = new Exception( e.toString() , e.posInfos );
 					this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), err ) );
 				}
 				else
