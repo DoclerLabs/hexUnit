@@ -69,6 +69,17 @@ class TestClassDescriptor
         this._methodIndex       = 0;
     }
 	
+	public function getTestLength() : UInt
+	{
+		var length : UInt = 0;
+		for ( classDescriptor in _classDescriptors )
+		{
+			length += classDescriptor.getTestLength();
+		}
+		length += this._methodDescriptors.length;
+		return length;
+	}
+	
 	public function getName() : String
 	{
 		return this._name;

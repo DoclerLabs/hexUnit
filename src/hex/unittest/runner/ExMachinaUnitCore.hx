@@ -1,13 +1,12 @@
 package hex.unittest.runner;
 
-import hex.event.BasicEvent;
 import hex.event.IEvent;
 import hex.event.LightweightListenerDispatcher;
-import hex.unittest.assertion.Assert;
-import hex.unittest.event.TestRunnerEvent;
-import hex.unittest.description.TestClassDescriptor;
 import hex.log.Stringifier;
+import hex.unittest.assertion.Assert;
+import hex.unittest.description.TestClassDescriptor;
 import hex.unittest.event.ITestRunnerListener;
+import hex.unittest.event.TestRunnerEvent;
 import hex.unittest.metadata.MetadataParser;
 
 /**
@@ -35,6 +34,16 @@ class ExMachinaUnitCore implements ITestRunner implements ITestRunnerListener
         Assert.resetAssertionLog();
         this._runNext();
     }
+	
+	public function getTestLength() : UInt
+	{
+		var length : UInt = 0;
+		for ( classDescriptor in this._classDescriptors )
+		{
+			length += classDescriptor.getTestLength();
+		}
+		return length;
+	}
 
     public function addTest( testableClass : Class<Dynamic> ) : Void
     {
