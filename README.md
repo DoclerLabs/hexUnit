@@ -3,6 +3,8 @@
 OOP Unit testing framework written in Haxe.
 
 ![alt tag](https://github.com/DoclerLabs/hexUnit/blob/master/hexunit.png)
+	
+![alt tag](https://github.com/DoclerLabs/hexUnit/blob/master/fd_integration.png)
 
 
 ## Dependencies
