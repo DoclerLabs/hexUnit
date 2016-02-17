@@ -2,14 +2,20 @@
 [![TravisCI Build Status](https://travis-ci.org/DoclerLabs/hexUnit.svg?branch=master)](https://travis-ci.org/DoclerLabs/hexUnit)
 OOP Unit testing framework written in Haxe.
 
-![alt tag](https://github.com/DoclerLabs/hexUnit/blob/master/hexunit.png)
-	
-![alt tag](https://github.com/DoclerLabs/hexUnit/blob/master/fd_integration.png)
-
-
 ## Dependencies
 
 * [hexCore](https://github.com/DoclerLabs/hexCore)
+
+
+## Browser integration
+
+![alt tag](https://github.com/DoclerLabs/hexUnit/blob/master/hexunit.png)
+	
+
+## Upcoming FlashDevelop integration
+
+![alt tag](https://github.com/DoclerLabs/hexUnit/blob/master/fd_integration.png)
+
 
 	
 ## Features
