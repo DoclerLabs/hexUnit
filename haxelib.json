@@ -1,0 +1,15 @@
+{
+  "name": "hexunit",
+  "license": "MIT",
+  "classPath": "src",
+  "tags": ["hexmachina", "mvc", "oop"],
+  "description": "OOP Unit testing framework written in Haxe",
+  "contributors": ["doclerlabs"],
+  "releasenote": "First release. Still alpha testing",
+  "version": "0.1.0",
+  "url": "https://github.com/DoclerLabs/hexUnit",
+  "dependencies": 
+  {
+	"hexcore": ""
+  }
+}
