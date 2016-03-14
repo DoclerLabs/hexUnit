@@ -133,7 +133,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
     {
         if ( classDescriptor.beforeClassFieldName != null )
         {
-            Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.instance, classDescriptor.beforeClassFieldName ), [] );
+           Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.type, classDescriptor.beforeClassFieldName ), [] );
         }
     }
 
@@ -141,7 +141,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
     {
         if ( classDescriptor.afterClassFieldName != null )
         {
-            Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.instance, classDescriptor.afterClassFieldName ), [] );
+            Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.type, classDescriptor.afterClassFieldName ), [] );
         }
     }
 
