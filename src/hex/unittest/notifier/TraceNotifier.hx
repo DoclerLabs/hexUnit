@@ -16,6 +16,8 @@ class TraceNotifier implements ITestRunnerListener
 {
     var _tabs   			: String;
     var _errorBubbling   	: Bool;
+	var _successfulCount	: UInt = 0;
+	var _failedCount 		: UInt = 0;
 
     public function new( errorBubbling : Bool = false )
     {
@@ -39,6 +41,8 @@ class TraceNotifier implements ITestRunnerListener
 
     public function onStartRun( e : TestRunnerEvent ) : Void
     {
+		this._successfulCount = 0;
+		this._failedCount = 0;
         this._tabs = "";
         this._log( "<<< Start " + e.getDescriptor().className + " tests run >>>" );
         this._addTab();
@@ -47,13 +51,14 @@ class TraceNotifier implements ITestRunnerListener
     public function onEndRun( e : TestRunnerEvent ) : Void
     {
         this._removeTab();
+
         this._log( "<<< End tests run >>>" );
-        this._log( "Assertions passed: " + Assert.getAssertionCount() + "\n" );
+        this._log( "Assertions passed: " + this._successfulCount + "/" + ( this._successfulCount + this._failedCount ) );
 		
-		if ( Assert.getAssertionFailedCount() > 0 )
+		if ( this._failedCount > 0 )
 		{
-			this._log( "Assertions failed: " + Assert.getAssertionFailedCount() + "\n" );
-			throw ( new Exception( "Assertions failed: " + Assert.getAssertionFailedCount() ) );
+			this._log( "Assertions failed: " + this._failedCount + "\n" );
+			throw ( new Exception( "Assertions failed: " + this._failedCount ) );
 		}
 		
 		#if flash
@@ -85,6 +90,7 @@ class TraceNotifier implements ITestRunnerListener
 
     public function onSuccess( e : TestRunnerEvent ) : Void
     {
+		this._successfulCount++;
         var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
         var description : String = methodDescriptor.description;
         var timeElapsed : String = e.getTimeElapsed() + "ms";
@@ -94,9 +100,10 @@ class TraceNotifier implements ITestRunnerListener
 
     public function onFail( e : TestRunnerEvent ) : Void
     {
+		this._failedCount++;
         var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
         var description : String = methodDescriptor.description;
-        var message : String = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+        var message : String = "FAILURE!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( message );
         this._addTab();
         this._log( e.getError().toString() );
