@@ -1,5 +1,9 @@
 package hex.unittest.notifier;
 
+import flash.display.LoaderInfo;
+import flash.errors.Error;
+import flash.events.ErrorEvent;
+import flash.events.UncaughtErrorEvent;
 import hex.error.Exception;
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
@@ -19,10 +23,34 @@ class TraceNotifier implements ITestRunnerListener
 	var _successfulCount	: UInt = 0;
 	var _failedCount 		: UInt = 0;
 
-    public function new( errorBubbling : Bool = false )
+    public function new( loaderInfo : LoaderInfo, errorBubbling : Bool = false )
     {
 		this._errorBubbling = errorBubbling;
+		loaderInfo.uncaughtErrorEvents.addEventListener( UncaughtErrorEvent.UNCAUGHT_ERROR, this._uncaughtErrorHandler );
     }
+	
+	private function _uncaughtErrorHandler( event : UncaughtErrorEvent ) : Void
+	{
+		if ( Std.is( event.error, Error ) )
+		{
+			var error : Error = cast event.error;
+			// do something with the error
+			trace( "UNCAUGHT ERROR: " + error.message + ":" + error.getStackTrace() );
+		}
+		else if ( Std.is( event.error, ErrorEvent ) )
+		{
+			var errorEvent : ErrorEvent = cast event.error;
+			// do something with the error
+			trace( "UNCAUGHT ERROR: " + errorEvent.text );
+		}
+		else
+		{
+			// a non-Error, non-ErrorEvent type was thrown and uncaught
+			trace( "UNCAUGHT ERROR: " + event.text );
+		}
+		
+		event.preventDefault();
+	}
 
     function _log( message : String ) : Void
     {
@@ -100,20 +128,24 @@ class TraceNotifier implements ITestRunnerListener
 
     public function onFail( e : TestRunnerEvent ) : Void
     {
-		this._failedCount++;
-        var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-        var description : String = methodDescriptor.description;
-        var message : String = "FAILURE!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
-        this._log( message );
-        this._addTab();
-        this._log( e.getError().toString() );
-        this._log( e.getError().message + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
-        this._removeTab();
-		
-		if ( this._errorBubbling )
+		if ( e != null && e.getDescriptor() != null )
 		{
-			throw( e.getError() );
+			this._failedCount++;
+			var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
+			var description : String = methodDescriptor.description;
+			var message : String = "FAILURE!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+			this._log( message );
+			this._addTab();
+			this._log( e.getError().toString() );
+			this._log( e.getError().message + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
+			this._removeTab();
+			
+			if ( this._errorBubbling )
+			{
+				throw( e.getError() );
+			}
 		}
+		
     }
 
     public function onTimeout( e : TestRunnerEvent ) : Void
