@@ -29,8 +29,9 @@ class TraceNotifier implements ITestRunnerListener
 		loaderInfo.uncaughtErrorEvents.addEventListener( UncaughtErrorEvent.UNCAUGHT_ERROR, this._uncaughtErrorHandler );
     }
 	
-	private function _uncaughtErrorHandler( event : UncaughtErrorEvent ) : Void
+	function _uncaughtErrorHandler( event : UncaughtErrorEvent ) : Void
 	{
+		event.preventDefault();
 		if ( Std.is( event.error, Error ) )
 		{
 			var error : Error = cast event.error;
@@ -49,7 +50,6 @@ class TraceNotifier implements ITestRunnerListener
 			trace( "UNCAUGHT ERROR: " + event.text );
 		}
 		
-		event.preventDefault();
 	}
 
     function _log( message : String ) : Void
@@ -86,7 +86,6 @@ class TraceNotifier implements ITestRunnerListener
 		if ( this._failedCount > 0 )
 		{
 			this._log( "Assertions failed: " + this._failedCount + "\n" );
-			throw ( new Exception( "Assertions failed: " + this._failedCount ) );
 		}
 		
 		#if flash

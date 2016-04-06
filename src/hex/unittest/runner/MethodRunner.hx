@@ -148,6 +148,10 @@ class MethodRunner
         this._passThroughArgs   = passThroughArgs;
         this._timeout           = timeout;
 
+		if ( this._timer != null )
+		{
+			this._timer.stop();
+		}
 		this._timer = new Timer( timeout );
 		this._timer.run = MethodRunner._fireTimeout;
     }
@@ -162,6 +166,7 @@ class MethodRunner
 			}
 			
 			MethodRunner._CURRENT_RUNNER._timer.stop();
+			MethodRunner._CURRENT_RUNNER._timer = null;
 		
 			var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
 
