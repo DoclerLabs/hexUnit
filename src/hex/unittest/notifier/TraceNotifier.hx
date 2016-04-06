@@ -86,6 +86,9 @@ class TraceNotifier implements ITestRunnerListener
 		if ( this._failedCount > 0 )
 		{
 			this._log( "Assertions failed: " + this._failedCount + "\n" );
+			#if flash
+			flash.system.System.exit( 1 );
+			#end
 		}
 		
 		#if flash
