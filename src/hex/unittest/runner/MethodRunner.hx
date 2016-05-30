@@ -148,7 +148,7 @@ class MethodRunner
         this._passThroughArgs   = passThroughArgs;
         this._timeout           = timeout;
 
-		#if !neko || haxe-ver >= 3.3
+		#if (!neko || haxe_ver >= "3.3")
 		if ( this._timer != null )
 		{
 			this._timer.stop();
@@ -167,7 +167,7 @@ class MethodRunner
 				throw new IllegalStateException( "AsyncHandler has been called after '@Async' test was released. Try to remove all your listeners in '@After' method to fix this error" );
 			}
 			
-			#if !neko || haxe-ver >= 3.3
+			#if (!neko || haxe_ver >= "3.3")
 			MethodRunner._CURRENT_RUNNER._timer.stop();
 			#end
 			MethodRunner._CURRENT_RUNNER._timer = null;
@@ -205,7 +205,7 @@ class MethodRunner
 
     static function _fireTimeout() : Void
     {
-		#if !neko || haxe-ver >= 3.3
+		#if (!neko || haxe_ver >= "3.3")
 		MethodRunner._CURRENT_RUNNER._timer.stop();
 		#end
         var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;

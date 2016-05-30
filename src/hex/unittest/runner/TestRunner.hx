@@ -184,7 +184,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         this._dispatcher.dispatchEvent( new TestRunnerEvent( eventType, this, classDescriptor, e.getTimeElapsed(), e.getError() ) );
         this._tryToRunTearDown( classDescriptor );
 		
-		#if !neko || haxe-ver >= 3.3
+		#if (!neko || haxe_ver >= "3.3")
 		if ( TestRunner.RENDER_DELAY > 0 && Date.now().getTime() - this._lastRender > TestRunner.RENDER_DELAY )
 		{
 			this._lastRender = Date.now().getTime();
