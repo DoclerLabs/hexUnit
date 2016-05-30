@@ -203,6 +203,7 @@ class MethodRunner
     {
 		MethodRunner._CURRENT_RUNNER._timer.stop();
         var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
+		methodRunner._endTime = Date.now().getTime();
 		MethodRunner._CURRENT_RUNNER = null;
         methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.TIMEOUT, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed(), new Exception( "Test timeout" ) ) );
     }
