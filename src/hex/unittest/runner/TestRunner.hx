@@ -184,7 +184,8 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
         this._dispatcher.dispatchEvent( new TestRunnerEvent( eventType, this, classDescriptor, e.getTimeElapsed(), e.getError() ) );
         this._tryToRunTearDown( classDescriptor );
 		
-		if ( Date.now().getTime() - this._lastRender > TestRunner.RENDER_DELAY )
+		#if !neko || haxe-ver >= 3.3
+		if ( TestRunner.RENDER_DELAY > 0 && Date.now().getTime() - this._lastRender > TestRunner.RENDER_DELAY )
 		{
 			this._lastRender = Date.now().getTime();
 			Timer.delay( function( ) { _runTestClass( classDescriptor ); }, 1 );
@@ -193,5 +194,8 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
 		{
 			_runTestClass( classDescriptor );
 		}
+		#else
+		_runTestClass( classDescriptor );
+		#end
     }
 }

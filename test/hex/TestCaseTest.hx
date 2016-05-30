@@ -15,6 +15,7 @@ class TestCaseTest
 		
 	}
 	
+	#if !neko || haxe-ver >= 3.3
 	@Async( "Test if async tests can run properly with static Timer.delay" )
 	public function asyncStaticTimerTest( )
 	{
@@ -34,4 +35,5 @@ class TestCaseTest
 		this.timer.stop();
 	}
 	
+	#end
 }
