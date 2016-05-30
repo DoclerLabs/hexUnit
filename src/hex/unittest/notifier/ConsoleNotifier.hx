@@ -28,7 +28,9 @@ class ConsoleNotifier implements ITestRunnerListener
 
     function _log( message : String ) : Void
     {
+		#if js
         Reflect.callMethod( untyped js.Boot, this._trace, [ this._tabs + message] );
+		#end
     }
 
     function _addTab() : Void

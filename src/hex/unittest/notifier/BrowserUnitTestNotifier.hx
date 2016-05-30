@@ -1,5 +1,5 @@
 package hex.unittest.notifier;
-
+#if js
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestMethodDescriptor;
@@ -268,3 +268,4 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 	
 	public function handleEvent( e : IEvent ) : Void {}
 }
+#end

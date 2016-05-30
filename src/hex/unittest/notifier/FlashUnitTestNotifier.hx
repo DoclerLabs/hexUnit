@@ -1,5 +1,5 @@
 package hex.unittest.notifier;
-
+#if flash
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.Lib;
@@ -292,3 +292,4 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 	
 	public function handleEvent( e : IEvent ) : Void {}
 }
+#end

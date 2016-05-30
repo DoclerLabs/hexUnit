@@ -1,5 +1,5 @@
 package hex.unittest.notifier;
-
+#if js
 import haxe.Json;
 import hex.event.IEvent;
 import hex.event.LightweightClosureDispatcher;
@@ -250,3 +250,4 @@ class WebSocketNotifier implements ITestRunnerListener
 		return text;
 	}
 }
+#end

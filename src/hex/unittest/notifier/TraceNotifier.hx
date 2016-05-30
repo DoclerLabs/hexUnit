@@ -1,5 +1,5 @@
 package hex.unittest.notifier;
-
+#if flash
 import flash.display.LoaderInfo;
 import flash.errors.Error;
 import flash.events.ErrorEvent;
@@ -166,3 +166,4 @@ class TraceNotifier implements ITestRunnerListener
 		
 	}
 }
+#end
