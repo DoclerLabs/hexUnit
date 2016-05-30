@@ -9,5 +9,5 @@ import hex.event.EventSuite;
 class HexUnitSuite
 {
 	@Suite( "HexUnit suite" )
-    public var list : Array<Class<Dynamic>> = [EventSuite];
+    public var list : Array<Class<Dynamic>> = [EventSuite, TestCaseTest];
 }
