@@ -4,6 +4,7 @@ import flash.display.LoaderInfo;
 import flash.errors.Error;
 import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
+#end
 import hex.error.Exception;
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
@@ -18,11 +19,14 @@ import hex.unittest.event.TestRunnerEvent;
  */
 class TraceNotifier implements ITestRunnerListener
 {
+	public static var TAB_CHARACTER:String = "  ";
+	
     var _tabs   			: String;
     var _errorBubbling   	: Bool;
 	var _successfulCount	: UInt = 0;
 	var _failedCount 		: UInt = 0;
 
+	#if flash
     public function new( loaderInfo : LoaderInfo, errorBubbling : Bool = false )
     {
 		this._errorBubbling = errorBubbling;
@@ -51,6 +55,12 @@ class TraceNotifier implements ITestRunnerListener
 		}
 		
 	}
+	#else
+	public function new( errorBubbling : Bool = false )
+    {
+		this._errorBubbling = errorBubbling;
+    }
+	#end
 
     function _log( message : String ) : Void
     {
@@ -59,12 +69,12 @@ class TraceNotifier implements ITestRunnerListener
 
     function _addTab() : Void
     {
-        this._tabs += "\t";
+        this._tabs += TAB_CHARACTER;
     }
 
     function _removeTab() : Void
     {
-        this._tabs = this._tabs.substr( 0, this._tabs.length-1 );
+        this._tabs = this._tabs.substr( 0, this._tabs.length - (TAB_CHARACTER.length) );
     }
 
     public function onStartRun( e : TestRunnerEvent ) : Void
@@ -166,4 +176,3 @@ class TraceNotifier implements ITestRunnerListener
 		
 	}
 }
-#end
