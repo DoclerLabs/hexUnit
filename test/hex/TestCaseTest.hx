@@ -14,7 +14,6 @@ class TestCaseTest
 	@Async( "Test if async tests can run properly with static Timer.delay" )
 	public function asyncStaticTimerTest( )
 	{
-		trace("aaaaa");
 		Timer.delay( MethodRunner.asyncHandler( this._onAsyncTestComplete, 100 ), 50 );
 	}
 	
