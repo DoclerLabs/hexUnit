@@ -65,7 +65,7 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
                 if ( !this._executedDescriptors.exists( classDescriptor ) )
                 {
                     this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.TEST_CLASS_START_RUN, this, classDescriptor ) );
-                    classDescriptor.instance = Type.createInstance( classDescriptor.type, [] );
+                    classDescriptor.instance = Type.createEmptyInstance( classDescriptor.type );
                     this._executedDescriptors.set( classDescriptor, true );
                 }
 
