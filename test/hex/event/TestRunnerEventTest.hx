@@ -12,11 +12,6 @@ import hex.unittest.runner.TestRunner;
  */
 class TestRunnerEventTest
 {
-	public function new( )
-	{
-		
-	}
-	
 	@Test( "Test 'type' parameter passed to constructor" )
     public function testType() : Void
     {
