@@ -64,7 +64,11 @@ class TraceNotifier implements ITestRunnerListener
 
     function _log( message : String ) : Void
     {
+		#if !neko
         trace( this._tabs + message );
+		#else
+		Sys.println( this._tabs + message );
+		#end
     }
 
     function _addTab() : Void
