@@ -25,9 +25,9 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
 	var _lastRender					: Float = 0;
 	
 	#if flash
-	static public var RENDER_DELAY 			: Float = 150;
+	static public var RENDER_DELAY 			: Int = 150;
 	#else
-	static public var RENDER_DELAY			: Float = 50;
+	static public var RENDER_DELAY			: Int = 0;
 	#end
 
     public function new( classDescriptor : TestClassDescriptor )
@@ -187,12 +187,13 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
 		#if (!neko || haxe_ver >= "3.3")
 		if ( TestRunner.RENDER_DELAY > 0 && Date.now().getTime() - this._lastRender > TestRunner.RENDER_DELAY )
 		{
-			this._lastRender = Date.now().getTime();
+			this._lastRender = Date.now().getTime() + 1;
 			Timer.delay( function( ) { _runTestClass( classDescriptor ); }, 1 );
 		}
 		else
 		{
-			_runTestClass( classDescriptor );
+			this._lastRender = Date.now().getTime() + TestRunner.RENDER_DELAY;
+			Timer.delay( function( ) { _runTestClass( classDescriptor ); }, TestRunner.RENDER_DELAY );
 		}
 		#else
 		_runTestClass( classDescriptor );
