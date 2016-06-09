@@ -1,4 +1,5 @@
 package hex.unittest.notifier;
+
 #if flash
 import flash.display.LoaderInfo;
 import flash.errors.Error;

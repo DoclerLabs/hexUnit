@@ -40,10 +40,6 @@ class MetadataParser
             var metadata                                = this._collectMetadata( inherintanceChain );
             this._scanTestClass( descriptor, metadata );
         }
-		else
-		{
-			descriptor.isSuiteClass = true;
-		}
     }
 
     function _isSuite( descriptor : TestClassDescriptor  ) : Bool
