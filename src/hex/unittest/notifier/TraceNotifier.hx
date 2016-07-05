@@ -153,7 +153,11 @@ class TraceNotifier implements ITestRunnerListener
 			var message : String = "FAILURE!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
 			this._log( message );
 			this._addTab();
+			#if php
+			this._log( "" + e.getError() );
+			#else
 			this._log( e.getError().toString() );
+			#end
 			this._log( e.getError().message + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
 			this._removeTab();
 			
