@@ -51,10 +51,10 @@ class MethodRunner
 				if ( !Std.is( e, Exception ) )
 				{
 					var err : Exception = null;
-					#if !php
-					err = new Exception( e.toString(), e.posInfos );
+					#if php
+					err = new Exception( "" + e, e.p );
 					#else
-					err = new Exception( "" + e, e.posInfos );
+					err = new Exception( e.toString(), e.posInfos );
 					#end
 					this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), err ) );
 				}
