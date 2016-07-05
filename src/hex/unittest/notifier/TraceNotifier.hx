@@ -154,11 +154,12 @@ class TraceNotifier implements ITestRunnerListener
 			this._log( message );
 			this._addTab();
 			#if php
-			this._log( "" + e.getError() );
+			this._log( "" + e.getError() + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
 			#else
 			this._log( e.getError().toString() );
-			#end
 			this._log( e.getError().message + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
+			#end
+			
 			this._removeTab();
 			
 			if ( this._errorBubbling )
