@@ -65,10 +65,12 @@ class TraceNotifier implements ITestRunnerListener
 
     function _log( message : String ) : Void
     {
-		#if !neko
-        trace( this._tabs + message );
+		#if neko
+        Sys.println( this._tabs + message );
+		#elseif php
+		php.Lib.print( this._tabs + message );
 		#else
-		Sys.println( this._tabs + message );
+		trace( this._tabs + message );
 		#end
     }
 
