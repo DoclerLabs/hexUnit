@@ -50,7 +50,12 @@ class MethodRunner
                 this._endTime = Date.now().getTime();
 				if ( !Std.is( e, Exception ) )
 				{
-					var err : Exception = new Exception( e.toString() , e.posInfos );
+					var err : Exception = null;
+					#if !php
+					err = new Exception( e.toString(), e.posInfos );
+					#else
+					err = new Exception( "" + e, e.posInfos );
+					#end
 					this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), err ) );
 				}
 				else
