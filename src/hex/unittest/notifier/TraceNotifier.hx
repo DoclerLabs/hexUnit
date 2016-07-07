@@ -24,8 +24,6 @@ class TraceNotifier implements ITestRunnerListener
 	
     var _tabs   			: String;
     var _errorBubbling   	: Bool;
-	var _successfulCount	: UInt = 0;
-	var _failedCount 		: UInt = 0;
 
 	#if flash
     public function new( loaderInfo : LoaderInfo, errorBubbling : Bool = false )
@@ -84,8 +82,6 @@ class TraceNotifier implements ITestRunnerListener
 
     public function onStartRun( e : TestRunnerEvent ) : Void
     {
-		this._successfulCount = 0;
-		this._failedCount = 0;
         this._tabs = "";
         this._log( "<<< Start " + e.getDescriptor().className + " tests run >>>" );
         this._addTab();
@@ -94,13 +90,12 @@ class TraceNotifier implements ITestRunnerListener
     public function onEndRun( e : TestRunnerEvent ) : Void
     {
         this._removeTab();
-
         this._log( "<<< End tests run >>>" );
-        this._log( "Assertions passed: " + this._successfulCount + "/" + ( this._successfulCount + this._failedCount ) );
+        this._log( "Assertions passed: " + Assert.getAssertionCount() );
 		
-		if ( this._failedCount > 0 )
+		if ( Assert.getAssertionFailedCount() > 0 )
 		{
-			this._log( "Assertions failed: " + this._failedCount + "\n" );
+			this._log( "Assertions failed: " + Assert.getAssertionFailedCount() + "\n" );
 			#if flash
 			flash.system.System.exit( 1 );
 			#elseif ( php || neko )
@@ -137,7 +132,6 @@ class TraceNotifier implements ITestRunnerListener
 
     public function onSuccess( e : TestRunnerEvent ) : Void
     {
-		this._successfulCount++;
         var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
         var description : String = methodDescriptor.description;
         var timeElapsed : String = e.getTimeElapsed() + "ms";
@@ -149,7 +143,6 @@ class TraceNotifier implements ITestRunnerListener
     {
 		if ( e != null && e.getDescriptor() != null )
 		{
-			this._failedCount++;
 			var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
 			var description : String = methodDescriptor.description;
 			var message : String = "FAILURE!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
