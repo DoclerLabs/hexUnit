@@ -103,7 +103,7 @@ class TraceNotifier implements ITestRunnerListener
 			this._log( "Assertions failed: " + this._failedCount + "\n" );
 			#if flash
 			flash.system.System.exit( 1 );
-			#else
+			#elseif php || neko
 			Sys.exit(1);
 			#end
 		}
