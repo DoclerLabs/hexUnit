@@ -75,7 +75,7 @@ class Assert
 
         if ( value != true )
         {
-            Assert.fail( "Expected true but was '" + value + "'", userMessage, posInfos );
+            Assert._fail( "Expected true but was '" + value + "'", userMessage, posInfos );
         }
     }
 
@@ -88,7 +88,7 @@ class Assert
 
         if ( value != false )
         {
-            Assert.fail( "Expected false but was '" + value + "'", userMessage, posInfos );
+            Assert._fail( "Expected false but was '" + value + "'", userMessage, posInfos );
         }
     }
 
@@ -101,7 +101,7 @@ class Assert
 
         if ( value != null )
         {
-            Assert.fail( "Expected null but was '" + Stringifier.stringify( value ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected null but was '" + Stringifier.stringify( value ) + "'", userMessage, posInfos );
         }
     }
 
@@ -114,7 +114,7 @@ class Assert
 
         if ( value == null )
         {
-            Assert.fail( "Expected not null but was 'null'", userMessage, posInfos );
+            Assert._fail( "Expected not null but was 'null'", userMessage, posInfos );
         }
     }
 
@@ -127,7 +127,7 @@ class Assert
 
         if ( !Std.is( value, type ) )
         {
-            Assert.fail( "Expected '" + Type.getClassName( type ) + "' was of type '" + Stringifier.stringify( value ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + Type.getClassName( type ) + "' was of type '" + Stringifier.stringify( value ) + "'", userMessage, posInfos );
         }
     }
 
@@ -140,7 +140,7 @@ class Assert
 
         if ( Std.is( value, type ) )
         {
-            Assert.fail( "Value '" + Stringifier.stringify( value ) + "' was not of type '" + Type.getClassName( type ) + "'", userMessage, posInfos );
+            Assert._fail( "Value '" + Stringifier.stringify( value ) + "' was not of type '" + Type.getClassName( type ) + "'", userMessage, posInfos );
         }
     }
 
@@ -153,7 +153,7 @@ class Assert
 
         if ( expected != value )
         {
-            Assert.fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
         }
     }
 	
@@ -163,7 +163,7 @@ class Assert
 
         if ( Std.string( expected ) != Std.string( value ) )
         {
-            Assert.fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
         }
     }
 	
@@ -185,7 +185,7 @@ class Assert
 		
 		if ( numElement != expected.length )
         {
-            Assert.fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
         }
     }
 
@@ -198,7 +198,7 @@ class Assert
 
         if ( expected == value )
         {
-            Assert.fail( "Expected '" + expected +"' was not equal to '" + value + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + expected +"' was not equal to '" + value + "'", userMessage, posInfos );
         }
     }
 
@@ -223,7 +223,7 @@ class Assert
 
         if ( exceptionCaught == null || ( exceptionCaught != null && ( Type.getClass( exceptionCaught ) != expectedException ) ) )
         {
-            Assert.fail( "Expected '" + expectedExceptionType +"' but was '" + Stringifier.stringify( exceptionCaught ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + expectedExceptionType +"' but was '" + Stringifier.stringify( exceptionCaught ) + "'", userMessage, posInfos );
         }
     }
 
@@ -248,7 +248,7 @@ class Assert
 
         if ( exceptionCaught == null || ( exceptionCaught != null && ( Type.getClass( exceptionCaught ) != expectedException ) ) )
         {
-            Assert.fail( "Expected '" + expectedExceptionType +"' but was '" + exceptionCaught + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + expectedExceptionType +"' but was '" + exceptionCaught + "'", userMessage, posInfos );
         }
     }
 	
@@ -273,14 +273,27 @@ class Assert
 		
 		if ( exceptionCaught == null || ( exceptionCaught != null && ( Type.getClass( exceptionCaught ) != expectedException ) ) )
         {
-            Assert.fail( "Expected '" + expectedExceptionType +"' but was '" + exceptionCaught + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + expectedExceptionType +"' but was '" + exceptionCaught + "'", userMessage, posInfos );
         }
 		
 	}
-
-    static function fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void
+	
+	/**
+	 * Use this method to trigger a unit test failure
+	 * 
+	 * @param	assertMessage	Error message for the assertion type
+	 * @param	userMessage		Error message for the current assertion
+	 * @param	posInfos		Error position infos
+	 */
+	public static function fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void
+    {
+        throw new AssertException( assertMessage + ( userMessage.length < 0 ? ": " + userMessage : "" ), posInfos );
+    }
+	
+	//
+	static function _fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void
     {
 		Assert._assertFailedCount++;
-        throw new AssertException( assertMessage + ( userMessage.length < 0 ? ": " + userMessage : "" ), posInfos );
+		Assert.fail( assertMessage, userMessage, posInfos ) ;
     }
 }
