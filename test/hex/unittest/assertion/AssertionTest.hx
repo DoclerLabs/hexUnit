@@ -644,8 +644,8 @@ private class MockClassForDeepComparison
 	public var n 	: Int;
 	public var b 	: Bool;
 	public var s 	: String;
-	private var o 	: Dynamic;
-	private var i 	: MockClassForDeepComparison;
+	public var o 	: Dynamic;
+	public var i 	: MockClassForDeepComparison;
 
 	public function new( n : Int, b : Bool, s : String, ?o : Dynamic, ?i : MockClassForDeepComparison )
 	{
