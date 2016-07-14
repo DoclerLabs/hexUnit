@@ -1,4 +1,4 @@
-package hex.event;
+package hex.unittest.event;
 
 import hex.error.Exception;
 import hex.unittest.assertion.Assert;

@@ -157,39 +157,7 @@ class Assert
         }
     }
 	
-	public static function deepEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
-    {
-        Assert._LOG_ASSERT( userMessage );
-
-        if ( Std.string( expected ) != Std.string( value ) )
-        {
-            Assert._fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
-        }
-    }
-	
-	public static function arrayContains( expected : Array<Dynamic>, value : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
-    {
-        Assert._LOG_ASSERT( userMessage );
-		
-		var numElement : Int = 0;
-		for ( valueElement in value )
-		{
-			for ( expectedElement in expected )
-			{
-				if ( valueElement == expectedElement )
-				{
-					numElement++;
-				}
-			}
-		}
-		
-		if ( numElement != expected.length )
-        {
-            Assert._fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
-        }
-    }
-
-    /**
+	/**
      * Asserts that 'expected' and 'actual' are not equal
      */
     public static function notEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
@@ -201,9 +169,89 @@ class Assert
             Assert._fail( "Expected '" + expected +"' was not equal to '" + value + "'", userMessage, posInfos );
         }
     }
+	
+	/**
+     * Asserts that 'expected' and 'actual' are deep equal
+     */
+	public static function deepEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    {
+        Assert._LOG_ASSERT( userMessage );
+
+        if ( !jsonStream.testUtil.JsonEquality.deepEquals( expected, value ) )
+        {
+            Assert._fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
+        }
+    }
+	
+	/**
+     * Asserts that 'expected' and 'actual' are not deep equal
+     */
+	public static function notDeepEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    {
+        Assert._LOG_ASSERT( userMessage );
+
+        if ( jsonStream.testUtil.JsonEquality.deepEquals( expected, value ) )
+        {
+            Assert._fail( "Expected '" + expected +"' was not deep equal to '" + value + "'", userMessage, posInfos );
+        }
+    }
+
+	/**
+     * Asserts that array contains this element
+     */
+	public static function arrayContainsElement<T>( a : Array<T>, value : T, userMessage : String, ?posInfos : PosInfos ) : Void
+    {
+		if ( a.indexOf( value ) == -1 )
+		{
+			Assert._fail( "Array '" + a +"' should contain '" + value + "'", userMessage, posInfos );
+		}
+	}
+	
+	/**
+     * Asserts that array does not contain this element
+     */
+	public static function arrayNotContainsElement<T>( a : Array<T>, value : T, userMessage : String, ?posInfos : PosInfos ) : Void
+    {
+		if ( a.indexOf( value ) != -1 )
+		{
+			Assert._fail( "Array '" + a +"' should not contain '" + value + "'", userMessage, posInfos );
+		}
+	}
+	
+	/**
+     * Asserts this array contains every elements from another array
+     */
+	public static function arrayContainsElementsFrom<T>( expected : Array<T>, value : Array<T>, userMessage : String, ?posInfos : PosInfos ) : Void
+    {
+        Assert._LOG_ASSERT( userMessage );
+
+		for ( element in value )
+		{
+			if ( expected.indexOf( element ) == -1 )
+			{
+				Assert._fail( "Array '" + expected +"' should contain '" + element + "'", userMessage, posInfos );
+			}
+		}
+    }
 
     /**
-     * Asserts class constructor call throws 'expectedException'
+     * Asserts this array does not contain any element from another array
+     */
+	public static function arrayNotContainsElementsFrom<T>( expected : Array<T>, value : Array<T>, userMessage : String, ?posInfos : PosInfos ) : Void
+    {
+        Assert._LOG_ASSERT( userMessage );
+
+		for ( element in value )
+		{
+			if ( expected.indexOf( element ) != -1 )
+			{
+				Assert._fail( "Array '" + expected +"' should not contain '" + element + "'", userMessage, posInfos );
+			}
+		}
+    }
+	
+	/**
+     * Asserts constructor call throws 'expectedException'
      */
     public static function constructorCallThrows( expectedException : Class<Exception>, type : Class<Dynamic>, args : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
     {
@@ -289,6 +337,14 @@ class Assert
 		Assert._LOG_ASSERT( userMessage );
 		Assert._fail( assertMessage, userMessage, posInfos ) ;
     }
+	
+	/**
+	 * This method is used to test hexUnit framework
+	 */
+	static public function revertFailure() : Void
+	{
+		Assert._assertFailedCount--;
+	}
 	
 	//
 	static function _fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void

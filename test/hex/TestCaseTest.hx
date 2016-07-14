@@ -1,4 +1,5 @@
 package hex;
+
 import haxe.Timer;
 import hex.unittest.runner.MethodRunner;
 
@@ -32,6 +33,5 @@ class TestCaseTest
 			this.timer.stop();
 		}
 	}
-	
 	#end
 }
