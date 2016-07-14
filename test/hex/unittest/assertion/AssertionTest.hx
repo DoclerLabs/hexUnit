@@ -3,7 +3,6 @@ package hex.unittest.assertion;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.unittest.error.AssertException;
-import js.html.rtc.IdentityAssertion;
 import jsonStream.testUtil.JsonEquality;
 
 /**
