@@ -348,7 +348,10 @@ class Assert
 	
 	/**
      * Asserts that setting value to property throws 'expectedException'
+	 * Not available on Flash platform because error is caught while 
+	 * setting the value.
      */
+	#if !flash
     public static function setPropertyThrows( expectedException : Class<Exception>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
 	{
 		Assert._LOG_ASSERT( userMessage );
@@ -370,6 +373,7 @@ class Assert
             Assert._fail( "Expected '" + expectedExceptionType +"' but was '" + exceptionCaught + "'", userMessage, posInfos );
         }
 	}
+	#end
 	
 	/**
 	 * Use this method to trigger a unit test failure

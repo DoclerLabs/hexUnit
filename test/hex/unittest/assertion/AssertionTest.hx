@@ -401,11 +401,8 @@ class AssertionTest
 	@Test( "test Assert.notDeepEquals with class instance" )
 	public function testAssertNotDeepEqualsWithClassInstance() : Void
 	{
-		var ao1 = { p:"property", b:true, o: { p2:"property", b2:true }, i:4, f:1.23 };
-		var ao2 = { f:1.23, p:"property", o: { b2:true, p2:"property" }, b:true, i:4  };
-		
-		var o1 = new MockClassForDeepComparison( 3, true, "test", ao1, new MockClassForDeepComparison( 3, true, "test" ) );
-		var o2 = new MockClassForDeepComparison( 3, true, "test", ao2, new MockClassForDeepComparison( 3, false, "test" ) );
+		var o1 = { p:"property", b:true, o: { p2:"property", b2:true }, i:4, f:1.23 };
+		var o2 = { p:"property", b:true, o: { p2:"property", b2:false, }, i:4, f:1.23 };
 
 		Assert.notDeepEquals( o1, o2, "assertion should pass" );
 	}
@@ -413,11 +410,8 @@ class AssertionTest
 	@Test( "test Assert.notDeepEquals with class instance failure" )
 	public function testAssertNotDeepEqualsWithClassInstanceFailure() : Void
 	{
-		var ao1 = { p:"property", b:true, o: { p2:"property", b2:true }, i:4, f:1.23 };
-		var ao2 = { f:1.23, p:"property", o: { b2:true, p2:"property" }, b:true, i:4  };
-		
-		var o1 = new MockClassForDeepComparison( 3, true, "test", ao1, new MockClassForDeepComparison( 3, true, "test" ) );
-		var o2 = new MockClassForDeepComparison( 3, true, "test", ao2, new MockClassForDeepComparison( 3, true, "test" ) );
+		var o1 = { p:"property", b:true, o: { p2:"property", b2:true }, i:4, f:1.23 };
+		var o2 = { p:"property", b:true, o: { p2:"property", b2:true, }, i:4, f:1.23 };
 		
 		try 
 		{
@@ -682,6 +676,7 @@ class AssertionTest
 		}
 	}
 	
+	#if !flash
 	@Test( "test Assert.setPropertyThrows" )
 	public function testAssertSetPropertyThrows() : Void
 	{
@@ -726,6 +721,7 @@ class AssertionTest
 			Assert.fail( "assertion failed", "assertion failure should return 'AssertException'" );
 		}
 	}
+	#end
 	
 	@Test( "test Assert.fail" )
 	public function testAssertFail() : Void
