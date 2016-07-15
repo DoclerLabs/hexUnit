@@ -150,6 +150,16 @@ class Assert
     public static function equals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
+		
+		#if neko
+		if ( Reflect.isFunction( expected ) )
+		{
+			if ( !Reflect.compareMethods( expected, value ) )
+			{
+				Assert._fail( "Expected '" + expected +"' but was '" + value + "'", userMessage, posInfos );
+			}
+		} else 
+		#end
 
         if ( expected != value )
         {
@@ -163,6 +173,16 @@ class Assert
     public static function notEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
+		
+		#if neko
+		if ( Reflect.isFunction( expected ) )
+		{
+			if ( Reflect.compareMethods( expected, value ) )
+			{
+				Assert._fail( "Expected '" + expected +"' was not equal to '" + value + "'", userMessage, posInfos );
+			}
+		} else 
+		#end
 
         if ( expected == value )
         {
@@ -212,7 +232,7 @@ class Assert
      */
 	public static function arrayNotContainsElement<T>( a : Array<T>, value : T, userMessage : String, ?posInfos : PosInfos ) : Void
     {
-		if ( a.indexOf( value ) != -1 )
+		if ( Assert._indexOf( a, value ) != -1 )
 		{
 			Assert._fail( "Array '" + a +"' should not contain '" + value + "'", userMessage, posInfos );
 		}
@@ -227,12 +247,38 @@ class Assert
 
 		for ( element in value )
 		{
-			if ( expected.indexOf( element ) == -1 )
+			if ( Assert._indexOf( expected, element ) == -1 )
 			{
 				Assert._fail( "Array '" + expected +"' should contain '" + element + "'", userMessage, posInfos );
 			}
 		}
     }
+	
+	static function _indexOf<T>( a : Array<T>, element : T ) : Int
+	{
+		#if !neko
+			return a.indexOf( element );
+		#else
+		if ( Reflect.isFunction( element ) )
+		{
+			var length = a.length;
+			for ( i in 0...length )
+			{
+				var el = a[ i ];
+				if ( Reflect.compareMethods( el, element ) )
+				{
+					return i;
+				}
+			}
+				
+			return -1;
+		}
+		else
+		{
+			return a.indexOf( element );
+		}
+		#end
+	}
 
     /**
      * Asserts this array does not contain any element from another array

@@ -195,6 +195,57 @@ class AssertionTest
 		}
 	}
 	
+	//
+	@Test( "test Assert.equals with closures" )
+	public function testAssertEqualsWithClosures() : Void
+	{
+		Assert.equals( this.testAssertEquals, this.testAssertEquals, "assertion should pass" );
+	}
+	
+	@Test( "test Assert.equals failure with closures" )
+	public function testAssertEqualsWithClosuresFailure() : Void
+	{
+		var f1 = function () {};
+		var f2 = function () {};
+		
+		try 
+		{
+			Assert.equals( this.testAssertEquals, this.testAssertEqualsFailure, "assertion should not pass" );
+		}
+		catch ( e : AssertException )
+		{
+			Assert.revertFailure();
+		}
+		catch ( e : Dynamic )
+		{
+			Assert.fail( "assertion failed", "assertion failure should return 'AssertException'" );
+		}
+	}
+	
+	@Test( "test Assert.notEquals with closures" )
+	public function testAssertNotEqualsWithClosures() : Void
+	{
+		Assert.notEquals( this.testAssertEquals, this.testAssertEqualsFailure, "assertion should pass" );
+	}
+	
+	@Test( "test Assert.notEquals failure with closures" )
+	public function testAssertNotEqualsWithClosuresFailure() : Void
+	{
+		try 
+		{
+			Assert.equals( this.testAssertEquals, this.testAssertEquals, "assertion should not pass" );
+		}
+		catch ( e : AssertException )
+		{
+			Assert.revertFailure();
+		}
+		catch ( e : Dynamic )
+		{
+			Assert.fail( "assertion failed", "assertion failure should return 'AssertException'" );
+		}
+	}
+	//
+	
 	@Test( "test Assert.deepEquals with anonymous object" )
 	public function testAssertDeepEqualsWithAnonymousObject() : Void
 	{
@@ -371,6 +422,80 @@ class AssertionTest
 		try 
 		{
 			Assert.notDeepEquals( o1, o2, "assertion should not pass" );
+		}
+		catch ( e : AssertException )
+		{
+			Assert.revertFailure();
+		}
+		catch ( e : Dynamic )
+		{
+			Assert.fail( "assertion failed", "assertion failure should return 'AssertException'" );
+		}
+	}
+	
+	@Test( "test Assert.deepEquals with closures" )
+	public function testAssertDeepEqualsWithClosures() : Void
+	{
+		var f0 = function() { };
+		var f1 = function() { };
+		var f2 = function() { };
+
+		var a1 = [ f0, f1, f2 ];
+		var a2 = [ f0, f1, f2 ];
+		
+		Assert.deepEquals( a1, a2, "assertion should pass" );
+	}
+	
+	@Test( "test Assert.deepEquals with closures failure" )
+	public function testAssertDeepEqualsWithClosuresFailure() : Void
+	{
+		var f0 = function() { };
+		var f1 = function() { };
+		var f2 = function() { };
+
+		var a1 = [ f0, f1, f2 ];
+		var a2 = [ f0, f2 ];
+		
+		try 
+		{
+			Assert.deepEquals( a1, a2, "assertion should not pass" );
+		}
+		catch ( e : AssertException )
+		{
+			Assert.revertFailure();
+		}
+		catch ( e : Dynamic )
+		{
+			Assert.fail( "assertion failed", "assertion failure should return 'AssertException'" );
+		}
+	}
+	
+	@Test( "test Assert.notDeepEquals with closures" )
+	public function testAssertNotDeepEqualsWithClosures() : Void
+	{
+		var f0 = function() { };
+		var f1 = function() { };
+		var f2 = function() { };
+
+		var a1 = [ f0, f1, f2 ];
+		var a2 = [ f0, f2 ];
+		
+		Assert.notDeepEquals( a1, a2, "assertion should pass" );
+	}
+	
+	@Test( "test Assert.notDeepEquals with closures failure" )
+	public function testAssertNotDeepEqualsWithClosuresFailure() : Void
+	{
+		var f0 = function() { };
+		var f1 = function() { };
+		var f2 = function() { };
+
+		var a1 = [ f0, f1, f2 ];
+		var a2 = [ f0, f1, f2 ];
+		
+		try 
+		{
+			Assert.notDeepEquals( a1, a2, "assertion should not pass" );
 		}
 		catch ( e : AssertException )
 		{
@@ -700,7 +825,7 @@ private class MockClassWithPropertyThatThrowsException
 		return this._property;
 	}
 
-	function set_property( value : Bool ) : Bool
+	function set_property( value : Bool = true ) : Bool
 	{
 		if ( value )
 		{
