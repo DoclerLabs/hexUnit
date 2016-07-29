@@ -134,7 +134,7 @@ class TraceNotifier implements ITestRunnerListener
     {
         var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
         var description : String = methodDescriptor.description;
-        var timeElapsed : String = e.getTimeElapsed() + "ms";
+        var timeElapsed : String = " " + e.getTimeElapsed() + "ms";
         var message : String = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + timeElapsed;
         this._log( message );
     }
