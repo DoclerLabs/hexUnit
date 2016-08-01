@@ -1,4 +1,5 @@
 package hex.unittest.notifier;
+
 #if js
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
