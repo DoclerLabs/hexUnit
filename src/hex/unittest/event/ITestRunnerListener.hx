@@ -13,6 +13,7 @@ interface ITestRunnerListener extends IEventListener
     function onSuccess( event : TestRunnerEvent ) : Void;
     function onFail( event : TestRunnerEvent ) : Void;
     function onTimeout( event : TestRunnerEvent ) : Void;
+    function onIgnore( event : TestRunnerEvent ) : Void;
 
     function onSuiteClassStartRun( event : TestRunnerEvent ) : Void;
     function onSuiteClassEndRun( event : TestRunnerEvent ) : Void;

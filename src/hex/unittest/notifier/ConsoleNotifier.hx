@@ -122,6 +122,15 @@ class ConsoleNotifier implements ITestRunnerListener
         this._removeTab();
     }
 
+	public function onIgnore( e : TestRunnerEvent ):Void 
+	{
+		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
+        var description : String = methodDescriptor.description;
+        var timeElapsed : String = this.setColor( " " + e.getTimeElapsed() + "ms", "yellow+bold" );
+        var message : String = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + timeElapsed;
+        this._log( this.setColor( message, "yellow" ) );
+	}
+
     public function setColor( message : String, color : String ) : String
     {
         if ( color == null )
@@ -161,6 +170,9 @@ class ConsoleNotifier implements ITestRunnerListener
 
             case "red":
                 return 31;
+
+			case "yellow":
+				return 33;
 
             case "blue":
                 return 34;

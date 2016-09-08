@@ -14,6 +14,7 @@ class MethodRunnerEvent extends BasicEvent
     public static inline var SUCCESS    : String = "onSuccess";
     public static inline var FAIL       : String = "onFail";
     public static inline var TIMEOUT    : String = "onTimeout";
+    public static inline var IGNORE     : String = "onIgnore";
     public static inline var START_RUN  : String = "onStartRun";
     public static inline var END_RUN    : String = "onEndRun";
 

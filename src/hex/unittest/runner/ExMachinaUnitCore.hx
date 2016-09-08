@@ -143,6 +143,11 @@ class ExMachinaUnitCore implements ITestRunner implements ITestRunnerListener
         this._dispatcher.dispatchEvent( event );
     }
 
+	public function onIgnore(event:TestRunnerEvent):Void 
+	{
+		this._dispatcher.dispatchEvent( event );
+	}
+
     /**
      *
      **/
