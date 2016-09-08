@@ -36,7 +36,14 @@ class MethodRunner
     public function run() : Void
     {
         this._startTime = Date.now().getTime();
-
+		
+		if (this._methodDescriptor.isIgnored)
+		{
+			this._endTime = Date.now().getTime();
+			this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.IGNORE, this, this._methodDescriptor, this.getTimeElapsed() ) );
+			return;
+		}
+		
         if ( !this._methodDescriptor.isAsync )
         {
             try

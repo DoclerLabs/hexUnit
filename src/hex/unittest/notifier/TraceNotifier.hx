@@ -176,6 +176,15 @@ class TraceNotifier implements ITestRunnerListener
         this._removeTab();
     }
 	
+	public function onIgnore( e : TestRunnerEvent):Void 
+	{
+		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
+        var description : String = methodDescriptor.description;
+        var timeElapsed : String = " " + e.getTimeElapsed() + "ms";
+        var message : String = "IGNORE	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + timeElapsed;
+        this._log( message );
+	}
+	
 	public function handleEvent( e : IEvent ) : Void
 	{
 		

@@ -84,6 +84,15 @@ class JUnitTestNotifier implements ITestRunnerListener
 		summary.output += getTestCaseEnd();
 	}
 	
+	public function onIgnore(event:TestRunnerEvent):Void 
+	{
+		var summary = this._testSuitesInExecution.first();
+		updateSummary(summary, event);
+		summary.output += getTestCaseStart(event);
+		summary.output += "<skipped />";
+		summary.output += getTestCaseEnd();
+	}
+	
 	public function onSuiteClassStartRun(event:TestRunnerEvent):Void 
 	{
 		this._testSuitesInExecution.push(getSuiteSummary(event.getDescriptor().getName(), event.getDescriptor().className));
@@ -142,6 +151,7 @@ class JUnitTestNotifier implements ITestRunnerListener
 		{
 			case TestRunnerEvent.TIMEOUT:	summary.errored++;
 			case TestRunnerEvent.FAIL:		summary.failed++;
+			case TestRunnerEvent.IGNORE:	summary.skipped++;
 			default:
 		}
 	}
@@ -176,6 +186,7 @@ class JUnitTestNotifier implements ITestRunnerListener
 							"timestamp=\"" + summary.timestamp + "\" " +
 							"failures=\"" + summary.failed + "\" " +
 							"errors=\"" + summary.errored + "\" " +
+							"skips=\"" + summary.skipped + "\" " +
 							"tests=\"" + summary.tests + "\" " +
 							"time=\"" + (summary.time / 1000.0) + "\">";
 	}

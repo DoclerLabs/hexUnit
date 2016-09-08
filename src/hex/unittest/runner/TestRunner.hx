@@ -177,6 +177,11 @@ class TestRunner implements ITestRunner implements IMethodRunnerListener
     {
         this._endTestMethodCall( e, TestRunnerEvent.TIMEOUT );
     }
+	
+	public function onIgnore( e : MethodRunnerEvent ):Void 
+	{
+		this._endTestMethodCall( e, TestRunnerEvent.IGNORE );
+	}
 
     function _endTestMethodCall( e : MethodRunnerEvent, eventType : String ) : Void
     {

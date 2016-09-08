@@ -203,6 +203,11 @@ class WebSocketNotifier implements ITestRunnerListener
 		this.onFail(event);
 	}
 	
+	public function onIgnore(event:TestRunnerEvent):Void 
+	{
+		this.onSuccess(event);
+	}
+	
 	public function onSuiteClassStartRun(event:TestRunnerEvent):Void 
 	{
 		var data:Dynamic = {

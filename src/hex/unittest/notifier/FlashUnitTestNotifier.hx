@@ -179,6 +179,14 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		this.onFail( e );
     }
 	
+	public function onIgnore(event:TestRunnerEvent):Void 
+	{
+		var success: String = this.createElement( "- ", "yellow" );
+		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
+		var func : String = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
+        this.generateMessage( success, func, e );
+	}
+	
 	function generateMessage( icon:String, func:String, e : TestRunnerEvent ) : Void
 	{
         var description : String = e.getDescriptor().currentMethodDescriptor().description;
@@ -291,5 +299,6 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 	}
 	
 	public function handleEvent( e : IEvent ) : Void {}
+	
 }
 #end
