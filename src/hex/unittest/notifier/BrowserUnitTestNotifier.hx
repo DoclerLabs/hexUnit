@@ -158,6 +158,15 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 		this.onFail( e );
     }
 	
+	public function onIgnore( e : TestRunnerEvent ):Void 
+	{
+		this._successfulCount++;
+		var ignore: Element = this.createElement( "- ", "yellow" );
+		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
+		var func : Element = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
+        this.generateMessage( ignore, func, e );
+	}
+	
 	function generateMessage( icon:Element, func:Element, e : TestRunnerEvent ) : Void
 	{
         var description : String = e.getDescriptor().currentMethodDescriptor().description;
