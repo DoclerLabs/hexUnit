@@ -179,7 +179,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		this.onFail( e );
     }
 	
-	public function onIgnore(event:TestRunnerEvent):Void 
+	public function onIgnore(e:TestRunnerEvent):Void 
 	{
 		var success: String = this.createElement( "- ", "yellow" );
 		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();

@@ -23,13 +23,17 @@ class ConsoleNotifier implements ITestRunnerListener
     public function new( errorBubbling : Bool = false )
     {
 		this._errorBubbling = errorBubbling;
+		#if js
         this._trace = untyped Reflect.field( js.Boot, "__trace" );
+		#end
     }
 
     function _log( message : String ) : Void
     {
 		#if js
         Reflect.callMethod( untyped js.Boot, this._trace, [ this._tabs + message] );
+		#else
+		_TRACE(this._tabs + message);
 		#end
     }
 
