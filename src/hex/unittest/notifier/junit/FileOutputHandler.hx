@@ -1,4 +1,6 @@
 package hex.unittest.notifier.junit;
+
+#if sys
 import sys.FileSystem;
 import sys.io.File;
 
@@ -34,3 +36,4 @@ class FileOutputHandler implements IOutputHandler
 	}
 	
 }
+#end
