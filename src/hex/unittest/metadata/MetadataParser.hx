@@ -1,5 +1,6 @@
 package hex.unittest.metadata;
 
+import hex.error.Exception;
 import hex.util.ClassUtil;
 import Reflect;
 import hex.unittest.description.TestMethodDescriptor;
@@ -184,6 +185,21 @@ class MetadataParser
                     args = Reflect.field( funcMeta, MetadataList.IGNORE );
                     description = ( args != null ) ? args[ 0 ] : "";
                 }
+                
+                var isDataDriven = Reflect.hasField( funcMeta, MetadataList.DATA_PROVIDER );
+                var dataProvider:Array<Array<Dynamic>> = null;
+                if ( isDataDriven )
+                {
+                    var dataProviderName = Reflect.field( funcMeta, MetadataList.DATA_PROVIDER );
+                    if (!Reflect.hasField(testDescriptor.type, dataProviderName))
+                    {
+                        throw new Exception("Class " + testDescriptor.className + " is missing dataProvider '" + dataProviderName + "' for method '" + fieldName + "'");
+                    }
+                    else
+                    {
+                        dataProvider = Reflect.field( testDescriptor.type, dataProviderName);
+                    }
+                }
 
                 switch( tag )
                 {
@@ -204,13 +220,28 @@ class MetadataParser
                         break;
 
                     case MetadataList.TEST :
-                        testDescriptor.addTestMethodDescriptor( new TestMethodDescriptor( fieldName/*, func*/, false, isIgnored, description ) );
+                        this._addTestToDescriptor(testDescriptor, fieldName, false, isIgnored, description, dataProvider);
                         break;
 
                     case MetadataList.ASYNC:
-                        testDescriptor.addTestMethodDescriptor( new TestMethodDescriptor( fieldName/*, func*/, true, isIgnored, description ) );
+                        this._addTestToDescriptor(testDescriptor, fieldName, true, isIgnored, description, dataProvider);
                 }
             }
+        }
+    }
+
+    function _addTestToDescriptor(testDescriptor:TestClassDescriptor, fieldName:String, isAsync:Bool, isIgnored:Bool, description:String, dataProvider:Array<Array<Dynamic>>):Void
+    {
+        if(dataProvider != null && dataProvider.length > 0)
+        {
+            for(provider in dataProvider)
+            {
+                testDescriptor.addTestMethodDescriptor( new TestMethodDescriptor( fieldName, isAsync, isIgnored, description, provider ) );
+            }
+        }
+        else
+        {
+            testDescriptor.addTestMethodDescriptor( new TestMethodDescriptor( fieldName, isAsync, isIgnored, description, [] ) );
         }
     }
 }

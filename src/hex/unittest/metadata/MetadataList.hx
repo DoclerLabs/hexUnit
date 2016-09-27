@@ -47,6 +47,11 @@ class MetadataList
     public inline static var SUITE : String = "Suite";
 
     /**
+     * Metadata marking test as parametrized with input parameters
+     */
+    public inline static var DATA_PROVIDER : String = "DataProvider";
+    
+    /**
 	 * Array of valid metadatas for instance methods.
 	 */
     public static var INSTANCE_METADATA = [ BEFORE, AFTER, TEST, ASYNC ];

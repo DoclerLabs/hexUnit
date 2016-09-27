@@ -48,7 +48,7 @@ class MethodRunner
         {
             try
             {
-                Reflect.callMethod( this._scope, this._methodReference, [] );
+                Reflect.callMethod( this._scope, this._methodReference, this._methodDescriptor.dataProvider );
                 this._endTime = Date.now().getTime();
                 this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.SUCCESS, this, this._methodDescriptor, this.getTimeElapsed() ) );
             }
@@ -87,7 +87,7 @@ class MethodRunner
             
             try
             {
-                Reflect.callMethod( this._scope, this._methodReference, [] );
+                Reflect.callMethod( this._scope, this._methodReference, this._methodDescriptor.dataProvider );
             }
             catch ( e : Dynamic )
             {
