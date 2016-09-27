@@ -25,6 +25,8 @@ class DataProviderTest
 		Assert.equals(stringValue, "string" + intValue, "Values must be equal");
 	}
 	
+	#if (!neko || haxe_ver >= "3.3")
+	
 	@Async("Async test with data provider")
 	@DataProvider("testDataProvider")
 	public function testAsyncWithDataProvider(stringValue:String, intValue:Int)
@@ -37,4 +39,6 @@ class DataProviderTest
 	{
 		Assert.isTrue(true, "true is true");
 	}
+	
+	#end
 }
