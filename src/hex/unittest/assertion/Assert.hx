@@ -69,7 +69,7 @@ class Assert
     /**
      * Asserts that 'value' is true
      */
-    public static function isTrue( value : Bool, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isTrue( value : Bool, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -82,7 +82,7 @@ class Assert
     /**
      * Asserts that 'value' is false
      */
-    public static function isFalse( value : Bool, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isFalse( value : Bool, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -95,7 +95,7 @@ class Assert
     /**
      * Asserts that 'value' is null
      */
-    public static function isNull( value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isNull( value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -108,7 +108,7 @@ class Assert
     /**
      * Asserts that 'value' is not null
      */
-    public static function isNotNull( value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isNotNull( value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -121,7 +121,7 @@ class Assert
     /**
      * Asserts that 'value' is type of 'type'
      */
-    public static function isInstanceOf( value : Dynamic, type : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isInstanceOf( value : Dynamic, type : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -134,7 +134,7 @@ class Assert
     /**
      * Asserts that 'value' is not type of 'type'
      */
-    public static function isNotInstanceOf( value : Dynamic, type : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function isNotInstanceOf( value : Dynamic, type : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -147,7 +147,7 @@ class Assert
     /**
      * Asserts that 'expected' and 'actual' are equal
      */
-    public static function equals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function equals( expected : Dynamic, value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 		
@@ -170,7 +170,7 @@ class Assert
 	/**
      * Asserts that 'expected' and 'actual' are not equal
      */
-    public static function notEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function notEquals( expected : Dynamic, value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 		
@@ -193,7 +193,7 @@ class Assert
 	/**
      * Asserts that 'expected' and 'actual' are deep equal
      */
-	public static function deepEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+	public static function deepEquals( expected : Dynamic, value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -206,7 +206,7 @@ class Assert
 	/**
      * Asserts that 'expected' and 'actual' are not deep equal
      */
-	public static function notDeepEquals( expected : Dynamic, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+	public static function notDeepEquals( expected : Dynamic, value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -219,7 +219,7 @@ class Assert
 	/**
      * Asserts that array contains this element
      */
-	public static function arrayContainsElement<T>( a : Array<T>, value : T, userMessage : String, ?posInfos : PosInfos ) : Void
+	public static function arrayContainsElement<T>( a : Array<T>, value : T, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
 		if ( a.indexOf( value ) == -1 )
 		{
@@ -230,7 +230,7 @@ class Assert
 	/**
      * Asserts that array does not contain this element
      */
-	public static function arrayNotContainsElement<T>( a : Array<T>, value : T, userMessage : String, ?posInfos : PosInfos ) : Void
+	public static function arrayNotContainsElement<T>( a : Array<T>, value : T, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
 		if ( Assert._indexOf( a, value ) != -1 )
 		{
@@ -241,7 +241,7 @@ class Assert
 	/**
      * Asserts this array contains every elements from another array
      */
-	public static function arrayContainsElementsFrom<T>( expected : Array<T>, value : Array<T>, userMessage : String, ?posInfos : PosInfos ) : Void
+	public static function arrayContainsElementsFrom<T>( expected : Array<T>, value : Array<T>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -283,7 +283,7 @@ class Assert
     /**
      * Asserts this array does not contain any element from another array
      */
-	public static function arrayNotContainsElementsFrom<T>( expected : Array<T>, value : Array<T>, userMessage : String, ?posInfos : PosInfos ) : Void
+	public static function arrayNotContainsElementsFrom<T>( expected : Array<T>, value : Array<T>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -299,7 +299,7 @@ class Assert
 	/**
      * Asserts constructor call throws 'expectedException'
      */
-    public static function constructorCallThrows( expectedException : Class<Exception>, type : Class<Dynamic>, args : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function constructorCallThrows( expectedException : Class<Exception>, type : Class<Dynamic>, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -324,7 +324,7 @@ class Assert
     /**
      * Asserts method call throws 'expectedException'
      */
-    public static function methodCallThrows( expectedException : Class<Exception>, scope : Dynamic, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function methodCallThrows( expectedException : Class<Exception>, scope : Dynamic, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -352,7 +352,7 @@ class Assert
 	 * setting the value.
      */
 	#if !flash
-    public static function setPropertyThrows( expectedException : Class<Exception>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String, ?posInfos : PosInfos ) : Void
+    public static function setPropertyThrows( expectedException : Class<Exception>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
 	{
 		Assert._LOG_ASSERT( userMessage );
 
@@ -382,7 +382,7 @@ class Assert
 	 * @param	userMessage		Error message for the current assertion
 	 * @param	posInfos		Error position infos
 	 */
-	public static function fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void
+	public static function fail( assertMessage : String, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
 		Assert._LOG_ASSERT( userMessage );
 		Assert._fail( assertMessage, userMessage, posInfos ) ;
