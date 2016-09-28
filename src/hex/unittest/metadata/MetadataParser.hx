@@ -190,7 +190,9 @@ class MetadataParser
                 var dataProvider:Array<Array<Dynamic>> = null;
                 if ( isDataDriven )
                 {
-                    var dataProviderName = Reflect.field( funcMeta, MetadataList.DATA_PROVIDER );
+                    args = Reflect.field( funcMeta, MetadataList.DATA_PROVIDER );
+                    var dataProviderName = (args != null) ? args [0] : "";
+
                     if (!Reflect.hasField(testDescriptor.type, dataProviderName))
                     {
                         throw new Exception("Class " + testDescriptor.className + " is missing dataProvider '" + dataProviderName + "' for method '" + fieldName + "'");
