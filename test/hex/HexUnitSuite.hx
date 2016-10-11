@@ -10,5 +10,5 @@ import hex.unittest.event.EventSuite;
 class HexUnitSuite
 {
 	@Suite( "HexUnit suite" )
-    public var list : Array<Class<Dynamic>> = [ AssertionSuite, EventSuite, TestCaseTest ];
+    public var list : Array<Class<Dynamic>> = [ AssertionSuite, EventSuite, TestCaseTest, DataProviderTest ];
 }
