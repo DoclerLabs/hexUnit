@@ -8,6 +8,7 @@ import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestRunnerListener;
 import hex.unittest.event.TestRunnerEvent;
 
+using StringTools;
 
 /**
  * ...
@@ -71,7 +72,7 @@ class JUnitTestNotifier implements ITestRunnerListener
 		var summary = this._testSuitesInExecution.first();
 		updateSummary(summary, event);
 		summary.output += getTestCaseStart(event);
-		summary.output += "<failure type=\"" + event.getError().name + "\" message=\"" + event.getError().message + "\">" + event.getError() + "</failure>";
+		summary.output += "<failure type=\"" + event.getError().name + "\" message=\"" + event.getError().message.htmlEscape(true) + "\"><![CDATA[" + event.getError() + "]]></failure>";
 		summary.output += getTestCaseEnd();
 	}
 	
@@ -80,7 +81,7 @@ class JUnitTestNotifier implements ITestRunnerListener
 		var summary = this._testSuitesInExecution.first();
 		updateSummary(summary, event);
 		summary.output += getTestCaseStart(event);
-		summary.output += "<error type=\"" + event.getError().name + "\" message=\"" + event.getError().message + "\">" + event.getError() + "</error>";
+		summary.output += "<error type=\"" + event.getError().name + "\" message=\"" + event.getError().message.htmlEscape(true) + "\"><![CDATA[" + event.getError() + "]]></error>";
 		summary.output += getTestCaseEnd();
 	}
 	
