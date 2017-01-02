@@ -1,5 +1,7 @@
 package hex.unittest.notifier;
 
+import hex.error.IllegalArgumentException;
+
 #if js
 import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
@@ -28,20 +30,36 @@ class BrowserUnitTestNotifier implements ITestRunnerListener
 	
 	static var _TRACE 	: Dynamic = haxe.Log.trace;
 
-    public function new( targetId : String )
+    public function new( ?targetId : String )
     {
 		this.setConsole( targetId );
 		this.setGlobalResultSuccess( );
     }
 	
-	function setConsole( targetId : String ) : Void
+	function setConsole( ?targetId : String ) : Void
 	{
-		this.console = Browser.document.getElementById( targetId );
+		if ( targetId != null )
+		{
+			this.console = Browser.document.getElementById( targetId );
+			if ( this.console == null )
+			{
+				throw new IllegalArgumentException( "'" + targetId + "' div not found" );
+			}
+		}
+		else
+		{
+			this.console = Browser.document.createDivElement();
+			Browser.document.body.appendChild( this.console );
+		}
+		
 		this.console.style.backgroundColor = "#060606";
 		this.console.style.whiteSpace = "pre";
 		this.console.style.fontFamily = "Lucida Console";
 		this.console.style.position = "relative";
 		this.console.style.fontSize = "11px";
+		this.console.style.overflowY = "scroll";
+		this.console.style.height = "100vh";
+		this.console.style.padding = "15px";
 	}
 
     function _log( element : Element ) : Void
