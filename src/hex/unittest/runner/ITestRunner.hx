@@ -1,6 +1,6 @@
 package hex.unittest.runner;
 
-import hex.unittest.event.ITestRunnerListener;
+import hex.unittest.event.ITestClassResult;
 
 /**
  * ...
@@ -8,6 +8,6 @@ import hex.unittest.event.ITestRunnerListener;
  */
 interface ITestRunner extends IRunner
 {
-    function addListener( listener : ITestRunnerListener ) : Bool;
-    function removeListener( listener : ITestRunnerListener ) : Bool;
+    function addListener( listener : ITestClassResult ) : Bool;
+    function removeListener( listener : ITestClassResult ) : Bool;
 }

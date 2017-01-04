@@ -1,10 +1,12 @@
 package hex.unittest.runner;
 
+import hex.error.Exception;
 import hex.event.IEvent;
 import hex.event.LightweightListenerDispatcher;
 import hex.log.Stringifier;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.event.ITestClassResult;
 import hex.unittest.event.ITestRunnerListener;
 import hex.unittest.event.TestRunnerEvent;
 import hex.unittest.metadata.MetadataParser;
@@ -13,7 +15,8 @@ import hex.unittest.metadata.MetadataParser;
  * ...
  * @author Francis Bourre
  */
-class ExMachinaUnitCore implements ITestRunner implements ITestRunnerListener
+class ExMachinaUnitCore 
+	implements ITestClassResult
 {
     var _dispatcher                 : LightweightListenerDispatcher<ITestRunnerListener, TestRunnerEvent>;
     var _parser                     : MetadataParser;
@@ -86,16 +89,16 @@ class ExMachinaUnitCore implements ITestRunner implements ITestRunnerListener
         return this._dispatcher.removeListener( listener );
     }
 
-    public function onStartRun( event : TestRunnerEvent ) : Void
+    public function onStartRun( descriptor : TestClassDescriptor ): Void
     {
-        this._dispatcher.dispatchEvent( event );
+        this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.START_RUN, descriptor ) );
     }
 
-    public function onEndRun( event : TestRunnerEvent ) : Void
+    public function onEndRun( descriptor : TestClassDescriptor ) : Void
     {
         if ( this._hasNextClassDescriptor() )
         {
-			this._dispatcher.dispatchEvent( event );
+			this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.END_RUN, descriptor ) );
             Assert.resetAssertionLog();
 			
             this._runner.removeListener( this );
@@ -103,49 +106,49 @@ class ExMachinaUnitCore implements ITestRunner implements ITestRunnerListener
         }
         else
         {
-            this._dispatcher.dispatchEvent( event );
+            this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.END_RUN, descriptor ) );
             Assert.resetAssertionLog();
         }
     }
 
-    public function onSuiteClassStartRun( event : TestRunnerEvent ) : Void
+    public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._dispatcher.dispatchEvent( event );
+       this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.SUITE_CLASS_START_RUN, descriptor ) );
     }
 
-    public function onSuiteClassEndRun( event : TestRunnerEvent ) : Void
+    public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._dispatcher.dispatchEvent( event );
+        this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.SUITE_CLASS_END_RUN, descriptor ) );
     }
 
-    public function onTestClassStartRun( event : TestRunnerEvent ) : Void
+    public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._dispatcher.dispatchEvent( event );
+        this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.TEST_CLASS_START_RUN, descriptor ) );
     }
 
-    public function onTestClassEndRun( event : TestRunnerEvent ) : Void
+    public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._dispatcher.dispatchEvent( event );
+        this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.TEST_CLASS_END_RUN, descriptor ) );
     }
 
-    public function onSuccess( event : TestRunnerEvent ) : Void
+    public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-        this._dispatcher.dispatchEvent( event );
+        this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.SUCCESS, descriptor, timeElapsed, error ) );
     }
 
-    public function onFail( event : TestRunnerEvent ) : Void
+    public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-        this._dispatcher.dispatchEvent( event );
+        this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.FAIL, descriptor, timeElapsed, error ) );
     }
 
-    public function onTimeout( event : TestRunnerEvent ) : Void
+    public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-        this._dispatcher.dispatchEvent( event );
+        this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.TIMEOUT, descriptor, timeElapsed, error ) );
     }
 
-	public function onIgnore(event:TestRunnerEvent):Void 
+	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void 
 	{
-		this._dispatcher.dispatchEvent( event );
+		this._dispatcher.dispatchEvent( new TestRunnerEvent( TestRunnerEvent.IGNORE, descriptor, timeElapsed, error ) );
 	}
 
     /**

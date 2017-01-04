@@ -1,9 +1,9 @@
 package hex.unittest.event;
 
-import hex.event.BasicEvent;
 import hex.error.Exception;
-import hex.unittest.runner.TestRunner;
+import hex.event.BasicEvent;
 import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.runner.TestRunner;
 
 class TestRunnerEvent  extends BasicEvent
 {
@@ -23,9 +23,9 @@ class TestRunnerEvent  extends BasicEvent
     var _error                              : Exception;
     var _timeElapsed                        : Float;
 
-    public function new ( type : String, target : TestRunner, descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception )
+    public function new ( type : String, descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception )
     {
-        super( type, target );
+        super( type, null );
 
         this._descriptor    = descriptor;
         this._timeElapsed   = timeElapsed;
@@ -54,6 +54,6 @@ class TestRunnerEvent  extends BasicEvent
 	
 	override public function clone() : BasicEvent
 	{
-		return new TestRunnerEvent( this.type, this.target, this._descriptor, this._timeElapsed, this._error );
+		return new TestRunnerEvent( this.type, this._descriptor, this._timeElapsed, this._error );
 	}
 }
