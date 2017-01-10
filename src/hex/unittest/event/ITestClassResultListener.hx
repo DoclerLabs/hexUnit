@@ -7,7 +7,7 @@ import hex.unittest.description.TestClassDescriptor;
  * ...
  * @author Francis Bourre
  */
-interface ITestClassResult
+interface ITestClassResultListener
 {
 	function onStartRun( descriptor : TestClassDescriptor ) : Void;
     function onEndRun( descriptor : TestClassDescriptor ) : Void;

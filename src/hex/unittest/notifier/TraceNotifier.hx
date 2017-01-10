@@ -6,19 +6,18 @@ import flash.errors.Error;
 import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
 #end
+
 import hex.error.Exception;
-import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.description.TestClassDescriptor;
 import hex.unittest.error.AssertException;
-import hex.unittest.event.ITestRunnerListener;
-import hex.unittest.event.TestRunnerEvent;
+import hex.unittest.event.ITestClassResultListener;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class TraceNotifier implements ITestRunnerListener
+class TraceNotifier implements ITestClassResultListener
 {
 	public static var TAB_CHARACTER:String = "  ";
 	
@@ -80,14 +79,14 @@ class TraceNotifier implements ITestRunnerListener
         this._tabs = this._tabs.substr( 0, this._tabs.length - (TAB_CHARACTER.length) );
     }
 
-    public function onStartRun( e : TestRunnerEvent ) : Void
+    public function onStartRun( descriptor : TestClassDescriptor ) : Void
     {
         this._tabs = "";
-        this._log( "<<< Start " + e.getDescriptor().className + " tests run >>>" );
+        this._log( "<<< Start " + descriptor.className + " tests run >>>" );
         this._addTab();
     }
 
-    public function onEndRun( e : TestRunnerEvent ) : Void
+    public function onEndRun( descriptor : TestClassDescriptor ) : Void
     {
         this._removeTab();
         this._log( "<<< End tests run >>>" );
@@ -108,85 +107,80 @@ class TraceNotifier implements ITestRunnerListener
 		#end
     }
 
-    public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
+    public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._log( "Suite class '" + e.getDescriptor().getName() + "'" );
+        this._log( "Suite class '" + descriptor.getName() + "'" );
         this._addTab();
     }
 
-    public function onSuiteClassEndRun( e : TestRunnerEvent ) : Void
+    public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onTestClassStartRun( e : TestRunnerEvent ) : Void
+    public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._log( "Test class '" + e.getDescriptor().className + "'" );
+        this._log( "Test class '" + descriptor.className + "'" );
         this._addTab();
     }
 
-    public function onTestClassEndRun( e : TestRunnerEvent ) : Void
+    public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onSuccess( e : TestRunnerEvent ) : Void
+    public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-        var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-        var description : String = methodDescriptor.description;
-        var timeElapsed : String = " " + e.getTimeElapsed() + "ms";
-        var message : String = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + timeElapsed;
+        var methodDescriptor = descriptor.currentMethodDescriptor();
+        var description = methodDescriptor.description;
+        var time = " " + timeElapsed + "ms";
+        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
         this._log( message );
     }
 
-    public function onFail( e : TestRunnerEvent ) : Void
+    public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-		if ( e != null && e.getDescriptor() != null )
+		if ( descriptor != null )
 		{
-			var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-			var description : String = methodDescriptor.description;
-			var message : String = "FAILURE!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+			var methodDescriptor = descriptor.currentMethodDescriptor();
+			var description = methodDescriptor.description;
+			var message = "FAILURE!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
 			this._log( message );
 			this._addTab();
 			#if php
-			this._log( "" + e.getError() + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
+			this._log( "" + error + ": " + ( Std.is( error, AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
 			#else
-			this._log( e.getError().toString() );
-			this._log( e.getError().message + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
+			this._log( error.toString() );
+			this._log( error.message + ": " + ( Std.is( error, AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
 			#end
 			
 			this._removeTab();
 			
 			if ( this._errorBubbling )
 			{
-				throw( e.getError() );
+				throw( error );
 			}
 		}
 		
     }
 
-    public function onTimeout( e : TestRunnerEvent ) : Void
+    public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-        var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-        var description : String = methodDescriptor.description;
-        var message : String = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+        var methodDescriptor = descriptor.currentMethodDescriptor();
+        var description = methodDescriptor.description;
+        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( message );
         this._addTab();
-        this._log( e.getError().message );
+        this._log( error.message );
         this._removeTab();
     }
 	
-	public function onIgnore( e : TestRunnerEvent):Void 
+	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void 
 	{
-		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-        var description : String = methodDescriptor.description;
-        var timeElapsed : String = " " + e.getTimeElapsed() + "ms";
-        var message : String = "IGNORE	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + timeElapsed;
+		var methodDescriptor = descriptor.currentMethodDescriptor();
+        var description = methodDescriptor.description;
+        var timeElapsed = " " + timeElapsed + "ms";
+        var message = "IGNORE	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + timeElapsed;
         this._log( message );
-	}
-	
-	public function handleEvent( e : IEvent ) : Void
-	{
-		
 	}
 }

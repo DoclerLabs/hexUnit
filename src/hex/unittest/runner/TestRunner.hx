@@ -6,7 +6,7 @@ import hex.error.Exception;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
 import hex.unittest.description.TestClassDescriptor;
-import hex.unittest.event.ITestClassResult;
+import hex.unittest.event.ITestClassResultListener;
 import hex.unittest.event.ITestResultListener;
 
 /**
@@ -22,7 +22,7 @@ class TestRunner implements ITestRunner
 	var _lastRender					: Float = 0;
 	
 	@Trigger
-    public var dispatcher ( default, never ) : ITrigger<ITestClassResult>;
+    public var dispatcher ( default, never ) : ITrigger<ITestClassResultListener>;
 	
 	#if flash
 	static public var RENDER_DELAY 			: Int = 150;
@@ -143,12 +143,12 @@ class TestRunner implements ITestRunner
         }
     }
 
-    public function addListener( listener : ITestClassResult ) : Bool
+    public function addListener( listener : ITestClassResultListener ) : Bool
     {
         return this.dispatcher.connect( listener );
     }
 
-    public function removeListener( listener : ITestClassResult ) : Bool
+    public function removeListener( listener : ITestClassResultListener ) : Bool
     {
         return this.dispatcher.disconnect( listener );
     }
