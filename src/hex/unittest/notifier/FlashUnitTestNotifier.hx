@@ -1,23 +1,23 @@
 package hex.unittest.notifier;
+
 #if flash
+import flash.Lib;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
-import flash.Lib;
 import flash.text.StyleSheet;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import hex.event.IEvent;
+import hex.error.Exception;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.description.TestClassDescriptor;
 import hex.unittest.error.AssertException;
-import hex.unittest.event.ITestRunnerListener;
-import hex.unittest.event.TestRunnerEvent;
+import hex.unittest.event.ITestClassResultListener;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class FlashUnitTestNotifier implements ITestRunnerListener
+class FlashUnitTestNotifier implements ITestClassResultListener
 {
 	static var _TRACE 		: Dynamic = haxe.Log.trace;
 	
@@ -62,7 +62,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 
     function _log( element : String ) : Void
     {
-		var buffer:String = '';
+		var buffer = '';
 
 		for ( i in 0...this._tabs * 4 ) 
 		{
@@ -85,24 +85,24 @@ class FlashUnitTestNotifier implements ITestRunnerListener
         this._tabs--;
     }
 
-    public function onStartRun( e : TestRunnerEvent ) : Void
+    public function onStartRun( descriptor : TestClassDescriptor ) : Void
     {
         this._tabs = 0;
-        this._log( this.createElement( "[[[ Start " + e.getDescriptor().className + " tests run ]]]", "yellow+bold+h3" ) );
+        this._log( this.createElement( "[[[ Start " + descriptor.className + " tests run ]]]", "yellow+bold+h3" ) );
         this._addTab();
     }
 
-    public function onEndRun( e : TestRunnerEvent ) : Void
+    public function onEndRun( descriptor : TestClassDescriptor ) : Void
     {
         this._removeTab();
 		
-		var successfulCount:Int = Assert.getAssertionCount() - Assert.getAssertionFailedCount();
+		var successfulCount = Assert.getAssertionCount() - Assert.getAssertionFailedCount();
 		
-		var beginning : String 		= this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
-		var all : String 			= this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
-		var successfull : String 	= this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
-		var failed : String 		= this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
-		var ending : String 		= this.createElement( "]]]", "yellow+bold+h3" );
+		var beginning 		= this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
+		var all 			= this.createElement( Assert.getAssertionCount() + " overall :: ", "white+bold+h3" );
+		var successfull 	= this.createElement( successfulCount + " successul :: ", "green+bold+h3" );
+		var failed 			= this.createElement( Assert.getAssertionFailedCount() + " failed :: ", "red+bold+h3" );
+		var ending 			= this.createElement( "]]]", "yellow+bold+h3" );
 		
 		var list = new Array<String>();
 		list.push( beginning );
@@ -124,87 +124,84 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		this.addRuler();
     }
 
-    public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
+    public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._log( this.createElement( "Test suite: '" + e.getDescriptor().getName() + "'", "white+bold+h4" ) );
+        this._log( this.createElement( "Test suite: '" + descriptor.getName() + "'", "white+bold+h4" ) );
         this._addTab();
     }
 
-    public function onSuiteClassEndRun( e : TestRunnerEvent ) : Void
+    public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onTestClassStartRun( e : TestRunnerEvent ) : Void
+    public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._log( this.createElement( "Test class: '" + e.getDescriptor().className + "'", "darkwhite+h5+bold" ) );
+        this._log( this.createElement( "Test class: '" + descriptor.className + "'", "darkwhite+h5+bold" ) );
         this._addTab();
     }
 
-    public function onTestClassEndRun( e : TestRunnerEvent ) : Void
+    public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onSuccess( e : TestRunnerEvent ) : Void
+    public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-		var success: String = this.createElement( "✔ ", "green" );
-		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-		var func : String = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
-        this.generateMessage( success, func, e );
+		var success = this.createElement( "✔ ", "green" );
+		var methodDescriptor = descriptor.currentMethodDescriptor();
+		var func = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
+        this.generateMessage( success, func, descriptor, timeElapsed );
     }
 	
 
-    public function onFail( e : TestRunnerEvent ) : Void
+    public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-        var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-		var func : String = this.createElement( methodDescriptor.methodName + "() ", "red" );
+        var methodDescriptor = descriptor.currentMethodDescriptor();
+		var func = this.createElement( methodDescriptor.methodName + "() ", "red" );
+		var fail = this.createElement( "✘ ", "red" );
 		
-		var fail: String = this.createElement( "✘ ", "red" );
-		
-        this.generateMessage( fail, func, e );
+        this.generateMessage( fail, func, descriptor, timeElapsed );
 		
         this._addTab();
         this._addTab();
-        this._log( this.createElement( e.getError().toString(), "red+bold" ) );
-        this._log( this.createElement( e.getError().message + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ), "red" ) );
+        this._log( this.createElement( error.toString(), "red+bold" ) );
+        this._log( this.createElement( error.message + ": " + ( Std.is( error, AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ), "red" ) );
         this._removeTab();
         this._removeTab();
 		
 		this.setGlobalResultFailed( );
     }
 
-    public function onTimeout( e : TestRunnerEvent ) : Void
+    public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-		this.onFail( e );
+		this.onFail( descriptor, timeElapsed, error );
     }
 	
-	public function onIgnore(e:TestRunnerEvent):Void 
+	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
 	{
-		var success: String = this.createElement( "- ", "yellow" );
-		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-		var func : String = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
-        this.generateMessage( success, func, e );
+		var success 			= this.createElement( "- ", "yellow" );
+		var methodDescriptor 	= descriptor.currentMethodDescriptor();
+		var func 				= this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
+        this.generateMessage( success, func, descriptor, timeElapsed );
 	}
 	
-	function generateMessage( icon:String, func:String, e : TestRunnerEvent ) : Void
+	function generateMessage( icon : String, func:String, descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
 	{
-        var description : String = e.getDescriptor().currentMethodDescriptor().description;
-		
-        var message : String = this.createElement( (description.length > 0 ? description : "") + " [" + e.getTimeElapsed() + "ms]", "darkgrey" );
-		
+        var description 	= descriptor.currentMethodDescriptor().description;
+        var message 		= this.createElement( ( description.length > 0 ? description : "" ) + " [" + timeElapsed + "ms]", "darkgrey" );
         this._log( this.encapsulateElements( [icon, func, message] ) );
 	}
 
     public function createElement( message : String, color : String ) : String
     {
-        var result : String = "";
-		var colorId:String = color.split("+").join("_");
-		var span:String = "<span class=\"" + colorId + "\">" + message + "</span>";
+        var result 		= "";
+		var colorId 	= color.split("+").join("_");
+		var span 		= "<span class=\"" + colorId + "\">" + message + "</span>";
 		
 		if ( this._styleList[ "." + colorId ] == null )
 		{
-			var style:Dynamic = { };
+			var style : Dynamic = {};
 			this.setAttributes( style, color );
 			this.styleSheet.setStyle( "." + colorId, style );
 			this._styleList["." + colorId] = true;
@@ -219,7 +216,7 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 		return elementList.join( "" );
 	}
 	
-	function setAttributes( style:Dynamic, color: String ) : Void
+	function setAttributes( style : Dynamic, color : String ) : Void
 	{
 		var colorAttributes : Array<String> = color.split( "+" );
 		
@@ -273,20 +270,21 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 			case "h4":
 				style.fontSize = "13px";
 				style.leading = "30px";
+				
 			case "h5":
 				style.leading = "25px";
         }
 		
     }
 	
-	function setGlobalResultSuccess( ) : Void
+	function setGlobalResultSuccess() : Void
 	{
 		this.successMarker.graphics.clear();
 		this.successMarker.graphics.beginFill( 0x2f8a11 );
 		this.successMarker.graphics.drawRect( 0, 0, this.console.x, target.stage.stageHeight );
 	}
 	
-	function setGlobalResultFailed( ) : Void
+	function setGlobalResultFailed() : Void
 	{
 		this.successMarker.graphics.clear();
 		this.successMarker.graphics.beginFill( 0xe62323 );
@@ -297,8 +295,5 @@ class FlashUnitTestNotifier implements ITestRunnerListener
 	{
 		this.console.htmlText += "----------------------<br/>";
 	}
-	
-	public function handleEvent( e : IEvent ) : Void {}
-	
 }
 #end

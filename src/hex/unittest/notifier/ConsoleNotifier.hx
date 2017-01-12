@@ -1,18 +1,16 @@
 package hex.unittest.notifier;
 
 import hex.error.Exception;
-import hex.event.IEvent;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.description.TestClassDescriptor;
 import hex.unittest.error.AssertException;
-import hex.unittest.event.ITestRunnerListener;
-import hex.unittest.event.TestRunnerEvent;
+import hex.unittest.event.ITestClassResultListener;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ConsoleNotifier implements ITestRunnerListener
+class ConsoleNotifier implements ITestClassResultListener
 {
     var _trace  			: Dynamic;
     var _tabs   			: String;
@@ -47,14 +45,14 @@ class ConsoleNotifier implements ITestRunnerListener
         this._tabs = this._tabs.substr( 0, this._tabs.length-1 );
     }
 
-    public function onStartRun( e : TestRunnerEvent ) : Void
+    public function onStartRun( descriptor : TestClassDescriptor ) : Void
     {
         this._tabs = "";
-        this._log( this.setColor( "<<< Start " + e.getDescriptor().className + " tests run >>>", "blue+bold+underline" ) );
+        this._log( this.setColor( "<<< Start " + descriptor.className + " tests run >>>", "blue+bold+underline" ) );
         this._addTab();
     }
 
-    public function onEndRun( e : TestRunnerEvent ) : Void
+    public function onEndRun( descriptor : TestClassDescriptor ) : Void
     {
         this._removeTab();
         this._log( this.setColor( "<<< End tests run >>>", "blue+bold+underline" ) );
@@ -67,71 +65,71 @@ class ConsoleNotifier implements ITestRunnerListener
 		}
     }
 
-    public function onSuiteClassStartRun( e : TestRunnerEvent ) : Void
+    public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._log( this.setColor( "Suite class '" + e.getDescriptor().getName() + "'", "green+underline" ) );
+        this._log( this.setColor( "Suite class '" + descriptor.getName() + "'", "green+underline" ) );
         this._addTab();
     }
 
-    public function onSuiteClassEndRun( e : TestRunnerEvent ) : Void
+    public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onTestClassStartRun( e : TestRunnerEvent ) : Void
+    public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._log( this.setColor( "Test class '" + e.getDescriptor().className + "'", "green" ) );
+        this._log( this.setColor( "Test class '" + descriptor.className + "'", "green" ) );
         this._addTab();
     }
 
-    public function onTestClassEndRun( e : TestRunnerEvent ) : Void
+    public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onSuccess( e : TestRunnerEvent ) : Void
+    public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-        var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-        var description : String = methodDescriptor.description;
-        var timeElapsed : String = this.setColor( " " + e.getTimeElapsed() + "ms", "green+bold" );
-        var message : String = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + timeElapsed;
+        var methodDescriptor = descriptor.currentMethodDescriptor();
+        var description = methodDescriptor.description;
+        var time = this.setColor( " " + timeElapsed + "ms", "green+bold" );
+        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
         this._log( this.setColor( message, "green" ) );
     }
 
-    public function onFail( e : TestRunnerEvent ) : Void
+    public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-        var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-        var description : String = methodDescriptor.description;
-        var message : String = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+        var methodDescriptor = descriptor.currentMethodDescriptor();
+        var description = methodDescriptor.description;
+        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( this.setColor( message, "red" ) );
         this._addTab();
-        this._log( this.setColor( e.getError().toString(), "red+bold" ) );
-        this._log( this.setColor( e.getError().message + ": " + ( Std.is( e.getError(), AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ), "red" ) );
+        this._log( this.setColor( error.toString(), "red+bold" ) );
+        this._log( this.setColor( error.message + ": " + ( Std.is( error, AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ), "red" ) );
         this._removeTab();
 		
 		if ( this._errorBubbling )
 		{
-			throw( e.getError() );
+			throw( error );
 		}
     }
 
-    public function onTimeout( e : TestRunnerEvent ) : Void
+    public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
     {
-        var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-        var description : String = methodDescriptor.description;
-        var message : String = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+        var methodDescriptor = descriptor.currentMethodDescriptor();
+        var description = methodDescriptor.description;
+        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( this.setColor( message, "red" ) );
         this._addTab();
-        this._log( this.setColor( e.getError().message, "red+bold" ) );
+        this._log( this.setColor( error.message, "red+bold" ) );
         this._removeTab();
     }
 
-	public function onIgnore( e : TestRunnerEvent ):Void 
+	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
 	{
-		var methodDescriptor : TestMethodDescriptor = e.getDescriptor().currentMethodDescriptor();
-        var description : String = methodDescriptor.description;
-        var timeElapsed : String = this.setColor( " " + e.getTimeElapsed() + "ms", "yellow+bold" );
-        var message : String = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + timeElapsed;
+		var methodDescriptor = descriptor.currentMethodDescriptor();
+        var description = methodDescriptor.description;
+        var time = this.setColor( " " + timeElapsed + "ms", "yellow+bold" );
+        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
         this._log( this.setColor( message, "yellow" ) );
 	}
 
@@ -184,9 +182,4 @@ class ConsoleNotifier implements ITestRunnerListener
 
         return 0;
     }
-	
-	public function handleEvent( e : IEvent ) : Void
-	{
-		
-	}
 }

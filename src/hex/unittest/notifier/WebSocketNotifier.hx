@@ -1,12 +1,14 @@
 package hex.unittest.notifier;
+
 #if js
 import haxe.Json;
-import hex.event.IEvent;
-import hex.event.LightweightClosureDispatcher;
+import hex.data.GUID;
+import hex.error.Exception;
+import hex.event.ITrigger;
+import hex.event.ITriggerOwner;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestMethodDescriptor;
-import hex.unittest.event.ITestRunnerListener;
-import hex.unittest.event.TestRunnerEvent;
+import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.event.ITestClassResultListener;
 import js.html.CloseEvent;
 import js.html.Event;
 import js.html.WebSocket;
@@ -15,47 +17,54 @@ import js.html.WebSocket;
  * ...
  * @author ...
  */
-class WebSocketNotifier implements ITestRunnerListener
+class WebSocketNotifier 
+	implements ITriggerOwner
+	implements ITestClassResultListener
 {
-	static public inline var version:String = "0.1.1";
+	static public inline var version : String = "0.1.1";
 	
-	var _url:String;
-	var _webSocket:WebSocket;
-	var _clientId:String;
+	var _url		: String;
+	var _webSocket	: WebSocket;
+	var _clientId	: String;
+
+	@Trigger
+    public var dispatcher ( default, never ) : ITrigger<IWebSocketNotifierListener>;
 	
-	var _dispatcher:LightweightClosureDispatcher<WebSocketNotifierEvent>;
-	
-	var _cache = new Array<String>();
+	var _cache 			= new Array<String>();
 	var _connected:Bool = false;
 	var netTimeElapsed	: Float;
 
-	public function new(url:String) 
+	public function new( url : String ) 
 	{
 		this._url = url;
 		this._clientId = this.generateUUID();
-		this._dispatcher = new LightweightClosureDispatcher<WebSocketNotifierEvent>();
-		this._connect( );
+		this._connect();
 	}
 	
-	public function addEventListener( eventType:String, callback:WebSocketNotifierEvent->Void ):Void
+	public function addListener( listener : IWebSocketNotifierListener ):Void
 	{
-		this._dispatcher.addEventListener( eventType, callback );
+		this.dispatcher.connect( listener );
 	}
 	
-	function _connect():Void
+	public function removeListener( listener : IWebSocketNotifierListener ):Void
 	{
-		trace("WebSocketServiceJS._connect", this._url);
-		this._webSocket = new WebSocket(this._url);
+		this.dispatcher.disconnect( listener );
+	}
+	
+	function _connect() : Void
+	{
+		trace( "WebSocketServiceJS._connect", this._url );
+		this._webSocket = new WebSocket( this._url );
 		this._addWebSocketListeners( this._webSocket );
 	}
 	
-	function _close():Void
+	function _close() : Void
 	{
 		this._webSocket.close(0,"testOver");
 		this._removeWebSocketListeners(this._webSocket);
 	}
 	
-	function _addWebSocketListeners( webSocket:WebSocket ):Void
+	function _addWebSocketListeners( webSocket : WebSocket ) : Void
 	{
 		webSocket.addEventListener( "open", this.onOpen );
 		webSocket.addEventListener( "close", this.onClose );
@@ -63,7 +72,7 @@ class WebSocketNotifier implements ITestRunnerListener
 		webSocket.addEventListener( "message", this.onMessage );
 	}
 	
-	function _removeWebSocketListeners( webSocket:WebSocket ):Void
+	function _removeWebSocketListeners( webSocket : WebSocket ) : Void
 	{
 		webSocket.removeEventListener( "open", this.onOpen );
 		webSocket.removeEventListener( "close", this.onClose );
@@ -71,20 +80,20 @@ class WebSocketNotifier implements ITestRunnerListener
 		webSocket.removeEventListener( "message", this.onMessage );
 	}
 	
-	function onOpen(e:Event):Void 
+	function onOpen( e : Event ) : Void 
 	{
-		trace("WebSocketServiceJS.onOpen");
+		trace( "WebSocketServiceJS.onOpen" );
 		
-		this._dispatcher.dispatchEvent(new WebSocketNotifierEvent(WebSocketNotifierEvent.CONNECTED, this));
+		this.dispatcher.onConnect( this );
 		this._connected = true;
 		
 		this.flush( );
 	}
 	
-	function flush():Void
+	function flush() : Void
 	{
-		var l:UInt = this._cache.length;
-		for (i in 0 ... l ) 
+		var l = this._cache.length;
+		for ( i in 0 ... l ) 
 		{
 			this._webSocket.send( this._cache[i] );
 		}
@@ -92,25 +101,26 @@ class WebSocketNotifier implements ITestRunnerListener
 		this._cache = new Array<String>();
 	}
 	
-	function onClose(e:CloseEvent):Void 
+	function onClose( e : CloseEvent ) : Void 
 	{
-		trace("WebSocketNotifier.onClose", e.reason, e.code);
+		trace( "WebSocketNotifier.onClose", e.reason, e.code );
 		this._connected = false;
 	}
 	
-	function onError(e:Event):Void 
+	function onError( e : Event ) : Void 
 	{
-		trace("WebSocketNotifier.onError", e);
+		trace( "WebSocketNotifier.onError", e );
 	}
 	
-	function onMessage(e:Event):Void 
+	function onMessage( e : Event ) : Void 
 	{
 		trace("WebSocketNotifier.onMessage");
 	}
 	
-	function sendMessage( messageType:String, data:Dynamic ):Void
+	function sendMessage( messageType : String, data : Dynamic ) : Void
 	{
-		var message:Dynamic = {
+		var message = 
+		{
 			messageId: this.generateUUID(),
 			clientType: "webSocketTestNotifier",
 			clientVersion: WebSocketNotifier.version,
@@ -119,7 +129,7 @@ class WebSocketNotifier implements ITestRunnerListener
 			data: data
 		};
 		
-		var stringified:String = Json.stringify(message);
+		var stringified = Json.stringify( message );
 		
 		if ( this._connected )
 		{
@@ -131,18 +141,16 @@ class WebSocketNotifier implements ITestRunnerListener
 		}
 	}
 	
-	
-	public function onStartRun(event:TestRunnerEvent):Void 
+	public function onStartRun( descriptor : TestClassDescriptor ) : Void
 	{
-		
 		this.netTimeElapsed = 0;
-		
 		this.sendMessage( "startRun", {} );
 	}
 	
-	public function onEndRun(event:TestRunnerEvent):Void 
+	public function onEndRun( descriptor : TestClassDescriptor ) : Void
 	{
-		var data:Dynamic = { 
+		var data = 
+		{ 
 			successfulAssertionCount: Assert.getAssertionCount() - Assert.getAssertionFailedCount(),
 			assertionFailedCount: Assert.getAssertionFailedCount(),
 			assertionCount: Assert.getAssertionCount(),
@@ -152,107 +160,98 @@ class WebSocketNotifier implements ITestRunnerListener
 		this.sendMessage( "endRun", data  );
 	}
 	
-	public function onSuccess(event:TestRunnerEvent):Void 
+	public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void 
 	{
-		var methodDescriptor : TestMethodDescriptor = event.getDescriptor().currentMethodDescriptor();
+		var methodDescriptor = descriptor.currentMethodDescriptor();
 		
-		var data:Dynamic = {
-			className: event.getDescriptor().className,
+		var data = 
+		{
+			className: descriptor.className,
 			methodName: methodDescriptor.methodName,
 			description: methodDescriptor.description,
 			isAsync: methodDescriptor.isAsync,
 			isIgnored: methodDescriptor.isIgnored,
-			timeElapsed: event.getTimeElapsed(),
+			timeElapsed: timeElapsed,
 
 
 			fileName: "under_construction",
 			lineNumber: 0
 		};
 		
-		this.netTimeElapsed += event.getTimeElapsed();
-
+		this.netTimeElapsed += timeElapsed;
 		this.sendMessage( "testCaseRunSuccess", data );
 	}
 	
-	public function onFail(event:TestRunnerEvent):Void 
+	public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
 	{
-		var methodDescriptor : TestMethodDescriptor = event.getDescriptor().currentMethodDescriptor();
+		var methodDescriptor = descriptor.currentMethodDescriptor();
 		
-		var data:Dynamic = {
-			className: event.getDescriptor().className,
+		var data = 
+		{
+			className: descriptor.className,
 			methodName: methodDescriptor.methodName,
 			description: methodDescriptor.description,
 			isAsync: methodDescriptor.isAsync,
 			isIgnored: methodDescriptor.isIgnored,
-			timeElasped: event.getTimeElapsed(),
+			timeElasped: timeElapsed,
 
 
-			fileName: event.getError().posInfos != null ? event.getError().posInfos.fileName : "unknown",
-			lineNumber: event.getError().posInfos != null ? event.getError().posInfos.lineNumber : 0,
+			fileName: error.posInfos != null ? error.posInfos.fileName : "unknown",
+			lineNumber: error.posInfos != null ? error.posInfos.lineNumber : 0,
 
 			success: false,
-			errorMsg: event.getError().message };
+			errorMsg: error.message 
+		};
 			
-		this.netTimeElapsed += event.getTimeElapsed();
+		this.netTimeElapsed += timeElapsed;
 
 		this.sendMessage( "testCaseRunFailed", data );
 	}
 	
-	public function onTimeout(event:TestRunnerEvent):Void 
+	public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
 	{
-		this.onFail(event);
+		this.onFail( descriptor, timeElapsed, error );
 	}
 	
-	public function onIgnore(event:TestRunnerEvent):Void 
+	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
 	{
-		this.onSuccess(event);
+		this.onSuccess( descriptor, timeElapsed, error );
 	}
 	
-	public function onSuiteClassStartRun(event:TestRunnerEvent):Void 
+	public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
 	{
-		var data:Dynamic = {
-			className: event.getDescriptor().className,
-			suiteName: event.getDescriptor().getName()
+		var data = 
+		{
+			className: descriptor.className,
+			suiteName: descriptor.getName()
 		};
 		
 		this.sendMessage( "testSuiteStartRun", data );
 	}
 	
-	public function onSuiteClassEndRun(event:TestRunnerEvent):Void 
+	public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
 	{
 		this.sendMessage( "testSuiteEndRun", {} );
 	}
 	
-	public function onTestClassStartRun(event:TestRunnerEvent):Void 
+	public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void 
 	{
-		var data:Dynamic = {
-			className: event.getDescriptor().className
+		var data = 
+		{
+			className: descriptor.className
 		};
 		
 		this.sendMessage( "testClassStartRun", data );
 	}
 	
-	public function onTestClassEndRun(event:TestRunnerEvent):Void 
+	public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
 	{
 		this.sendMessage( "testClassEndRun", {} );
 	}
 	
-	public function handleEvent(e:IEvent):Void 
+	function generateUUID() : String
 	{
-		
-	}
-	
-	function generateUUID():String
-	{
-		var text:String = "";
-		var possible:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-		for (i in 0...10) 
-		{		
-			text += possible.charAt(Math.floor(Math.random() * possible.length));
-		}
-
-		return text;
+		return GUID.uuid();
 	}
 }
 #end

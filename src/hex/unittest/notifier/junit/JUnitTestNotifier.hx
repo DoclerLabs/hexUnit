@@ -1,12 +1,8 @@
 package hex.unittest.notifier.junit;
 
-import hex.event.IEvent;
-import hex.unittest.assertion.Assert;
+import hex.error.Exception;
 import hex.unittest.description.TestClassDescriptor;
-import hex.unittest.description.TestMethodDescriptor;
-import hex.unittest.error.AssertException;
-import hex.unittest.event.ITestRunnerListener;
-import hex.unittest.event.TestRunnerEvent;
+import hex.unittest.event.ITestClassResultListener;
 
 using StringTools;
 
@@ -15,121 +11,129 @@ using StringTools;
  * @author St3veV
  */
 
-typedef TestSuiteSummary = {
-	var success:Int;
-	var failed:Int;
-	var errored:Int;
-	var skipped:Int;
-	var output:String;
-	var time:Float;
-	var tests:Int;
-	var pack:String;
-	var timestamp:String;
-	var suiteName:String;
+typedef TestSuiteSummary = 
+{
+	var success		: Int;
+	var failed		: Int;
+	var errored		: Int;
+	var skipped		: Int;
+	var output		: String;
+	var time		: Float;
+	var tests		: Int;
+	var pack		: String;
+	var timestamp	: String;
+	var suiteName	: String;
 }
 
-class JUnitTestNotifier implements ITestRunnerListener
+class JUnitTestNotifier implements ITestClassResultListener
 {
 
-	var _testSuiteSummaries:List<TestSuiteSummary>;
-	var _testSuitesInExecution:List<TestSuiteSummary>;
-	var _hostname:String;
-	var _outputHandler:IOutputHandler;
+	var _testSuiteSummaries		: List<TestSuiteSummary>;
+	var _testSuitesInExecution	: List<TestSuiteSummary>;
+	var _hostname				: String;
+	var _outputHandler			: IOutputHandler;
 	
-	public function new(outputHandler:IOutputHandler, hostname:String = "localhost") 
+	public function new( outputHandler : IOutputHandler, hostname : String = "localhost" ) 
 	{
 		this._outputHandler = outputHandler;
 		this._hostname = hostname;
 	}
 	
-	public function onStartRun(event:TestRunnerEvent):Void 
+	public function onStartRun( descriptor : TestClassDescriptor ) : Void 
 	{
 		this._testSuiteSummaries = new List();
 		this._testSuitesInExecution = new List();
 		
 		//push global suite to catch orphaned tests and functions
-		this._testSuitesInExecution.push(getSuiteSummary("-", ""));
+		this._testSuitesInExecution.push( this.getSuiteSummary("-", "") );
 	}
 	
-	public function onEndRun(event:TestRunnerEvent):Void 
+	public function onEndRun( descriptor : TestClassDescriptor ) : Void 
 	{
 		//pop the global suite
-		this._testSuiteSummaries.add(this._testSuitesInExecution.pop());
+		this._testSuiteSummaries.add( this._testSuitesInExecution.pop() );
 		
-		this._outputHandler.handleOutput(getOutput());
+		this._outputHandler.handleOutput( this.getOutput() );
 	}
 	
-	public function onSuccess(event:TestRunnerEvent):Void 
+	public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
-		updateSummary(summary, event);
-		summary.output += getTestCaseStart(event);
-		summary.output += getTestCaseEnd();
+		this.updateSummary( summary, timeElapsed );
+		
+		summary.output += this.getTestCaseStart( descriptor, timeElapsed );
+		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onFail(event:TestRunnerEvent):Void 
+	public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
-		updateSummary(summary, event);
-		summary.output += getTestCaseStart(event);
-		summary.output += "<failure type=\"" + event.getError().name + "\" message=\"" + event.getError().message.htmlEscape(true) + "\"><![CDATA[" + event.getError() + "]]></failure>";
-		summary.output += getTestCaseEnd();
+		
+		this.updateSummary( summary, timeElapsed );
+		summary.failed++;
+		
+		summary.output += this.getTestCaseStart( descriptor, timeElapsed );
+		summary.output += "<failure type=\"" + error.name + "\" message=\"" + error.message.htmlEscape(true) + "\"><![CDATA[" + error + "]]></failure>";
+		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onTimeout(event:TestRunnerEvent):Void 
+	public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
-		updateSummary(summary, event);
-		summary.output += getTestCaseStart(event);
-		summary.output += "<error type=\"" + event.getError().name + "\" message=\"" + event.getError().message.htmlEscape(true) + "\"><![CDATA[" + event.getError() + "]]></error>";
-		summary.output += getTestCaseEnd();
+		
+		this.updateSummary( summary, timeElapsed );
+		summary.errored++;
+		
+		summary.output += this.getTestCaseStart( descriptor, timeElapsed );
+		summary.output += "<error type=\"" + error.name + "\" message=\"" + error.message.htmlEscape(true) + "\"><![CDATA[" + error + "]]></error>";
+		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onIgnore(event:TestRunnerEvent):Void 
+	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
-		updateSummary(summary, event);
-		summary.output += getTestCaseStart(event);
+		
+		this.updateSummary( summary, timeElapsed );
+		summary.skipped++;
+		
+		summary.output += this.getTestCaseStart( descriptor, timeElapsed );
 		summary.output += "<skipped />";
-		summary.output += getTestCaseEnd();
+		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onSuiteClassStartRun(event:TestRunnerEvent):Void 
+	public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void  
 	{
-		this._testSuitesInExecution.push(getSuiteSummary(event.getDescriptor().getName(), event.getDescriptor().className));
+		this._testSuitesInExecution.push( this.getSuiteSummary( descriptor.getName(), descriptor.className ) );
 	}
 	
-	public function onSuiteClassEndRun(event:TestRunnerEvent):Void 
+	public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void 
 	{
 		this._testSuiteSummaries.add(_testSuitesInExecution.pop());
 	}
 	
-	public function onTestClassStartRun(event:TestRunnerEvent):Void 
+	public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void  
 	{
 	}
 	
-	public function onTestClassEndRun(event:TestRunnerEvent):Void 
-	{
-	}
-	
-	public function handleEvent(e:IEvent):Void 
+	public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void 
 	{
 	}
 	
 	//----------------------------------------- Helper functions
 	
-	function getSuiteSummary(name:String, className:String):TestSuiteSummary
+	function getSuiteSummary( name : String, className : String ) : TestSuiteSummary
 	{
 		var suiteName = name;
-		if (suiteName == "")
+		if ( suiteName == "" )
 		{
-			suiteName = className.substring(className.lastIndexOf(".") + 1);
+			suiteName = className.substring( className.lastIndexOf(".") + 1 );
 		}
 		
 		var now = Date.now();
 		var formattedTime = now.toString().split(" ").join("T");
 		
-		var testSuiteSummary:TestSuiteSummary = {
+		var testSuiteSummary : TestSuiteSummary = 
+		{
 			errored: 0,
 			failed: 0,
 			skipped: 0,
@@ -144,31 +148,24 @@ class JUnitTestNotifier implements ITestRunnerListener
 		return testSuiteSummary;
 	}
 	
-	function updateSummary(summary:TestSuiteSummary, event:TestRunnerEvent):Void
+	function updateSummary( summary : TestSuiteSummary, timeElapsed : Float ) : Void
 	{
-		summary.time += event.getTimeElapsed();
+		summary.time += timeElapsed;
 		summary.tests++;
-		switch(event.type)
-		{
-			case TestRunnerEvent.TIMEOUT:	summary.errored++;
-			case TestRunnerEvent.FAIL:		summary.failed++;
-			case TestRunnerEvent.IGNORE:	summary.skipped++;
-			default:
-		}
 	}
 	
-	function getTestCaseStart(event:TestRunnerEvent):String
+	function getTestCaseStart( descriptor : TestClassDescriptor, timeElapsed : Float ) : String
 	{
-		var methodDescriptor : TestMethodDescriptor = event.getDescriptor().currentMethodDescriptor();
-		return "<testcase classname=\"" + event.getDescriptor().className + "\" name=\"" + methodDescriptor.methodName + "\" time=\"" + event.getTimeElapsed() / 1000 + "\">";
+		var methodDescriptor = descriptor.currentMethodDescriptor();
+		return "<testcase classname=\"" + descriptor.className + "\" name=\"" + methodDescriptor.methodName + "\" time=\"" + timeElapsed / 1000 + "\">";
 	}
 	
-	function getTestCaseEnd():String
+	function getTestCaseEnd() : String
 	{
 		return "</testcase>";
 	}
 	
-	function getSuiteNode(summary:TestSuiteSummary, id:Int, host:String):String
+	function getSuiteNode( summary : TestSuiteSummary, id : Int, host : String ) : String
 	{
 		var out = "";
 		out += getTestSuiteStart(summary, id, host);
@@ -178,7 +175,7 @@ class JUnitTestNotifier implements ITestRunnerListener
 		return out;
 	}
 	
-	function getTestSuiteStart(summary:TestSuiteSummary, id:Int, host:String):String
+	function getTestSuiteStart( summary : TestSuiteSummary, id : Int, host : String ) : String
 	{
 		return "<testsuite name=\"" + summary.suiteName + "\" " +
 							"package=\"" + summary.pack + "\" " +
@@ -192,20 +189,20 @@ class JUnitTestNotifier implements ITestRunnerListener
 							"time=\"" + (summary.time / 1000.0) + "\">";
 	}
 	
-	function getTestSuiteEnd():String
+	function getTestSuiteEnd() : String
 	{
 		return "<system-out /><system-err /></testsuite>";
 	}
 	
-	function getOutput():String
+	function getOutput() : String
 	{
-		var id:Int = 0;
+		var id : Int = 0;
 		var output = "";
 		output += "<testsuites>";
-		for (summary in this._testSuiteSummaries)
+		for ( summary in this._testSuiteSummaries )
 		{
-			if (summary.tests == 0) continue;
-			output += getSuiteNode(summary, id++, _hostname);
+			if ( summary.tests == 0 ) continue;
+			output += this.getSuiteNode( summary, id++, _hostname );
 		}
 		output += "</testsuites>";
 		

@@ -1,46 +1,44 @@
 package hex.unittest.runner;
 
-import haxe.CallStack;
 import haxe.Timer;
 import hex.error.Exception;
 import hex.error.IllegalArgumentException;
 import hex.error.IllegalStateException;
-import hex.event.BasicEvent;
-import hex.event.EventDispatcher;
+import hex.event.ITrigger;
+import hex.event.ITriggerOwner;
 import hex.unittest.description.TestMethodDescriptor;
-import hex.unittest.event.IMethodRunnerListener;
-import hex.unittest.event.MethodRunnerEvent;
+import hex.unittest.event.ITestResultListener;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MethodRunner
+class MethodRunner implements ITriggerOwner
 {
     var _scope                  : Dynamic;
     var _methodReference        : Dynamic;
     var _methodDescriptor       : TestMethodDescriptor;
-    var _dispatcher             : EventDispatcher<IMethodRunnerListener, BasicEvent>;
-
-    var _startTime              : Float;
+	var _startTime              : Float;
     var _endTime                : Float;
+	
+	@Trigger
+    public var trigger ( default, never ) : ITrigger<ITestResultListener>;
 
     public function new( scope : Dynamic, methodDescriptor : TestMethodDescriptor )
     {
         this._scope             = scope;
         this._methodReference   = Reflect.field( this._scope, methodDescriptor.methodName );
         this._methodDescriptor  = methodDescriptor;
-        this._dispatcher        = new EventDispatcher<IMethodRunnerListener, BasicEvent>();
     }
 
     public function run() : Void
     {
         this._startTime = Date.now().getTime();
 		
-		if (this._methodDescriptor.isIgnored)
+		if ( this._methodDescriptor.isIgnored )
 		{
 			this._endTime = Date.now().getTime();
-			this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.IGNORE, this, this._methodDescriptor, this.getTimeElapsed() ) );
+			this.trigger.onIgnore( this.getTimeElapsed() );
 			return;
 		}
 		
@@ -50,8 +48,8 @@ class MethodRunner
             {
                 Reflect.callMethod( this._scope, this._methodReference, this._methodDescriptor.dataProvider );
                 this._endTime = Date.now().getTime();
-                this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.SUCCESS, this, this._methodDescriptor, this.getTimeElapsed() ) );
-            }
+                this.trigger.onSuccess( this.getTimeElapsed() );
+			}
             catch ( e : Dynamic )
             {
                 this._endTime = Date.now().getTime();
@@ -63,11 +61,11 @@ class MethodRunner
 					#else
 					err = new Exception( e.toString(), e.posInfos );
 					#end
-					this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), err ) );
+					this.trigger.onFail( this.getTimeElapsed(), err );
 				}
 				else
 				{
-					this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), e ) );
+					this.trigger.onFail( this.getTimeElapsed(), e );
 				}
                 
             }
@@ -81,7 +79,7 @@ class MethodRunner
 			catch ( e : IllegalArgumentException )
 			{
 				this._endTime = Date.now().getTime();
-                this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), e ) );
+                this.trigger.onFail( this.getTimeElapsed(), e );
 				return;
 			}
             
@@ -92,19 +90,19 @@ class MethodRunner
             catch ( e : Dynamic )
             {
                 this._endTime = Date.now().getTime();
-                this._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, this, this._methodDescriptor, this.getTimeElapsed(), e ) );
+                this.trigger.onFail( this.getTimeElapsed(), e );
             }
         }
     }
 
-    public function addListener( listener : IMethodRunnerListener ) : Bool
+    public function addListener( listener : ITestResultListener ) : Bool
     {
-        return this._dispatcher.addListener( listener );
+		return this.trigger.connect( listener );
     }
 
-    public function removeListener( listener : IMethodRunnerListener ) : Bool
+    public function removeListener( listener : ITestResultListener ) : Bool
     {
-        return this._dispatcher.removeListener( listener );
+		return this.trigger.disconnect( listener );
     }
 
     public function getDescriptor() : TestMethodDescriptor
@@ -203,16 +201,18 @@ class MethodRunner
 				Reflect.callMethod( methodRunner._scope, methodRunner._callback, args );
 				methodRunner._endTime = Date.now().getTime();
 				MethodRunner._CURRENT_RUNNER = null;
-				methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.SUCCESS, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed() ) );
+				methodRunner.trigger.onSuccess( methodRunner.getTimeElapsed() );
+			
+				
 			}
 			catch ( e : Exception )
 			{
 				MethodRunner._CURRENT_RUNNER = null;
-				methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.FAIL, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed(), e ) );
+				methodRunner.trigger.onFail( methodRunner.getTimeElapsed(), e );
 			}
 		}
         
-		return Reflect.makeVarArgs(f);
+		return Reflect.makeVarArgs( f );
     }
 
     static function _fireTimeout() : Void
@@ -223,6 +223,6 @@ class MethodRunner
         var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
 		methodRunner._endTime = Date.now().getTime();
 		MethodRunner._CURRENT_RUNNER = null;
-        methodRunner._dispatcher.dispatchEvent( new MethodRunnerEvent( MethodRunnerEvent.TIMEOUT, methodRunner, methodRunner._methodDescriptor, methodRunner.getTimeElapsed(), new Exception( "Test timeout" ) ) );
+        methodRunner.trigger.onTimeout( methodRunner.getTimeElapsed() );
     }
 }
