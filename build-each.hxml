@@ -1,5 +1,5 @@
 -main MainUnitTest
 -cp src
 -cp test
--cp /home/travis/hexcore/src
+-cp hexcore/src
 -D debug=true
