@@ -27,7 +27,6 @@ class WebSocketNotifier
 	var _webSocket	: WebSocket;
 	var _clientId	: String;
 
-	@Trigger
     public var dispatcher ( default, never ) : ITrigger<IWebSocketNotifierListener>;
 	
 	var _cache 			= new Array<String>();

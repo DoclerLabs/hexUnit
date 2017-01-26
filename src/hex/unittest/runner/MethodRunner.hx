@@ -21,7 +21,6 @@ class MethodRunner implements ITriggerOwner
 	var _startTime              : Float;
     var _endTime                : Float;
 	
-	@Trigger
     public var trigger ( default, never ) : ITrigger<ITestResultListener>;
 
     public function new( scope : Dynamic, methodDescriptor : TestMethodDescriptor )

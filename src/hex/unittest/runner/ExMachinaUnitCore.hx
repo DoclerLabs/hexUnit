@@ -22,7 +22,6 @@ class ExMachinaUnitCore
     var _runner                     : TestRunner;
     var _currentClassDescriptor     : Int;
 	
-	@Trigger
     public var dispatcher ( default, never ) : ITrigger<ITestClassResultListener>;
 
     public function new()

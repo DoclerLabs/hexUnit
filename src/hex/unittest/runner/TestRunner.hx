@@ -20,8 +20,7 @@ class TestRunner implements ITestRunner
     var _classDescriptors           : GenericStack<TestClassDescriptor>;
     var _executedDescriptors        : Map<TestClassDescriptor, Bool>;
 	var _lastRender					: Float = 0;
-	
-	@Trigger
+
     public var dispatcher ( default, never ) : ITrigger<ITestClassResultListener>;
 	
 	#if flash
