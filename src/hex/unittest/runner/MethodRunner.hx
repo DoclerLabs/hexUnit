@@ -6,6 +6,7 @@ import hex.error.IllegalArgumentException;
 import hex.error.IllegalStateException;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
+import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestMethodDescriptor;
 import hex.unittest.event.ITestResultListener;
 
@@ -49,24 +50,9 @@ class MethodRunner implements ITriggerOwner
                 this._endTime = Date.now().getTime();
                 this.trigger.onSuccess( this.getTimeElapsed() );
 			}
-            catch ( e : Dynamic )
+            catch ( err : Dynamic )
             {
-                this._endTime = Date.now().getTime();
-				if ( !Std.is( e, Exception ) )
-				{
-					var err : Exception = null;
-					#if php
-					err = new Exception( "" + e, e.p );
-					#else
-					err = new Exception( e.toString(), e.posInfos );
-					#end
-					this.trigger.onFail( this.getTimeElapsed(), err );
-				}
-				else
-				{
-					this.trigger.onFail( this.getTimeElapsed(), e );
-				}
-                
+                this._notifyError( err );
             }
         }
         else
@@ -86,13 +72,36 @@ class MethodRunner implements ITriggerOwner
             {
                 Reflect.callMethod( this._scope, this._methodReference, this._methodDescriptor.dataProvider );
             }
-            catch ( e : Dynamic )
+            catch ( err : Dynamic )
             {
-                this._endTime = Date.now().getTime();
-                this.trigger.onFail( this.getTimeElapsed(), e );
+                this._notifyError( err );
             }
         }
     }
+	
+	function _notifyError( e : Dynamic ) : Void
+	{
+		this._endTime = Date.now().getTime();
+		
+		if ( !Std.is( e, Exception ) )
+		{
+			var err : Exception = null;
+			#if php
+			err = new Exception( "" + e, e.p );
+			#elseif flash
+			err = new Exception( cast( e ).message );
+			#else
+			err = new Exception( e.toString(), e.posInfos );
+			#end
+			this.trigger.onFail( this.getTimeElapsed(), err );
+			Assert._logFailedAssertion();
+		}
+		else
+		{
+			this.trigger.onFail( this.getTimeElapsed(), e );
+			Assert._logFailedAssertion();
+		}
+	}
 
     public function addListener( listener : ITestResultListener ) : Bool
     {
