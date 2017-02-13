@@ -1,9 +1,9 @@
 package hex.unittest.assertion;
 
+import haxe.PosInfos;
 import hex.error.Exception;
 import hex.log.Stringifier;
 import hex.unittest.error.AssertException;
-import haxe.PosInfos;
 
 /**
  * ...
@@ -394,6 +394,16 @@ class Assert
 	static public function revertFailure() : Void
 	{
 		Assert._assertFailedCount--;
+	}
+	
+	/**
+	 * This method is used to report system exception that
+	 * is not caught by assertion.
+	 */
+	@:allow( hex.unittest )
+	static function _logFailedAssertion() : Void
+	{
+		Assert._assertFailedCount++;
 	}
 	
 	//
