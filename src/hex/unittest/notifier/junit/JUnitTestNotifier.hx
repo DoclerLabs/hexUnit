@@ -56,7 +56,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		this._outputHandler.handleOutput( this.getOutput() );
 	}
 	
-	public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+	public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		this.updateSummary( summary, timeElapsed );
@@ -65,7 +65,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+	public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		
@@ -77,7 +77,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+	public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		
@@ -89,14 +89,14 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+	public function onIgnore( descriptor : TestClassDescriptor ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		
-		this.updateSummary( summary, timeElapsed );
+		this.updateSummary( summary, 0 );
 		summary.skipped++;
 		
-		summary.output += this.getTestCaseStart( descriptor, timeElapsed );
+		summary.output += this.getTestCaseStart( descriptor, 0 );
 		summary.output += "<skipped />";
 		summary.output += this.getTestCaseEnd();
 	}
