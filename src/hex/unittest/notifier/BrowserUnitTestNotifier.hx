@@ -141,7 +141,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
         this._removeTab();
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
     {
 		this._successfulCount++;
 		var success = this.createElement( "✔ ", "green" );
@@ -151,7 +151,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
     }
 	
 
-    public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
 		this._failedCount++;
         var methodDescriptor = descriptor.currentMethodDescriptor();
@@ -170,18 +170,18 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 		this.setGlobalResultFailed( );
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
 		this.onFail( descriptor, timeElapsed, error );
     }
 	
-	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ):Void 
+	public function onIgnore( descriptor : TestClassDescriptor ):Void 
 	{
 		this._successfulCount++;
 		var ignore = this.createElement( "- ", "yellow" );
 		var methodDescriptor : TestMethodDescriptor = descriptor.currentMethodDescriptor();
 		var func = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
-        this.generateMessage( ignore, func, descriptor, timeElapsed );
+        this.generateMessage( ignore, func, descriptor, 0 );
 	}
 	
 	function generateMessage( icon:Element, func:Element, descriptor : TestClassDescriptor, timeElapsed : Float ) : Void

@@ -17,8 +17,8 @@ interface ITestClassResultListener
     function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void;
     function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void;
 	
-	function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void;
-    function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void;
-    function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void;
-    function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void;
+	function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void;
+    function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void;
+    function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void;
+    function onIgnore( descriptor : TestClassDescriptor ) : Void;
 }
