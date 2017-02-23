@@ -3,7 +3,7 @@ package hex.unittest.runner;
 import hex.error.Exception;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
-import hex.log.Stringifier;
+import hex.util.Stringifier;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;

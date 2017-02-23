@@ -3,7 +3,7 @@ package hex.unittest.assertion;
 import haxe.PosInfos;
 import hex.error.Exception;
 import hex.error.PrivateConstructorException;
-import hex.log.Stringifier;
+import hex.util.Stringifier;
 import hex.unittest.error.AssertException;
 
 /**
