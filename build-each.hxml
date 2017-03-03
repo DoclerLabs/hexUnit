@@ -1,5 +1,6 @@
 -main MainUnitTest
--cp src
+
+-lib hexunit
+
 -cp test
--cp hexcore/src
 -D debug=true
