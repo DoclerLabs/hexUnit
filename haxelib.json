@@ -6,7 +6,7 @@
   "description": "OOP Unit testing framework written in Haxe",
   "contributors": ["doclerlabs"],
   "releasenote": "First release. Still alpha testing",
-  "version": "0.1.0",
+  "version": "git",
   "url": "https://github.com/DoclerLabs/hexUnit",
   "dependencies": 
   {

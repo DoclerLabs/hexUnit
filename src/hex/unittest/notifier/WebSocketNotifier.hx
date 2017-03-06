@@ -159,7 +159,7 @@ class WebSocketNotifier
 		this.sendMessage( "endRun", data  );
 	}
 	
-	public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void 
+	public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void 
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
 		
@@ -181,7 +181,7 @@ class WebSocketNotifier
 		this.sendMessage( "testCaseRunSuccess", data );
 	}
 	
-	public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+	public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
 		
@@ -207,14 +207,14 @@ class WebSocketNotifier
 		this.sendMessage( "testCaseRunFailed", data );
 	}
 	
-	public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+	public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
 	{
 		this.onFail( descriptor, timeElapsed, error );
 	}
 	
-	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+	public function onIgnore( descriptor : TestClassDescriptor ) : Void
 	{
-		this.onSuccess( descriptor, timeElapsed, error );
+		this.onSuccess( descriptor, 0 );
 	}
 	
 	public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void

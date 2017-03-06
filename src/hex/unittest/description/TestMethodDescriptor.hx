@@ -1,6 +1,6 @@
 package hex.unittest.description;
 
-import hex.log.Stringifier;
+import hex.util.Stringifier;
 
 /**
  * ...

@@ -6,6 +6,7 @@ import hex.error.Exception;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
 import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.error.TimeoutException;
 import hex.unittest.event.ITestClassResultListener;
 import hex.unittest.event.ITestResultListener;
 
@@ -172,14 +173,14 @@ class TestRunner implements ITestRunner
     public function onTimeout( timeElapsed : Float ) : Void
     {
 		var classDescriptor = this._classDescriptors.first();
-		this.dispatcher.onTimeout( classDescriptor, timeElapsed );
+		this.dispatcher.onTimeout( classDescriptor, timeElapsed, new TimeoutException() );
         this._endTestMethodCall( classDescriptor );
     }
 	
 	public function onIgnore( timeElapsed : Float) : Void
 	{
 		var classDescriptor = this._classDescriptors.first();
-		this.dispatcher.onIgnore( classDescriptor, timeElapsed );
+		this.dispatcher.onIgnore( classDescriptor );
 		this._endTestMethodCall( classDescriptor );
 	}
 

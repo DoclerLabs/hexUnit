@@ -3,7 +3,7 @@ package hex.unittest.runner;
 import hex.error.Exception;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
-import hex.log.Stringifier;
+import hex.util.Stringifier;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.TestClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
@@ -125,24 +125,24 @@ class ExMachinaUnitCore
         this.dispatcher.onTestClassEndRun( descriptor );
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
     {
-        this.dispatcher.onSuccess( descriptor, timeElapsed, error );
+        this.dispatcher.onSuccess( descriptor, timeElapsed );
     }
 
-    public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         this.dispatcher.onFail( descriptor, timeElapsed, error );
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         this.dispatcher.onTimeout( descriptor, timeElapsed, error );
     }
 
-	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void 
+	public function onIgnore( descriptor : TestClassDescriptor ) : Void 
 	{
-		this.dispatcher.onIgnore( descriptor, timeElapsed, error );
+		this.dispatcher.onIgnore( descriptor );
 	}
 
     /**

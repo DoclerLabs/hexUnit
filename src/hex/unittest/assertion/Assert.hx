@@ -2,7 +2,8 @@ package hex.unittest.assertion;
 
 import haxe.PosInfos;
 import hex.error.Exception;
-import hex.log.Stringifier;
+import hex.error.PrivateConstructorException;
+import hex.util.Stringifier;
 import hex.unittest.error.AssertException;
 
 /**
@@ -299,7 +300,7 @@ class Assert
 	/**
      * Asserts constructor call throws 'expectedException'
      */
-    public static function constructorCallThrows( expectedException : Class<Exception>, type : Class<Dynamic>, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    public static function constructorCallThrows<T>( expectedException : Class<Exception>, type : Class<T>, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -320,6 +321,30 @@ class Assert
             Assert._fail( "Expected '" + expectedExceptionType +"' but was '" + Stringifier.stringify( exceptionCaught ) + "'", userMessage, posInfos );
         }
     }
+	
+	/**
+     * Asserts constructor call throws 'PrivateConstructorException'
+     */
+	public static function constructorIsPrivate<T>( type : Class<T>, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    {
+        Assert._LOG_ASSERT( userMessage );
+		
+		var exceptionCaught : Exception  = null;
+		
+		try
+        {
+            Type.createInstance( type, [] );
+        }
+        catch ( e : Exception )
+        {
+            exceptionCaught = e;
+        }
+		
+		if ( exceptionCaught == null || ( exceptionCaught != null && ( Type.getClass( exceptionCaught ) != PrivateConstructorException ) ) )
+        {
+            Assert._fail( "Expected 'PrivateConstructorException' but was '" + Stringifier.stringify( exceptionCaught ) + "'", userMessage, posInfos );
+        }
+	}
 
     /**
      * Asserts method call throws 'expectedException'

@@ -2,6 +2,7 @@ package hex.unittest.assertion;
 
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
+import hex.error.PrivateConstructorException;
 import hex.unittest.error.AssertException;
 import jsonStream.testUtil.JsonEquality;
 
@@ -591,6 +592,29 @@ class AssertionTest
 		}
 	}
 	
+	@Test( "test Assert.constructorIsPrivate" )
+	public function testAssertConstructorIsPrivate() : Void
+	{
+		Assert.constructorIsPrivate( MockClassWithPrivateConstructorException, "assertion should pass" );
+	}
+	
+	@Test( "test Assert.constructorIsPrivate" )
+	public function testAssertConstructorIsPrivateFailure() : Void
+	{
+		try 
+		{
+			Assert.constructorIsPrivate( MockClassWithoutPrivateConstructorException, "assertion should not pass" );
+		}
+		catch ( e : AssertException )
+		{
+			Assert.revertFailure();
+		}
+		catch ( e : Dynamic )
+		{
+			Assert.fail( "assertion failed", "assertion failure should return 'AssertException'" );
+		}
+	}
+	
 	@Test( "test Assert.constructorCallThrows" )
 	public function testAssertConstructorCallThrows() : Void
 	{
@@ -830,5 +854,21 @@ private class MockClassWithPropertyThatThrowsException
 		
 		this._property = value;
 		return this._property;
+	}
+}
+
+private class MockClassWithPrivateConstructorException
+{
+	public function new()
+	{
+		throw new PrivateConstructorException();
+	}
+}
+
+private class MockClassWithoutPrivateConstructorException
+{
+	public function new()
+	{
+		
 	}
 }

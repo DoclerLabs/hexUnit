@@ -19,13 +19,15 @@ import js.html.SpanElement;
  */
 class BrowserUnitTestNotifier implements ITestClassResultListener
 {
+	
     var _trace  		: Dynamic;
     var _tabs   		: Int = 0;
 	var console 		: Element;
 	var netTimeElapsed	: Float;
 	
-	var _successfulCount	: UInt = 0;
-	var _failedCount 	: UInt = 0;
+	var _assertionStartCount	: UInt = 0;
+	var _successfulCount		: UInt = 0;
+	var _failedCount 			: UInt = 0;
 	
 	static var _TRACE 	: Dynamic = haxe.Log.trace;
 
@@ -82,6 +84,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 
     public function onStartRun( descriptor : TestClassDescriptor ) : Void
     {
+		this._assertionStartCount = Assert.getAssertionCount();
 		this._successfulCount = 0;
 		this._failedCount = 0;
         this._tabs = 0;
@@ -92,12 +95,16 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 
     public function onEndRun( descriptor : TestClassDescriptor ) : Void
     {
-        this._removeTab();
+		this._removeTab();
+		
+		var assertionCount = Assert.getAssertionCount() - this._assertionStartCount;
+		var assertionMessage = assertionCount > 1 ?  assertionCount + " assertions runned" : assertionCount + " assertions runned";
 
 		var beginning 	= this.createElement( "[[[ Test runs finished :: ", "yellow+bold+h3" );
 		var all 		= this.createElement( this._successfulCount + this._failedCount + " overall :: ", "white+bold+h3" );
 		var successfull = this.createElement( this._successfulCount + " successul :: ", "green+bold+h3" );
 		var failed 		= this.createElement( this._failedCount + " failed :: ", "red+bold+h3" );
+		var assertion 	= this.createElement( assertionMessage + "  :: ", "white+bold+h3" );
 		var ending 		= this.createElement( " in " + this.netTimeElapsed + "ms :: ]]]", "yellow+bold+h3" );
 		
 		var list = new Array<Element>();
@@ -114,6 +121,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 			list.push( failed );
 		}
 		
+		list.push( assertion );
 		list.push( ending );
         this._log( this.encapsulateElements( list ) );
 		this.addRuler();
@@ -141,7 +149,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
         this._removeTab();
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
     {
 		this._successfulCount++;
 		var success = this.createElement( "✔ ", "green" );
@@ -151,7 +159,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
     }
 	
 
-    public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
 		this._failedCount++;
         var methodDescriptor = descriptor.currentMethodDescriptor();
@@ -170,18 +178,18 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 		this.setGlobalResultFailed( );
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
 		this.onFail( descriptor, timeElapsed, error );
     }
 	
-	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ):Void 
+	public function onIgnore( descriptor : TestClassDescriptor ):Void 
 	{
 		this._successfulCount++;
 		var ignore = this.createElement( "- ", "yellow" );
 		var methodDescriptor : TestMethodDescriptor = descriptor.currentMethodDescriptor();
 		var func = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
-        this.generateMessage( ignore, func, descriptor, timeElapsed );
+        this.generateMessage( ignore, func, descriptor, 0 );
 	}
 	
 	function generateMessage( icon:Element, func:Element, descriptor : TestClassDescriptor, timeElapsed : Float ) : Void

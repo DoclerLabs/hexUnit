@@ -129,7 +129,7 @@ class TraceNotifier implements ITestClassResultListener
         this._removeTab();
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
@@ -138,7 +138,7 @@ class TraceNotifier implements ITestClassResultListener
         this._log( message );
     }
 
-    public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
 		if ( descriptor != null )
 		{
@@ -164,23 +164,22 @@ class TraceNotifier implements ITestClassResultListener
 		
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
         var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( message );
         this._addTab();
-        this._log( error.message );
         this._removeTab();
     }
 	
-	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void 
+	public function onIgnore( descriptor : TestClassDescriptor ) : Void 
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
-        var timeElapsed = " " + timeElapsed + "ms";
-        var message = "IGNORE	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + timeElapsed;
+		var timeElapsed = " " + 0 + "ms";
+        var message = "IGNORE	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" );
         this._log( message );
 	}
 }

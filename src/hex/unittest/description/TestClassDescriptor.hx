@@ -1,7 +1,7 @@
 package hex.unittest.description;
 
 import hex.error.NoSuchElementException;
-import hex.log.Stringifier;
+import hex.util.Stringifier;
 
 /**
  * ...

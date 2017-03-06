@@ -87,7 +87,7 @@ class ConsoleNotifier implements ITestClassResultListener
         this._removeTab();
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
@@ -96,7 +96,7 @@ class ConsoleNotifier implements ITestClassResultListener
         this._log( this.setColor( message, "green" ) );
     }
 
-    public function onFail( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
@@ -113,7 +113,7 @@ class ConsoleNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
@@ -124,11 +124,11 @@ class ConsoleNotifier implements ITestClassResultListener
         this._removeTab();
     }
 
-	public function onIgnore( descriptor : TestClassDescriptor, ?timeElapsed : Float, ?error : Exception ) : Void
+	public function onIgnore( descriptor : TestClassDescriptor ) : Void
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
-        var time = this.setColor( " " + timeElapsed + "ms", "yellow+bold" );
+        var time = this.setColor( " " + 0 + "ms", "yellow+bold" );
         var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
         this._log( this.setColor( message, "yellow" ) );
 	}
