@@ -166,14 +166,12 @@ class MethodRunner implements ITriggerOwner
         this._passThroughArgs   = passThroughArgs;
         this._timeout           = timeout;
 
-		#if (!neko || haxe_ver >= "3.3")
 		if ( this._timer != null )
 		{
 			this._timer.stop();
 		}
 		this._timer = new Timer( timeout );
 		this._timer.run = MethodRunner._fireTimeout;
-		#end
     }
 
     public static function _createAsyncCallbackHandler( ) : Array<Dynamic>->Void
@@ -184,10 +182,8 @@ class MethodRunner implements ITriggerOwner
 			{
 				throw new IllegalStateException( "AsyncHandler has been called after '@Async' test was released. Try to remove all your listeners in '@After' method to fix this error" );
 			}
-			
-			#if (!neko || haxe_ver >= "3.3")
+
 			MethodRunner._CURRENT_RUNNER._timer.stop();
-			#end
 			MethodRunner._CURRENT_RUNNER._timer = null;
 		
 			var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
@@ -225,9 +221,7 @@ class MethodRunner implements ITriggerOwner
 
     static function _fireTimeout() : Void
     {
-		#if (!neko || haxe_ver >= "3.3")
 		MethodRunner._CURRENT_RUNNER._timer.stop();
-		#end
         var methodRunner : MethodRunner = MethodRunner._CURRENT_RUNNER;
 		methodRunner._endTime = Date.now().getTime();
 		MethodRunner._CURRENT_RUNNER = null;

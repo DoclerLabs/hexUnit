@@ -187,8 +187,7 @@ class TestRunner implements ITestRunner
     function _endTestMethodCall( classDescriptor: TestClassDescriptor ) : Void
     {
         this._tryToRunTearDown( classDescriptor );
-		
-		#if (!neko || haxe_ver >= "3.3")
+
 		if ( TestRunner.RENDER_DELAY > 0 && Date.now().getTime() - this._lastRender > TestRunner.RENDER_DELAY )
 		{
 			this._lastRender = Date.now().getTime() + 1;
@@ -199,8 +198,5 @@ class TestRunner implements ITestRunner
 			this._lastRender = Date.now().getTime() + TestRunner.RENDER_DELAY;
 			Timer.delay( function( ) { _runTestClass( classDescriptor ); }, TestRunner.RENDER_DELAY );
 		}
-		#else
-		this._runTestClass( classDescriptor );
-		#end
     }
 }
