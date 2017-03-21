@@ -10,8 +10,7 @@ import hex.unittest.runner.MethodRunner;
 class TestCaseTest
 {
 	var timer:Timer;
-	
-	#if (!neko || haxe_ver >= "3.3")
+
 	@Async( "Test if async tests can run properly with static Timer.delay" )
 	public function asyncStaticTimerTest( )
 	{
@@ -33,5 +32,4 @@ class TestCaseTest
 			this.timer.stop();
 		}
 	}
-	#end
 }
