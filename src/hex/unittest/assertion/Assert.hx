@@ -229,6 +229,29 @@ class Assert
 	}
 	
 	/**
+     * Asserts that array contains this element using deepEquals
+     */
+	public static function arrayDeepContainsElement<T>( a : Array<T>, value : T, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    {
+		var contains = false;
+		for (e in a)
+		{
+			if (jsonStream.testUtil.JsonEquality.deepEquals( e, value ))
+			{
+				contains = true;
+				break;
+			}
+		}
+		
+		if ( !contains )
+		{
+			Assert._fail( "Array '" + a +"' should contain '" + value + "'", userMessage, posInfos );
+		}
+	}
+	
+	
+	
+	/**
      * Asserts that array does not contain this element
      */
 	public static function arrayNotContainsElement<T>( a : Array<T>, value : T, userMessage : String = "", ?posInfos : PosInfos ) : Void
@@ -249,6 +272,32 @@ class Assert
 		for ( element in value )
 		{
 			if ( Assert._indexOf( expected, element ) == -1 )
+			{
+				Assert._fail( "Array '" + expected +"' should contain '" + element + "'", userMessage, posInfos );
+			}
+		}
+    }
+	
+	/**
+     * Asserts this array contains every elements from another array using deep equals
+     */
+	public static function arrayDeepContainsElementsFrom<T>( expected : Array<T>, value : Array<T>, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    {
+        Assert._LOG_ASSERT( userMessage );
+
+		for ( element in value )
+		{
+			var contains = false;
+			for (e in expected)
+			{
+				if (jsonStream.testUtil.JsonEquality.deepEquals( e, element ))
+				{
+					contains = true;
+					break;
+				}
+			}
+			
+			if ( !contains )
 			{
 				Assert._fail( "Array '" + expected +"' should contain '" + element + "'", userMessage, posInfos );
 			}

@@ -528,6 +528,35 @@ class AssertionTest
 		}
 	}
 	
+	@Test("test Assert.arrayDeepContainsElement")
+	public function testAssertArrayDeepContainsElement()
+	{
+		var a1 = [{a:1, b:1}, {a:2, b:2}, {a:3, b:3}];
+		var element = {a:3, b:3};
+		
+		Assert.arrayDeepContainsElement(a1, element, "assertion should pass");
+	}
+	
+	@Test("test Assert.arrayDeepContainsElement failure")
+	public function testAssertArrayDeepContainsElementFailure()
+	{
+		var a1 = [{a:1, b:1}, {a:2, b:2}, {a:3, b:3}];
+		var element = {a:4, b:4};
+		
+		try 
+		{
+			Assert.arrayDeepContainsElement(a1, element, "assertion should pass");
+		}
+		catch ( e : AssertException )
+		{
+			Assert.revertFailure();
+		}
+		catch ( e : Dynamic )
+		{
+			Assert.fail( "assertion failed", "assertion failure should return 'AssertException'" );
+		}
+	}
+	
 	@Test( "test Assert.arrayContainsElement" )
 	public function testAssertArrayNotContainsElement() : Void
 	{
@@ -587,6 +616,34 @@ class AssertionTest
 			Assert.revertFailure();
 		}
 		catch ( e : Dynamic )
+		{
+			Assert.fail( "assertion failed", "assertion failure should return 'AssertException'" );
+		}
+	}
+	
+	@Test("test Assert.arrayDeepContainsElementsFrom")
+	public function testAssertArrayDeepContainsElementsFrom()
+	{
+		var a1 = [{a:1, b:1}, {a:2, b:2}, {a:3, b:3}];
+		var a2 = [{a:1, b:1}, {a:2, b:2}];
+		
+		Assert.arrayDeepContainsElementsFrom(a1, a2, "assertion should pass");
+	}
+	
+	@Test("test Assert.arrayDeepContainsElementsFrom failure")
+	public function testAssertArrayDeepContainsElementsFromFailure()
+	{
+		var a1 = [{a:1, b:1}, {a:2, b:2}, {a:3, b:3}];
+		var a2 = [{a:1, b:1}, {a:4, b:4}];
+		try
+		{
+			Assert.arrayDeepContainsElementsFrom(a1, a2, "assertion should not pass");
+		}
+		catch (e:AssertException)
+		{
+			Assert.revertFailure();
+		}
+		catch (e:Dynamic)
 		{
 			Assert.fail( "assertion failed", "assertion failure should return 'AssertException'" );
 		}
