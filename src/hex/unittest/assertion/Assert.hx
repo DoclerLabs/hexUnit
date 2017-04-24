@@ -3,6 +3,7 @@ package hex.unittest.assertion;
 import haxe.PosInfos;
 import hex.error.Exception;
 import hex.error.PrivateConstructorException;
+import hex.util.ArrayUtil;
 import hex.util.Stringifier;
 import hex.unittest.error.AssertException;
 
@@ -256,7 +257,7 @@ class Assert
      */
 	public static function arrayNotContainsElement<T>( a : Array<T>, value : T, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
-		if ( Assert._indexOf( a, value ) != -1 )
+		if ( ArrayUtil.indexOf( a, value ) != -1 )
 		{
 			Assert._fail( "Array '" + a +"' should not contain '" + value + "'", userMessage, posInfos );
 		}
@@ -271,7 +272,7 @@ class Assert
 
 		for ( element in value )
 		{
-			if ( Assert._indexOf( expected, element ) == -1 )
+			if ( ArrayUtil.indexOf( expected, element ) == -1 )
 			{
 				Assert._fail( "Array '" + expected +"' should contain '" + element + "'", userMessage, posInfos );
 			}
@@ -303,32 +304,6 @@ class Assert
 			}
 		}
     }
-	
-	static function _indexOf<T>( a : Array<T>, element : T ) : Int
-	{
-		#if !neko
-			return a.indexOf( element );
-		#else
-		if ( Reflect.isFunction( element ) )
-		{
-			var length = a.length;
-			for ( i in 0...length )
-			{
-				var el = a[ i ];
-				if ( Reflect.compareMethods( el, element ) )
-				{
-					return i;
-				}
-			}
-				
-			return -1;
-		}
-		else
-		{
-			return a.indexOf( element );
-		}
-		#end
-	}
 
     /**
      * Asserts this array does not contain any element from another array
