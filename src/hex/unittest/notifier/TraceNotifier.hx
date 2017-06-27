@@ -23,11 +23,13 @@ class TraceNotifier implements ITestClassResultListener
 	
     var _tabs   			: String;
     var _errorBubbling   	: Bool;
+    var _hideSuccessTest   	: Bool;
 
 	#if flash
-    public function new( loaderInfo : LoaderInfo, errorBubbling : Bool = false )
+    public function new( loaderInfo : LoaderInfo, errorBubbling : Bool = false, hideSuccessTest : Bool = false )
     {
 		this._errorBubbling = errorBubbling;
+		this._hideSuccessTest = hideSuccessTest;
 		loaderInfo.uncaughtErrorEvents.addEventListener( UncaughtErrorEvent.UNCAUGHT_ERROR, this._uncaughtErrorHandler );
     }
 	
@@ -131,11 +133,14 @@ class TraceNotifier implements ITestClassResultListener
 
     public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
     {
-        var methodDescriptor = descriptor.currentMethodDescriptor();
-        var description = methodDescriptor.description;
-        var time = " " + timeElapsed + "ms";
-        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
-        this._log( message );
+		if( !this._hideSuccessTest )
+		{
+			var methodDescriptor = descriptor.currentMethodDescriptor();
+			var description = methodDescriptor.description;
+			var time = " " + timeElapsed + "ms";
+			var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
+			this._log( message );
+		}
     }
 
     public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
