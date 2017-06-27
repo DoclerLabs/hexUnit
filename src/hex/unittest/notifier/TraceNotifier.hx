@@ -56,9 +56,10 @@ class TraceNotifier implements ITestClassResultListener
 		
 	}
 	#else
-	public function new( errorBubbling : Bool = false )
+	public function new( errorBubbling : Bool = false, hideSuccessTest : Bool = false )
     {
 		this._errorBubbling = errorBubbling;
+		this._hideSuccessTest = hideSuccessTest;
     }
 	#end
 
