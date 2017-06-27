@@ -14,12 +14,14 @@ class ConsoleNotifier implements ITestClassResultListener
 {
     var _tabs   			: String;
     var _errorBubbling   	: Bool;
+	var _hideSuccessTest   	: Bool;
 	
 	static var _TRACE : Dynamic = haxe.Log.trace;
 
-    public function new( errorBubbling : Bool = false )
+    public function new( errorBubbling : Bool = false, hideSuccessTest : Bool = false )
     {
 		this._errorBubbling = errorBubbling;
+		this._hideSuccessTest = hideSuccessTest;
     }
 
     function _log( message : String ) : Void
@@ -81,11 +83,14 @@ class ConsoleNotifier implements ITestClassResultListener
 
     public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
     {
-        var methodDescriptor = descriptor.currentMethodDescriptor();
-        var description = methodDescriptor.description;
-        var time = this.setColor( " " + timeElapsed + "ms", "green+bold" );
-        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
-        this._log( this.setColor( message, "green" ) );
+		if( !this._hideSuccessTest )
+		{
+			var methodDescriptor = descriptor.currentMethodDescriptor();
+			var description = methodDescriptor.description;
+			var time = this.setColor( " " + timeElapsed + "ms", "green+bold" );
+			var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
+			this._log( this.setColor( message, "green" ) );
+		}
     }
 
     public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
