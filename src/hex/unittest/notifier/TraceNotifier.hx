@@ -13,6 +13,8 @@ import hex.unittest.description.TestClassDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 
+import haxe.PosInfos;
+
 /**
  * ...
  * @author Francis Bourre
@@ -60,16 +62,13 @@ class TraceNotifier implements ITestClassResultListener
     {
 		this._errorBubbling = errorBubbling;
 		this._hideSuccessTest = hideSuccessTest;
+		Log.init();
     }
 	#end
 
     function _log( message : String ) : Void
     {
-		#if neko
-        Sys.println( this._tabs + message );
-		#else
-		trace( this._tabs + message );
-		#end
+		Log.debug( this._tabs + message );
     }
 
     function _addTab() : Void
@@ -93,11 +92,11 @@ class TraceNotifier implements ITestClassResultListener
     {
         this._removeTab();
         this._log( "<<< End tests run >>>" );
-        this._log( "Assertions passed: " + Assert.getAssertionCount() );
+        Log.pass( "Assertions passed: " + Assert.getAssertionCount() );
 		
 		if ( Assert.getAssertionFailedCount() > 0 )
 		{
-			this._log( "Assertions failed: " + Assert.getAssertionFailedCount() + "\n" );
+			Log.fail( "Assertions failed: " + Assert.getAssertionFailedCount() + "\n" );
 			#if flash
 			flash.system.System.exit( 1 );
 			#elseif ( php || neko )
@@ -140,7 +139,7 @@ class TraceNotifier implements ITestClassResultListener
 			var description = methodDescriptor.description;
 			var time = " " + timeElapsed + "ms";
 			var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
-			this._log( message );
+			Log.pass( message );
 		}
     }
 
@@ -151,13 +150,13 @@ class TraceNotifier implements ITestClassResultListener
 			var methodDescriptor = descriptor.currentMethodDescriptor();
 			var description = methodDescriptor.description;
 			var message = "FAILURE!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
-			this._log( message );
+			Log.fail( message );
 			this._addTab();
 			#if php
-			this._log( "" + error + ": " + ( Std.is( error, AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
+			Log.fail( "" + error + ": " + ( Std.is( error, AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
 			#else
-			this._log( error.toString() );
-			this._log( error.message + ": " + ( Std.is( error, AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
+			Log.fail( error.toString() );
+			Log.fail( error.message + ": " + ( Std.is( error, AssertException ) ? ": " + Assert.getLastAssertionLog() : "" ) );
 			#end
 			
 			this._removeTab();
@@ -175,7 +174,7 @@ class TraceNotifier implements ITestClassResultListener
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
         var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
-        this._log( message );
+        Log.warn( message );
         this._addTab();
         this._removeTab();
     }
@@ -186,6 +185,88 @@ class TraceNotifier implements ITestClassResultListener
         var description = methodDescriptor.description;
 		var timeElapsed = " " + 0 + "ms";
         var message = "IGNORE	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" );
-        this._log( message );
+        Log.warn( message );
+	}
+}
+
+// from https://gist.github.com/martinwells/5980517
+class Log
+{
+	private static var ansiColors:Map<String,String> = new Map();
+
+	private static var origTrace:Dynamic->?PosInfos->Void;
+
+	public static function init()
+	{
+		ansiColors['black'] = '\033[0;30m';
+		ansiColors['red'] = '\033[31m';
+		ansiColors['green'] = '\033[32m';
+		ansiColors['yellow'] = '\033[33m';
+		ansiColors['blue'] = '\033[1;34m';
+		ansiColors['magenta'] = '\033[1;35m';
+		ansiColors['cyan'] = '\033[0;36m';
+		ansiColors['grey'] = '\033[0;37m';
+		ansiColors['white'] = '\033[1;37m';
+		ansiColors['default'] = '\033[1;39m';
+
+		// reuse it for quick lookups of colors to log levels
+		ansiColors['debug'] = ansiColors['default'];
+		ansiColors['warn'] = ansiColors['yellow'];
+		ansiColors['error'] = ansiColors['red'];
+		ansiColors['fail'] = ansiColors['red'];
+		ansiColors['pass'] = ansiColors['green'];
+		ansiColors['default'] = ansiColors['default'];
+
+		// overload trace so we get access to funky stuff
+		origTrace = haxe.Log.trace;
+		haxe.Log.trace = haxeTrace;
+	}
+
+	inline public static function debug(message:Dynamic, ?pos:PosInfos):Void
+	{
+		print('debug', [message], pos);
+	}
+
+	inline public static function warn(message:Dynamic, ?pos:PosInfos):Void
+	{
+		print('warn', [message], pos);
+	}
+
+	inline public static function error(message:Dynamic, ?pos:PosInfos):Void
+	{
+		print('error', [message], pos);
+	}
+
+	inline public static function fail(message:Dynamic, ?pos:PosInfos):Void
+	{
+		print('fail', [message], pos);
+	}
+
+	inline public static function pass(message:Dynamic, ?pos:PosInfos):Void
+	{
+		print('pass', [message], pos);
+	}
+
+	static function haxeTrace(value:Dynamic, ?pos:PosInfos)
+	{
+		var params = pos.customParams;
+		if (params == null)
+			params = [];
+		else
+			pos.customParams = null;
+
+		print(value, params, pos);
+	}
+
+	static public function print(level:String, params:Array<Dynamic>, pos:PosInfos):Void
+	{
+		params = params.copy();
+
+		// prepare message
+		for (i in 0...params.length)
+			params[i] = Std.string(params[i]);
+		var message = params.join(", ");
+
+		origTrace(ansiColors[level] + message + ansiColors['default'], pos);
 	}
 }
