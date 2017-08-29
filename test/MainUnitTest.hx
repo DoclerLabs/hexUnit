@@ -15,6 +15,8 @@ class MainUnitTest
         
 		#if flash
 		emu.addListener( new hex.unittest.notifier.TraceNotifier( flash.Lib.current.loaderInfo, false, true ) );
+		#elseif php
+		emu.addListener( new hex.unittest.notifier.TraceNotifier( ) );
 		#else
 		emu.addListener( new hex.unittest.notifier.ConsoleNotifier( ) );
 		#end
