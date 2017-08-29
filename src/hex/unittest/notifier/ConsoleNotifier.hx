@@ -24,9 +24,9 @@ class ConsoleNotifier implements ITestClassResultListener
 		this._hideSuccessTest = hideSuccessTest;
     }
 
-    function _log( message : String ) : Void
+    function _log( message : String, ?infos : haxe.PosInfos ) : Void
     {
-		_TRACE(this._tabs + message);
+		_TRACE(this._tabs + message, infos);
     }
 
     function _addTab() : Void
