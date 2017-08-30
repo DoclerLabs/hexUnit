@@ -55,7 +55,6 @@ class ConsoleNotifier implements ITestClassResultListener
 		if ( Assert.getAssertionFailedCount() > 0 )
 		{
 			this._log( this.setColor( "Assertions failed: " + Assert.getAssertionFailedCount() + "\n", "red+bold" )  );
-			throw ( new Exception( "Assertions failed: " + Assert.getAssertionFailedCount() ) );
 		}
     }
 

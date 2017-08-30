@@ -98,16 +98,7 @@ class TraceNotifier implements ITestClassResultListener
 		if ( Assert.getAssertionFailedCount() > 0 )
 		{
 			this._log( "Assertions failed: " + Assert.getAssertionFailedCount() + "\n" );
-			#if flash
-			flash.system.System.exit( 1 );
-			#elseif ( php || neko )
-			Sys.exit(1);
-			#end
 		}
-		
-		#if flash
-		flash.system.System.exit( 0 );
-		#end
     }
 
     public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void

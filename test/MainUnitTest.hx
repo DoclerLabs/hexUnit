@@ -20,6 +20,7 @@ class MainUnitTest
 		#else
 		emu.addListener( new hex.unittest.notifier.ConsoleNotifier( ) );
 		#end
+		emu.addListener( new hex.unittest.notifier.ExitingNotifier( ) );
 		
         emu.addTest( HexUnitSuite );
         emu.run();
