@@ -46,7 +46,7 @@ typedef ClassDescriptor =
     var tearDownFieldName 	: String;
 
     var classDescriptors   	: Array<ClassDescriptor>;
-    var methodDescriptors  	: Array<TestMethodDescriptor>;
+    var methodDescriptors  	: Array<MethodDescriptor>;
     var classIndex 			: Int;
     var methodIndex 		: Int;
     var name				: String;	

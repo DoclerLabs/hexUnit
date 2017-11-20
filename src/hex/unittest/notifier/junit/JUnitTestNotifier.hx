@@ -5,6 +5,7 @@ import hex.unittest.description.ClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
 
 using StringTools;
+using hex.unittest.description.ClassDescriptorUtil;
 
 /**
  * ...

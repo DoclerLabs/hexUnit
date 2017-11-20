@@ -20,13 +20,13 @@ class ClassDescriptorUtil
 	static public function hasNextMethod( classDescriptor : ClassDescriptor ) : Bool
         return classDescriptor.methodIndex < classDescriptor.methodDescriptors.length;
 	
-	static public function nextMethod( classDescriptor : ClassDescriptor ) : TestMethodDescriptor
+	static public function nextMethod( classDescriptor : ClassDescriptor ) : MethodDescriptor
 		return classDescriptor.methodDescriptors[ classDescriptor.methodIndex++ ];
 		
 	static public function keepOnlyThisMethod( classDescriptor : ClassDescriptor, methodName : String ) : Void
 		classDescriptor.methodDescriptors = classDescriptor.methodDescriptors.filter( function( descriptor ) return descriptor.methodName == methodName );
 		
-	static public function currentMethodDescriptor( classDescriptor : ClassDescriptor ) : TestMethodDescriptor
+	static public function currentMethodDescriptor( classDescriptor : ClassDescriptor ) : MethodDescriptor
 		return classDescriptor.methodDescriptors[ classDescriptor.methodIndex == 0 ? 0 : classDescriptor.methodIndex - 1 ];
 		
 	static public function length( classDescriptor : ClassDescriptor ) : UInt

@@ -6,6 +6,8 @@ import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 
+using hex.unittest.description.ClassDescriptorUtil;
+
 /**
  * ...
  * @author Francis Bourre

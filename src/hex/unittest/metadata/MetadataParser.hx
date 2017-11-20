@@ -4,7 +4,7 @@ import Reflect;
 import haxe.rtti.Meta;
 import hex.error.Exception;
 import hex.unittest.description.ClassDescriptor;
-import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.description.MethodDescriptor;
 import hex.util.ClassUtil;
 
 using hex.unittest.description.ClassDescriptorUtil;
@@ -15,21 +15,18 @@ using hex.unittest.description.ClassDescriptorUtil;
  */
 class MetadataParser
 {
-    public function new()
-    {
-        //
-    }
+    public function new(){}
 
     public function parse( type : Class<Dynamic> ) : ClassDescriptor
     {
-        var descriptor = this._getClassDescriptor( type );
+        var descriptor = _getClassDescriptor( type );
         this._parse( descriptor );
         return descriptor;
     }
 	
 	public function parseMethod( type : Class<Dynamic>, methodName : String ) : ClassDescriptor
     {
-		var descriptor = this._getClassDescriptor( type );
+		var descriptor = _getClassDescriptor( type );
 		this._parse( descriptor );
 		descriptor.keepOnlyThisMethod( methodName );
 		return descriptor;
@@ -72,7 +69,7 @@ class MetadataParser
                     var suites : Array<Class<Dynamic>> = Reflect.field( descriptor.instance, fieldName );
                     for ( testClass in suites )
                     {
-                        var classDescriptor = this._getClassDescriptor( testClass );
+                        var classDescriptor = _getClassDescriptor( testClass );
                         descriptor.classDescriptors.push( classDescriptor );
                         this._parse( classDescriptor );
                     }
@@ -243,16 +240,15 @@ class MetadataParser
     {
         if ( dataProvider != null && dataProvider.length > 0 )
         {
-            for ( provider in dataProvider ) testDescriptor.methodDescriptors.push( new TestMethodDescriptor( fieldName, isAsync, isIgnored, description, provider ) );
+            for ( provider in dataProvider ) testDescriptor.methodDescriptors.push( _getMethodDescriptor( fieldName, isAsync, isIgnored, description, provider ) );
         }
         else
         {
-            testDescriptor.methodDescriptors.push( new TestMethodDescriptor( fieldName, isAsync, isIgnored, description, [] ) );
+            testDescriptor.methodDescriptors.push( _getMethodDescriptor( fieldName, isAsync, isIgnored, description, [] ) );
         }
     }
 	
-	function _getClassDescriptor( type : Class<Dynamic> ) : ClassDescriptor
-	{
+	static function _getClassDescriptor( type : Class<Dynamic> ) : ClassDescriptor
 		return
 		{
 			instance: 				Type.createEmptyInstance( type ),
@@ -269,5 +265,18 @@ class MetadataParser
 			methodIndex: 			0,
 			name:					""
 		}
-	}
+	
+	static function _getMethodDescriptor(  	methodName       : String,
+											isAsync           : Bool,
+											isIgnored         : Bool,
+											?description      : String,
+											?dataProvider     : Array<Dynamic> ) : MethodDescriptor
+		return 
+		{
+			methodName: 	methodName,
+			isAsync:		isAsync,
+			isIgnored:		isIgnored,
+			description:	description != null ? description : "",
+			dataProvider:	dataProvider
+		}
 }

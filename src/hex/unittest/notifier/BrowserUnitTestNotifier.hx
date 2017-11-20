@@ -5,7 +5,7 @@ import hex.error.Exception;
 import hex.error.IllegalArgumentException;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
-import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.description.MethodDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 import js.Browser;
@@ -189,7 +189,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 	{
 		this._successfulCount++;
 		var ignore = this.createElement( "- ", "yellow" );
-		var methodDescriptor : TestMethodDescriptor = descriptor.currentMethodDescriptor();
+		var methodDescriptor : MethodDescriptor = descriptor.currentMethodDescriptor();
 		var func = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
         this.generateMessage( ignore, func, descriptor, 0 );
 	}
