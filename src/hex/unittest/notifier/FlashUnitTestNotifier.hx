@@ -13,6 +13,8 @@ import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 
+using hex.unittest.description.ClassDescriptorUtil;
+
 /**
  * ...
  * @author Francis Bourre
@@ -126,7 +128,7 @@ class FlashUnitTestNotifier implements ITestClassResultListener
 
     public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
     {
-        this._log( this.createElement( "Test suite: '" + descriptor.getName() + "'", "white+bold+h4" ) );
+        this._log( this.createElement( "Test suite: '" + descriptor.name + "'", "white+bold+h4" ) );
         this._addTab();
     }
 
