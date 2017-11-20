@@ -104,7 +104,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 	
 	public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void  
 	{
-		this._testSuitesInExecution.push( this.getSuiteSummary( descriptor.getName(), descriptor.className ) );
+		this._testSuitesInExecution.push( this.getSuiteSummary( descriptor.name, descriptor.className ) );
 	}
 	
 	public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void 

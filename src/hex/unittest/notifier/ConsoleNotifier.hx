@@ -62,7 +62,7 @@ class ConsoleNotifier implements ITestClassResultListener
 
     public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
     {
-        this._log( this.setColor( "Suite class '" + descriptor.getName() + "'", "green+underline" ) );
+        this._log( this.setColor( "Suite class '" + descriptor.name + "'", "green+underline" ) );
         this._addTab();
     }
 
