@@ -1,6 +1,7 @@
 package hex.unittest.runner;
 
 import haxe.Timer;
+import haxe.ds.GenericStack;
 import hex.collection.HashMap;
 import hex.error.Exception;
 import hex.event.ITrigger;
@@ -20,7 +21,7 @@ class TestRunner implements ITestRunner
 	implements ITriggerOwner
 	implements ITestResultListener 
 {
-    var _classDescriptors           : Array<ClassDescriptor>;
+    var _classDescriptors           : GenericStack<Dynamic>;
     var _executedDescriptors        : HashMap<ClassDescriptor, Bool>;
 	var _lastRender					: Float = 0;
 
@@ -34,16 +35,16 @@ class TestRunner implements ITestRunner
 
     public function new( classDescriptor : ClassDescriptor )
     {
-        this._classDescriptors          = [];
+        this._classDescriptors          = new GenericStack();
         this._executedDescriptors       = new HashMap<ClassDescriptor, Bool>();
-        this._classDescriptors.push( classDescriptor );
+        this._classDescriptors.add( classDescriptor );
     }
 
     public function run() : Void
     {
-        var classDescriptor : ClassDescriptor = this._classDescriptors[ 0 ];
+        var classDescriptor = this._classDescriptors.first();
 		this.dispatcher.onStartRun( classDescriptor );
-        this._runClassDescriptor( this._classDescriptors[ 0 ] );
+        this._runClassDescriptor( this._classDescriptors.first() );
     }
 
     function _runClassDescriptor( classDescriptor : ClassDescriptor ) : Void
@@ -84,14 +85,14 @@ class TestRunner implements ITestRunner
         if ( classDescriptor.hasNextClass() )
         {
             classDescriptor = classDescriptor.nextClass();
-            this._classDescriptors.push( classDescriptor );
+            this._classDescriptors.add( classDescriptor );
             this._runClassDescriptor( classDescriptor );
         }
         else
         {
             this.dispatcher.onSuiteClassEndRun( classDescriptor );
-            this._classDescriptors.shift();
-            this._runClassDescriptor( this._classDescriptors[ 0 ] );
+            this._classDescriptors.pop();
+            this._runClassDescriptor( this._classDescriptors.first() );
         }
     }
 
@@ -108,8 +109,8 @@ class TestRunner implements ITestRunner
         {
             this.dispatcher.onTestClassEndRun( classDescriptor );
             this._tryToRunAfterClass( classDescriptor );
-            this._classDescriptors.shift();
-            this._runClassDescriptor( this._classDescriptors[ 0 ] );
+            this._classDescriptors.pop();
+            this._runClassDescriptor( this._classDescriptors.first() );
         }
     }
 
@@ -160,28 +161,28 @@ class TestRunner implements ITestRunner
      **/
     public function onSuccess( timeElapsed : Float ) : Void
     {
-		var classDescriptor = this._classDescriptors[ 0 ];
+		var classDescriptor = this._classDescriptors.first();
 		this.dispatcher.onSuccess( classDescriptor, timeElapsed );
         this._endTestMethodCall( classDescriptor );
     }
 
     public function onFail( timeElapsed : Float, error : Exception ) : Void
     {
-		var classDescriptor = this._classDescriptors[ 0 ];
+		var classDescriptor = this._classDescriptors.first();
 		this.dispatcher.onFail( classDescriptor, timeElapsed, error );
         this._endTestMethodCall( classDescriptor );
     }
 
     public function onTimeout( timeElapsed : Float ) : Void
     {
-		var classDescriptor = this._classDescriptors[ 0 ];
+		var classDescriptor = this._classDescriptors.first();
 		this.dispatcher.onTimeout( classDescriptor, timeElapsed, new TimeoutException() );
         this._endTestMethodCall( classDescriptor );
     }
 	
 	public function onIgnore( timeElapsed : Float) : Void
 	{
-		var classDescriptor = this._classDescriptors[ 0 ];
+		var classDescriptor = this._classDescriptors.first();
 		this.dispatcher.onIgnore( classDescriptor );
 		this._endTestMethodCall( classDescriptor );
 	}
