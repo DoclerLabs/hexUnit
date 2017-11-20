@@ -1,7 +1,7 @@
 package hex.unittest.notifier.junit;
 
 import hex.error.Exception;
-import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.description.ClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
 
 using StringTools;
@@ -39,7 +39,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		this._hostname = hostname;
 	}
 	
-	public function onStartRun( descriptor : TestClassDescriptor ) : Void 
+	public function onStartRun( descriptor : ClassDescriptor ) : Void 
 	{
 		this._testSuiteSummaries = new List();
 		this._testSuitesInExecution = new List();
@@ -48,7 +48,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		this._testSuitesInExecution.push( this.getSuiteSummary("-", "") );
 	}
 	
-	public function onEndRun( descriptor : TestClassDescriptor ) : Void 
+	public function onEndRun( descriptor : ClassDescriptor ) : Void 
 	{
 		//pop the global suite
 		this._testSuiteSummaries.add( this._testSuitesInExecution.pop() );
@@ -56,7 +56,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		this._outputHandler.handleOutput( this.getOutput() );
 	}
 	
-	public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
+	public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		this.updateSummary( summary, timeElapsed );
@@ -65,7 +65,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		
@@ -77,7 +77,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		
@@ -89,7 +89,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onIgnore( descriptor : TestClassDescriptor ) : Void
+	public function onIgnore( descriptor : ClassDescriptor ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		
@@ -101,21 +101,21 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void  
+	public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void  
 	{
 		this._testSuitesInExecution.push( this.getSuiteSummary( descriptor.getName(), descriptor.className ) );
 	}
 	
-	public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void 
+	public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void 
 	{
 		this._testSuiteSummaries.add(_testSuitesInExecution.pop());
 	}
 	
-	public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void  
+	public function onTestClassStartRun( descriptor : ClassDescriptor ) : Void  
 	{
 	}
 	
-	public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void 
+	public function onTestClassEndRun( descriptor : ClassDescriptor ) : Void 
 	{
 	}
 	
@@ -154,7 +154,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.tests++;
 	}
 	
-	function getTestCaseStart( descriptor : TestClassDescriptor, timeElapsed : Float ) : String
+	function getTestCaseStart( descriptor : ClassDescriptor, timeElapsed : Float ) : String
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
 		return "<testcase classname=\"" + descriptor.className + "\" name=\"" + methodDescriptor.methodName + "\" time=\"" + timeElapsed / 1000 + "\">";

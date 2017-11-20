@@ -9,7 +9,7 @@ import flash.events.UncaughtErrorEvent;
 
 import hex.error.Exception;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 
@@ -82,14 +82,14 @@ class TraceNotifier implements ITestClassResultListener
         this._tabs = this._tabs.substr( 0, this._tabs.length - (TAB_CHARACTER.length) );
     }
 
-    public function onStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onStartRun( descriptor : ClassDescriptor ) : Void
     {
         this._tabs = "";
         this._log( "<<< Start " + descriptor.className + " tests run >>>" );
         this._addTab();
     }
 
-    public function onEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
         this._log( "<<< End tests run >>>" );
@@ -101,29 +101,29 @@ class TraceNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
     {
         this._log( "Suite class '" + descriptor.getName() + "'" );
         this._addTab();
     }
 
-    public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassStartRun( descriptor : ClassDescriptor ) : Void
     {
         this._log( "Test class '" + descriptor.className + "'" );
         this._addTab();
     }
 
-    public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
+    public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void
     {
 		if( !this._hideSuccessTest )
 		{
@@ -135,7 +135,7 @@ class TraceNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
 		if ( descriptor != null )
 		{
@@ -161,7 +161,7 @@ class TraceNotifier implements ITestClassResultListener
 		
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
@@ -171,7 +171,7 @@ class TraceNotifier implements ITestClassResultListener
         this._removeTab();
     }
 	
-	public function onIgnore( descriptor : TestClassDescriptor ) : Void 
+	public function onIgnore( descriptor : ClassDescriptor ) : Void 
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;

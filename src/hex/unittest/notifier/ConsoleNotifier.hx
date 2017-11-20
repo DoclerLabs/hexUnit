@@ -2,7 +2,7 @@ package hex.unittest.notifier;
 
 import hex.error.Exception;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 
@@ -39,14 +39,14 @@ class ConsoleNotifier implements ITestClassResultListener
         this._tabs = this._tabs.substr( 0, this._tabs.length-1 );
     }
 
-    public function onStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onStartRun( descriptor : ClassDescriptor ) : Void
     {
         this._tabs = "";
         this._log( this.setColor( "<<< Start " + descriptor.className + " tests run >>>", "blue+bold+underline" ) );
         this._addTab();
     }
 
-    public function onEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
         this._log( this.setColor( "<<< End tests run >>>", "blue+bold+underline" ) );
@@ -58,29 +58,29 @@ class ConsoleNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
     {
         this._log( this.setColor( "Suite class '" + descriptor.getName() + "'", "green+underline" ) );
         this._addTab();
     }
 
-    public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassStartRun( descriptor : ClassDescriptor ) : Void
     {
         this._log( this.setColor( "Test class '" + descriptor.className + "'", "green" ) );
         this._addTab();
     }
 
-    public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
+    public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void
     {
 		if( !this._hideSuccessTest )
 		{
@@ -92,7 +92,7 @@ class ConsoleNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
@@ -109,7 +109,7 @@ class ConsoleNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
@@ -120,7 +120,7 @@ class ConsoleNotifier implements ITestClassResultListener
         this._removeTab();
     }
 
-	public function onIgnore( descriptor : TestClassDescriptor ) : Void
+	public function onIgnore( descriptor : ClassDescriptor ) : Void
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;

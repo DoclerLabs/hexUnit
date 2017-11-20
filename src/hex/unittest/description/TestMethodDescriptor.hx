@@ -1,7 +1,5 @@
 package hex.unittest.description;
 
-import hex.util.Stringifier;
-
 /**
  * ...
  * @author Francis Bourre
@@ -29,6 +27,6 @@ class TestMethodDescriptor
 
     public function toString() : String
     {
-        return Stringifier.stringify( this ) + ':[$methodName, $isAsync, $isIgnored, $description, $dataProvider]';
+        return hex.util.Stringifier.stringify( this ) + ':[$methodName, $isAsync, $isIgnored, $description, $dataProvider]';
     }
 }

@@ -1,7 +1,7 @@
 package hex.unittest.event;
 
 import hex.error.Exception;
-import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.description.ClassDescriptor;
 
 /**
  * ...
@@ -9,16 +9,16 @@ import hex.unittest.description.TestClassDescriptor;
  */
 interface ITestClassResultListener
 {
-	function onStartRun( descriptor : TestClassDescriptor ) : Void;
-    function onEndRun( descriptor : TestClassDescriptor ) : Void;
+	function onStartRun( descriptor : ClassDescriptor ) : Void;
+    function onEndRun( descriptor : ClassDescriptor ) : Void;
 	
-    function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void;
-    function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void;
-    function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void;
-    function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void;
+    function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void;
+    function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void;
+    function onTestClassStartRun( descriptor : ClassDescriptor ) : Void;
+    function onTestClassEndRun( descriptor : ClassDescriptor ) : Void;
 	
-	function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void;
-    function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void;
-    function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void;
-    function onIgnore( descriptor : TestClassDescriptor ) : Void;
+	function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void;
+    function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void;
+    function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void;
+    function onIgnore( descriptor : ClassDescriptor ) : Void;
 }
