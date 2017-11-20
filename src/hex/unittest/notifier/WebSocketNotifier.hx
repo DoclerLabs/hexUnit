@@ -13,6 +13,8 @@ import js.html.CloseEvent;
 import js.html.Event;
 import js.html.WebSocket;
 
+using hex.unittest.description.ClassDescriptorUtil;
+
 /**
  * ...
  * @author ...
@@ -222,7 +224,7 @@ class WebSocketNotifier
 		var data = 
 		{
 			className: descriptor.className,
-			suiteName: descriptor.getName()
+			suiteName: descriptor.name
 		};
 		
 		this.sendMessage( "testSuiteStartRun", data );
