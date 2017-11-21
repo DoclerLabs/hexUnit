@@ -2,13 +2,16 @@ package hex.unittest.runner;
 
 import haxe.Timer;
 import haxe.ds.GenericStack;
+import hex.collection.HashMap;
 import hex.error.Exception;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
-import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.TimeoutException;
 import hex.unittest.event.ITestClassResultListener;
 import hex.unittest.event.ITestResultListener;
+
+using hex.unittest.description.ClassDescriptorUtil;
 
 /**
  * ...
@@ -18,8 +21,8 @@ class TestRunner implements ITestRunner
 	implements ITriggerOwner
 	implements ITestResultListener 
 {
-    var _classDescriptors           : GenericStack<TestClassDescriptor>;
-    var _executedDescriptors        : Map<TestClassDescriptor, Bool>;
+    var _classDescriptors           : GenericStack<Dynamic>;
+    var _executedDescriptors        : HashMap<ClassDescriptor, Bool>;
 	var _lastRender					: Float = 0;
 
     public var dispatcher ( default, never ) : ITrigger<ITestClassResultListener>;
@@ -30,41 +33,41 @@ class TestRunner implements ITestRunner
 	static public var RENDER_DELAY			: Int = 0;
 	#end
 
-    public function new( classDescriptor : TestClassDescriptor )
+    public function new( classDescriptor : ClassDescriptor )
     {
-        this._classDescriptors          = new GenericStack<TestClassDescriptor>();
-        this._executedDescriptors       = new Map<TestClassDescriptor, Bool>();
+        this._classDescriptors          = new GenericStack();
+        this._executedDescriptors       = new HashMap<ClassDescriptor, Bool>();
         this._classDescriptors.add( classDescriptor );
     }
 
     public function run() : Void
     {
-        var classDescriptor : TestClassDescriptor = this._classDescriptors.first();
+        var classDescriptor = this._classDescriptors.first();
 		this.dispatcher.onStartRun( classDescriptor );
         this._runClassDescriptor( this._classDescriptors.first() );
     }
 
-    function _runClassDescriptor( classDescriptor : TestClassDescriptor ) : Void
+    function _runClassDescriptor( classDescriptor : ClassDescriptor ) : Void
     {
         if ( classDescriptor != null )
         {
             if ( classDescriptor.isSuiteClass )
             {
-                if ( !this._executedDescriptors.exists( classDescriptor ) )
+                if ( !this._executedDescriptors.containsKey( classDescriptor ) )
                 {
                     this.dispatcher.onSuiteClassStartRun( classDescriptor );
-                    this._executedDescriptors.set( classDescriptor, true );
+                    this._executedDescriptors.put( classDescriptor, true );
                 }
 
                 this._runSuiteClass( classDescriptor );
             }
             else
             {
-                if ( !this._executedDescriptors.exists( classDescriptor ) )
+                if ( !this._executedDescriptors.containsKey( classDescriptor ) )
                 {
                     this.dispatcher.onTestClassStartRun( classDescriptor );
                     classDescriptor.instance = Type.createEmptyInstance( classDescriptor.type );
-                    this._executedDescriptors.set( classDescriptor, true );
+                    this._executedDescriptors.put( classDescriptor, true );
                 }
 
                 this._tryToRunBeforeClass( classDescriptor );
@@ -77,7 +80,7 @@ class TestRunner implements ITestRunner
         }
     }
 
-    function _runSuiteClass( classDescriptor : TestClassDescriptor ) : Void
+    function _runSuiteClass( classDescriptor : ClassDescriptor ) : Void
     {
         if ( classDescriptor.hasNextClass() )
         {
@@ -93,7 +96,7 @@ class TestRunner implements ITestRunner
         }
     }
 
-    function _runTestClass( classDescriptor : TestClassDescriptor ) : Void
+    function _runTestClass( classDescriptor : ClassDescriptor ) : Void
     {
         if ( classDescriptor.hasNextMethod() )
         {
@@ -111,7 +114,7 @@ class TestRunner implements ITestRunner
         }
     }
 
-    function _tryToRunSetUp( classDescriptor : TestClassDescriptor ) : Void
+    function _tryToRunSetUp( classDescriptor : ClassDescriptor ) : Void
     {
         if ( classDescriptor.setUpFieldName != null )
         {
@@ -119,7 +122,7 @@ class TestRunner implements ITestRunner
         }
     }
 
-    function _tryToRunTearDown( classDescriptor : TestClassDescriptor ) : Void
+    function _tryToRunTearDown( classDescriptor : ClassDescriptor ) : Void
     {
         if ( classDescriptor.tearDownFieldName != null )
         {
@@ -127,7 +130,7 @@ class TestRunner implements ITestRunner
         }
     }
 
-    function _tryToRunBeforeClass( classDescriptor : TestClassDescriptor ) : Void
+    function _tryToRunBeforeClass( classDescriptor : ClassDescriptor ) : Void
     {
         if ( classDescriptor.beforeClassFieldName != null )
         {
@@ -135,7 +138,7 @@ class TestRunner implements ITestRunner
         }
     }
 
-    function _tryToRunAfterClass( classDescriptor : TestClassDescriptor ) : Void
+    function _tryToRunAfterClass( classDescriptor : ClassDescriptor ) : Void
     {
         if ( classDescriptor.afterClassFieldName != null )
         {
@@ -184,7 +187,7 @@ class TestRunner implements ITestRunner
 		this._endTestMethodCall( classDescriptor );
 	}
 
-    function _endTestMethodCall( classDescriptor: TestClassDescriptor ) : Void
+    function _endTestMethodCall( classDescriptor: ClassDescriptor ) : Void
     {
         this._tryToRunTearDown( classDescriptor );
 

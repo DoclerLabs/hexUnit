@@ -7,7 +7,7 @@ import hex.error.IllegalStateException;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.description.MethodDescriptor;
 import hex.unittest.event.ITestResultListener;
 
 /**
@@ -18,13 +18,13 @@ class MethodRunner implements ITriggerOwner
 {
     var _scope                  : Dynamic;
     var _methodReference        : Dynamic;
-    var _methodDescriptor       : TestMethodDescriptor;
+    var _methodDescriptor       : MethodDescriptor;
 	var _startTime              : Float;
     var _endTime                : Float;
 	
     public var trigger ( default, never ) : ITrigger<ITestResultListener>;
 
-    public function new( scope : Dynamic, methodDescriptor : TestMethodDescriptor )
+    public function new( scope : Dynamic, methodDescriptor : MethodDescriptor )
     {
         this._scope             = scope;
         this._methodReference   = Reflect.field( this._scope, methodDescriptor.methodName );
@@ -113,7 +113,7 @@ class MethodRunner implements ITriggerOwner
 		return this.trigger.disconnect( listener );
     }
 
-    public function getDescriptor() : TestMethodDescriptor
+    public function getDescriptor() : MethodDescriptor
     {
         return this._methodDescriptor;
     }

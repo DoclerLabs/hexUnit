@@ -7,11 +7,13 @@ import hex.error.Exception;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.description.ClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
 import js.html.CloseEvent;
 import js.html.Event;
 import js.html.WebSocket;
+
+using hex.unittest.description.ClassDescriptorUtil;
 
 /**
  * ...
@@ -140,13 +142,13 @@ class WebSocketNotifier
 		}
 	}
 	
-	public function onStartRun( descriptor : TestClassDescriptor ) : Void
+	public function onStartRun( descriptor : ClassDescriptor ) : Void
 	{
 		this.netTimeElapsed = 0;
 		this.sendMessage( "startRun", {} );
 	}
 	
-	public function onEndRun( descriptor : TestClassDescriptor ) : Void
+	public function onEndRun( descriptor : ClassDescriptor ) : Void
 	{
 		var data = 
 		{ 
@@ -159,7 +161,7 @@ class WebSocketNotifier
 		this.sendMessage( "endRun", data  );
 	}
 	
-	public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void 
+	public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void 
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
 		
@@ -181,7 +183,7 @@ class WebSocketNotifier
 		this.sendMessage( "testCaseRunSuccess", data );
 	}
 	
-	public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
 		
@@ -207,33 +209,33 @@ class WebSocketNotifier
 		this.sendMessage( "testCaseRunFailed", data );
 	}
 	
-	public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
 	{
 		this.onFail( descriptor, timeElapsed, error );
 	}
 	
-	public function onIgnore( descriptor : TestClassDescriptor ) : Void
+	public function onIgnore( descriptor : ClassDescriptor ) : Void
 	{
 		this.onSuccess( descriptor, 0 );
 	}
 	
-	public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
+	public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
 	{
 		var data = 
 		{
 			className: descriptor.className,
-			suiteName: descriptor.getName()
+			suiteName: descriptor.name
 		};
 		
 		this.sendMessage( "testSuiteStartRun", data );
 	}
 	
-	public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
+	public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void
 	{
 		this.sendMessage( "testSuiteEndRun", {} );
 	}
 	
-	public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void 
+	public function onTestClassStartRun( descriptor : ClassDescriptor ) : Void 
 	{
 		var data = 
 		{
@@ -243,7 +245,7 @@ class WebSocketNotifier
 		this.sendMessage( "testClassStartRun", data );
 	}
 	
-	public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
+	public function onTestClassEndRun( descriptor : ClassDescriptor ) : Void
 	{
 		this.sendMessage( "testClassEndRun", {} );
 	}

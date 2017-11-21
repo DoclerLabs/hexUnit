@@ -4,14 +4,16 @@ package hex.unittest.notifier;
 import hex.error.Exception;
 import hex.error.IllegalArgumentException;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestClassDescriptor;
-import hex.unittest.description.TestMethodDescriptor;
+import hex.unittest.description.ClassDescriptor;
+import hex.unittest.description.MethodDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 import js.Browser;
 import js.html.Element;
 import js.html.HRElement;
 import js.html.SpanElement;
+
+using hex.unittest.description.ClassDescriptorUtil;
 
 /**
  * ...
@@ -82,7 +84,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
         this._tabs--;
     }
 
-    public function onStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onStartRun( descriptor : ClassDescriptor ) : Void
     {
 		this._assertionStartCount = Assert.getAssertionCount();
 		this._successfulCount = 0;
@@ -93,7 +95,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 		this.netTimeElapsed = 0;
     }
 
-    public function onEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onEndRun( descriptor : ClassDescriptor ) : Void
     {
 		this._removeTab();
 		
@@ -127,29 +129,29 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 		this.addRuler();
     }
 
-    public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
     {
-        this._log( this.createElement( descriptor.getName() + ": '" + descriptor.className + "'", "white+bold+h4" ) );
+        this._log( this.createElement( descriptor.name + ": '" + descriptor.className + "'", "white+bold+h4" ) );
         this._addTab();
     }
 
-    public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassStartRun( descriptor : ClassDescriptor ) : Void
     {
         this._log( this.createElement( "Test class: '" + descriptor.className + "'", "darkwhite+h5+bold" ) );
         this._addTab();
     }
 
-    public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
+    public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void
     {
 		this._successfulCount++;
 		var success = this.createElement( "✔ ", "green" );
@@ -159,7 +161,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
     }
 	
 
-    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
 		this._failedCount++;
         var methodDescriptor = descriptor.currentMethodDescriptor();
@@ -178,21 +180,21 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 		this.setGlobalResultFailed( );
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
 		this.onFail( descriptor, timeElapsed, error );
     }
 	
-	public function onIgnore( descriptor : TestClassDescriptor ):Void 
+	public function onIgnore( descriptor : ClassDescriptor ):Void 
 	{
 		this._successfulCount++;
 		var ignore = this.createElement( "- ", "yellow" );
-		var methodDescriptor : TestMethodDescriptor = descriptor.currentMethodDescriptor();
+		var methodDescriptor : MethodDescriptor = descriptor.currentMethodDescriptor();
 		var func = this.createElement( methodDescriptor.methodName + "() ", "lightgrey" );
         this.generateMessage( ignore, func, descriptor, 0 );
 	}
 	
-	function generateMessage( icon:Element, func:Element, descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
+	function generateMessage( icon:Element, func:Element, descriptor : ClassDescriptor, timeElapsed : Float ) : Void
 	{
         var description = descriptor.currentMethodDescriptor().description;
         var message = this.createElement( (description.length > 0 ? description : "") + " [" + timeElapsed + "ms]", "darkgrey" );

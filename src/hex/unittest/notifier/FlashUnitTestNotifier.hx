@@ -9,9 +9,11 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import hex.error.Exception;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
+
+using hex.unittest.description.ClassDescriptorUtil;
 
 /**
  * ...
@@ -85,14 +87,14 @@ class FlashUnitTestNotifier implements ITestClassResultListener
         this._tabs--;
     }
 
-    public function onStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onStartRun( descriptor : ClassDescriptor ) : Void
     {
         this._tabs = 0;
         this._log( this.createElement( "[[[ Start " + descriptor.className + " tests run ]]]", "yellow+bold+h3" ) );
         this._addTab();
     }
 
-    public function onEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
 		
@@ -124,29 +126,29 @@ class FlashUnitTestNotifier implements ITestClassResultListener
 		this.addRuler();
     }
 
-    public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
     {
-        this._log( this.createElement( "Test suite: '" + descriptor.getName() + "'", "white+bold+h4" ) );
+        this._log( this.createElement( "Test suite: '" + descriptor.name + "'", "white+bold+h4" ) );
         this._addTab();
     }
 
-    public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassStartRun( descriptor : ClassDescriptor ) : Void
     {
         this._log( this.createElement( "Test class: '" + descriptor.className + "'", "darkwhite+h5+bold" ) );
         this._addTab();
     }
 
-    public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this._removeTab();
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
+    public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void
     {
 		var success = this.createElement( "✔ ", "green" );
 		var methodDescriptor = descriptor.currentMethodDescriptor();
@@ -155,7 +157,7 @@ class FlashUnitTestNotifier implements ITestClassResultListener
     }
 	
 
-    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
 		var func = this.createElement( methodDescriptor.methodName + "() ", "red" );
@@ -173,12 +175,12 @@ class FlashUnitTestNotifier implements ITestClassResultListener
 		this.setGlobalResultFailed( );
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
 		this.onFail( descriptor, timeElapsed, error );
     }
 	
-	public function onIgnore( descriptor : TestClassDescriptor ) : Void
+	public function onIgnore( descriptor : ClassDescriptor ) : Void
 	{
 		var success 			= this.createElement( "- ", "yellow" );
 		var methodDescriptor 	= descriptor.currentMethodDescriptor();
@@ -186,7 +188,7 @@ class FlashUnitTestNotifier implements ITestClassResultListener
         this.generateMessage( success, func, descriptor, 0 );
 	}
 	
-	function generateMessage( icon : String, func:String, descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
+	function generateMessage( icon : String, func:String, descriptor : ClassDescriptor, timeElapsed : Float ) : Void
 	{
         var description 	= descriptor.currentMethodDescriptor().description;
         var message 		= this.createElement( ( description.length > 0 ? description : "" ) + " [" + timeElapsed + "ms]", "darkgrey" );

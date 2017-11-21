@@ -5,9 +5,11 @@ import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
 import hex.util.Stringifier;
 import hex.unittest.assertion.Assert;
-import hex.unittest.description.TestClassDescriptor;
+import hex.unittest.description.ClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
 import hex.unittest.metadata.MetadataParser;
+
+using hex.unittest.description.ClassDescriptorUtil;
 
 /**
  * ...
@@ -18,7 +20,7 @@ class ExMachinaUnitCore
 	implements ITestClassResultListener
 {
     var _parser                     : MetadataParser;
-    var _classDescriptors           : Array<TestClassDescriptor>;
+    var _classDescriptors           : Array<ClassDescriptor>;
     var _runner                     : TestRunner;
     var _currentClassDescriptor     : Int;
 	
@@ -39,11 +41,8 @@ class ExMachinaUnitCore
 	
 	public function getTestLength() : UInt
 	{
-		var length : UInt = 0;
-		for ( classDescriptor in this._classDescriptors )
-		{
-			length += classDescriptor.getTestLength();
-		}
+		var length = 0;
+		for ( classDescriptor in this._classDescriptors ) length += classDescriptor.length();
 		return length;
 	}
 
@@ -83,12 +82,12 @@ class ExMachinaUnitCore
         return this.dispatcher.disconnect( listener );
     }
 
-    public function onStartRun( descriptor : TestClassDescriptor ): Void
+    public function onStartRun( descriptor : ClassDescriptor ): Void
     {
         this.dispatcher.onStartRun( descriptor );
     }
 
-    public function onEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onEndRun( descriptor : ClassDescriptor ) : Void
     {
 		this.dispatcher.onEndRun( descriptor );
 		
@@ -105,42 +104,42 @@ class ExMachinaUnitCore
         }
     }
 
-    public function onSuiteClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
     {
        this.dispatcher.onSuiteClassStartRun( descriptor );
     }
 
-    public function onSuiteClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this.dispatcher.onSuiteClassEndRun( descriptor );
     }
 
-    public function onTestClassStartRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassStartRun( descriptor : ClassDescriptor ) : Void
     {
         this.dispatcher.onTestClassStartRun( descriptor );
     }
 
-    public function onTestClassEndRun( descriptor : TestClassDescriptor ) : Void
+    public function onTestClassEndRun( descriptor : ClassDescriptor ) : Void
     {
         this.dispatcher.onTestClassEndRun( descriptor );
     }
 
-    public function onSuccess( descriptor : TestClassDescriptor, timeElapsed : Float ) : Void
+    public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void
     {
         this.dispatcher.onSuccess( descriptor, timeElapsed );
     }
 
-    public function onFail( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         this.dispatcher.onFail( descriptor, timeElapsed, error );
     }
 
-    public function onTimeout( descriptor : TestClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         this.dispatcher.onTimeout( descriptor, timeElapsed, error );
     }
 
-	public function onIgnore( descriptor : TestClassDescriptor ) : Void 
+	public function onIgnore( descriptor : ClassDescriptor ) : Void 
 	{
 		this.dispatcher.onIgnore( descriptor );
 	}
@@ -155,7 +154,7 @@ class ExMachinaUnitCore
         this._runner.run();
     }
 
-    function _nextClassDescriptor() : TestClassDescriptor
+    function _nextClassDescriptor() : ClassDescriptor
     {
         return this._classDescriptors[ this._currentClassDescriptor++ ];
     }
