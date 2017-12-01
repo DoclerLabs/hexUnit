@@ -4,7 +4,6 @@ package hex.unittest.runner;
 import haxe.macro.*;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-import hex.compiletime.flow.parser.ExpressionUtil;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.description.MethodDescriptor;
 import hex.unittest.metadata.MetadataList;
@@ -146,7 +145,7 @@ class ClassDescriptorGenerator
 		{
 			case EArrayDecl( values ):
 				values.iter( 
-					function( value ) cd.classDescriptors.push( _parseClass( _getClassDescriptor( ExpressionUtil.compressField( value ) ) ) )
+					function( value ) cd.classDescriptors.push( _parseClass( _getClassDescriptor( MacroUtil.compressField( value ) ) ) )
 				);
 
 			case _:
