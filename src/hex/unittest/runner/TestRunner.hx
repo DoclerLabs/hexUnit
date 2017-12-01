@@ -101,7 +101,7 @@ class TestRunner implements ITestRunner
         if ( classDescriptor.hasNextMethod() )
         {
             this._tryToRunSetUp( classDescriptor );
-            var methodRunner = new MethodRunner( classDescriptor.instance, classDescriptor.nextMethod() );
+            var methodRunner = new MethodRunner( classDescriptor.instance, classDescriptor.nextMethod(), classDescriptor.type );
             methodRunner.addListener( this );
             methodRunner.run();
         }

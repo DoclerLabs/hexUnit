@@ -187,19 +187,11 @@ class MetadataParser
                 
                 var isDataDriven = Reflect.hasField( funcMeta, MetadataList.DATA_PROVIDER );
                 var dataProvider:Array<Array<Dynamic>> = null;
+				var dataProviderFieldName = "";
                 if ( isDataDriven )
                 {
                     args = Reflect.field( funcMeta, MetadataList.DATA_PROVIDER );
-                    var dataProviderName = ( args != null ) ? args [0] : "";
-
-                    if ( !Reflect.hasField(testDescriptor.type, dataProviderName ) )
-                    {
-                        throw new Exception( "Class " + testDescriptor.className + " is missing dataProvider '" + dataProviderName + "' for method '" + fieldName + "'" );
-                    }
-                    else
-                    {
-                        dataProvider = Reflect.field( testDescriptor.type, dataProviderName);
-                    }
+                    dataProviderFieldName = ( args != null ) ? args [0] : "";
                 }
 
                 switch( tag )
@@ -221,30 +213,46 @@ class MetadataParser
                         break;
 
                     case MetadataList.TEST :
-                        this._addTestToDescriptor(testDescriptor, fieldName, false, isIgnored, description, dataProvider);
+                        this._addTestToDescriptor(testDescriptor, fieldName, false, isIgnored, description, 0, dataProviderFieldName );
                         break;
 
                     case MetadataList.ASYNC:
-                        this._addTestToDescriptor(testDescriptor, fieldName, true, isIgnored, description, dataProvider);
+						var hasTimeout = Reflect.hasField( funcMeta, MetadataList.TIMEOUT );
+						var timeout = hasTimeout ? Reflect.field( funcMeta, MetadataList.TIMEOUT )[ 0 ] : 1500;
+						this._addTestToDescriptor( testDescriptor, fieldName, true, isIgnored, description, timeout, dataProviderFieldName );
                 }
             }
         }
     }
 
-    function _addTestToDescriptor( 	testDescriptor 	: ClassDescriptor, 
-									fieldName 		: String, 
-									isAsync 		: Bool, 
-									isIgnored 		: Bool, 
-									description 	: String, 
-									dataProvider 	: Array<Array<Dynamic>> ) : Void
+    function _addTestToDescriptor( 	testDescriptor 			: ClassDescriptor, 
+									fieldName 				: String, 
+									isAsync 				: Bool, 
+									isIgnored 				: Bool, 
+									description 			: String, 
+									timeout 				: UInt,
+									dataProviderFieldName 	: String ) : Void
     {
-        if ( dataProvider != null && dataProvider.length > 0 )
+        if ( dataProviderFieldName != '' )
         {
-            for ( provider in dataProvider ) testDescriptor.methodDescriptors.push( _getMethodDescriptor( fieldName, isAsync, isIgnored, description, provider ) );
+			var length = 0;
+			try
+			{
+				length = Reflect.field( testDescriptor.type, dataProviderFieldName ).length;
+			}
+			catch ( e : Dynamic )
+			{
+				throw new Exception( "Class " + testDescriptor.className + " is missing dataProvider '" + dataProviderFieldName + "' for method '" + fieldName + "'" );
+			}
+			
+            for ( dataProviderIndex in 0...length ) 
+			{
+				testDescriptor.methodDescriptors.push( _getMethodDescriptor( fieldName, isAsync, isIgnored, description, dataProviderFieldName, dataProviderIndex ) );
+			}
         }
         else
         {
-            testDescriptor.methodDescriptors.push( _getMethodDescriptor( fieldName, isAsync, isIgnored, description, [] ) );
+            testDescriptor.methodDescriptors.push( _getMethodDescriptor( fieldName, isAsync, isIgnored, description, dataProviderFieldName, 0 ) );
         }
     }
 	
@@ -266,17 +274,20 @@ class MetadataParser
 			name:					""
 		}
 	
-	static function _getMethodDescriptor(  	methodName       : String,
-											isAsync           : Bool,
-											isIgnored         : Bool,
-											?description      : String,
-											?dataProvider     : Array<Dynamic> ) : MethodDescriptor
+	static function _getMethodDescriptor(  	methodName       		: String,
+											isAsync           		: Bool,
+											isIgnored         		: Bool,
+											?description      		: String,
+											dataProviderFieldName 	: String,
+											dataProviderIndex 		: UInt ) : MethodDescriptor
 		return 
 		{
-			methodName: 	methodName,
-			isAsync:		isAsync,
-			isIgnored:		isIgnored,
-			description:	description != null ? description : "",
-			dataProvider:	dataProvider
+			methodName: 			methodName,
+			isAsync:				isAsync,
+			isIgnored:				isIgnored,
+			description:			description != null ? description : "",
+			timeout:				1500,
+			dataProviderFieldName:	dataProviderFieldName,
+			dataProviderIndex:		dataProviderIndex
 		}
 }

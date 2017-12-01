@@ -1,4 +1,5 @@
 package hex;
+
 import haxe.Timer;
 import hex.unittest.assertion.Assert;
 import hex.unittest.runner.MethodRunner;
