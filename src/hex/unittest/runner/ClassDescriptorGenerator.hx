@@ -20,13 +20,14 @@ using Lambda;
 class ClassDescriptorGenerator 
 {
 	/** @private */ function new() throw new hex.error.PrivateConstructorException();
-	
+	#if genhexunit
 	macro public static function generate( testableClass : haxe.macro.Expr.ExprOf<Class<Dynamic>> )
 	{
 		var stringClassRepresentation = _getStringClassRepresentation( testableClass );
 		var classDescriptor = _parseClass( _getClassDescriptor( stringClassRepresentation ) );
 		return ExprUtil.genClass( classDescriptor );
 	}
+	#end
 	
 	#if macro
 	static function _parseClass( classDescriptor : ClassDescriptor ) : ClassDescriptor

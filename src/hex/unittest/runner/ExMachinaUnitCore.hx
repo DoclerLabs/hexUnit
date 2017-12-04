@@ -49,10 +49,12 @@ class ExMachinaUnitCore
         this._classDescriptors.push( this._parser.parse( testableClass ) );
     }
 	
+	#if genhexunit
 	public function addDescriptor( classDescriptor : ClassDescriptor ) : Void
     {
         this._classDescriptors.push( classDescriptor );
     }
+	#end
 	
 	public function addTestCollection( collection : Array<Class<Dynamic>> ) : Void
     {
