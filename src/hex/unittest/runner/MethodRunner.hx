@@ -42,7 +42,6 @@ class MethodRunner
 			return;
 		}
 		
-		//var dataProvider : Array<Dynamic> = [];
 		var dataProvider : Array<Array<Dynamic>> = this._methodDescriptor.dataProviderFieldName != "" ? cast(Reflect.field( this._classType, this._methodDescriptor.dataProviderFieldName )) : [];
 		
         if ( !this._methodDescriptor.isAsync )
@@ -50,7 +49,7 @@ class MethodRunner
             try
             {
 				//
-                Reflect.callMethod( this._scope, this._methodReference, dataProvider.length > 0 ? dataProvider[ this._methodDescriptor.dataProviderIndex ] : [] );
+                Reflect.callMethod( this._scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
                 this._endTime = Date.now().getTime();
                 this.trigger.onSuccess( this.getTimeElapsed() );
 			}
@@ -81,7 +80,7 @@ class MethodRunner
             
             try
             {
-                Reflect.callMethod( this._scope, this._methodReference, dataProvider.length > 0 ? dataProvider[ this._methodDescriptor.dataProviderIndex ] : [] );
+                Reflect.callMethod( this._scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
             }
             catch ( err : Dynamic )
             {

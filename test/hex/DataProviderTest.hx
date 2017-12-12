@@ -10,27 +10,28 @@ import hex.unittest.runner.MethodRunner;
  */
 class DataProviderTest
 {
+	public function new(){}
 
-	public static var testDataProvider:Array<Array<Dynamic>> = [
-		["string0", 0],
-		["string1", 1],
-		["string2", 2],
-		["string3", 3],
-		["string4", 4]
+	public static var testDataProvider = [
+		{stringValue:"string0", intValue:0},
+		{stringValue:"string1", intValue:1},
+		{stringValue:"string2", intValue:2},
+		{stringValue:"string3", intValue:3},
+		{stringValue:"string4", intValue:4}
 	];
 	
 	@Test("Data provider test")
 	@DataProvider("testDataProvider")
-	public function testWithProvider(stringValue:String, intValue:Int)
+	public function testWithProvider(o:{stringValue:String, intValue:Int})
 	{
-		Assert.equals(stringValue, "string" + intValue, "Values must be equal");
+		Assert.equals(o.stringValue, "string" + o.intValue, "Values must be equal");
 	}
 
 	@Async("Async test with data provider")
 	@DataProvider("testDataProvider")
-	public function testAsyncWithDataProvider(stringValue:String, intValue:Int)
+	public function testAsyncWithDataProvider(o:{stringValue:String, intValue:Int})
 	{
-		Assert.equals(stringValue, "string" + intValue, "Values must be equal");
+		Assert.equals(o.stringValue, "string" + o.intValue, "Values must be equal");
 		Timer.delay(MethodRunner.asyncHandler(this._onAsyncTestEnd), 10);
 	}
 	
