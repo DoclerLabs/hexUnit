@@ -42,7 +42,7 @@ class MethodRunner
 			return;
 		}
 		
-		var dataProvider : Array<Array<Dynamic>> = this._methodDescriptor.dataProviderFieldName != "" ? cast(Reflect.field( this._classType, this._methodDescriptor.dataProviderFieldName )) : [];
+		var dataProvider = this._methodDescriptor.dataProviderFieldName != "" ? cast(Reflect.field( this._classType, this._methodDescriptor.dataProviderFieldName )) : [];
 		
         if ( !this._methodDescriptor.isAsync )
         {
