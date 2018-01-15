@@ -1,8 +1,6 @@
 package hex.unittest.runner;
 
 import hex.error.Exception;
-import hex.event.ITrigger;
-import hex.event.ITriggerOwner;
 import hex.util.Stringifier;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
@@ -16,7 +14,7 @@ using hex.unittest.description.ClassDescriptorUtil;
  * @author Francis Bourre
  */
 class ExMachinaUnitCore 
-	implements ITriggerOwner
+	implements hex.event.ITriggerOwner
 	implements ITestClassResultListener
 {
     var _parser                     : MetadataParser;
@@ -24,7 +22,7 @@ class ExMachinaUnitCore
     var _runner                     : TestRunner;
     var _currentClassDescriptor     : Int;
 	
-    public var dispatcher ( default, never ) : ITrigger<ITestClassResultListener>;
+    public var dispatcher ( default, never ) : hex.event.ITrigger<ITestClassResultListener>;
 
     public function new()
     {
@@ -51,6 +49,13 @@ class ExMachinaUnitCore
         this._classDescriptors.push( this._parser.parse( testableClass ) );
     }
 	
+	#if genhexunit
+	public function addDescriptor( classDescriptor : ClassDescriptor ) : Void
+    {
+        this._classDescriptors.push( classDescriptor );
+    }
+	#end
+	
 	public function addTestCollection( collection : Array<Class<Dynamic>> ) : Void
     {
 		for ( testableClass in collection )
@@ -64,10 +69,7 @@ class ExMachinaUnitCore
 		this._classDescriptors.push( this._parser.parseMethod( testableClass, methodName ) );
 	}
 
-    public function toString() : String
-    {
-        return Stringifier.stringify( this );
-    }
+    public function toString() return hex.util.Stringifier.stringify( this );
 
     /**
      * Event handling

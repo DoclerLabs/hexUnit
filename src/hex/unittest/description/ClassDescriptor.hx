@@ -8,12 +8,14 @@ typedef ClassDescriptor =
 	/**
 	 * The instance of the test class.
 	 */
-    var instance : Dynamic;
+    @:optional 
+	var instance : Dynamic;
 
     /**
 	 * The type of the test class.
 	 */
-    var type : Class<Dynamic>;
+    @:optional 
+	var type : Dynamic;
 
     /**
 	 * The class name of the test class.

@@ -8,8 +8,7 @@ using Lambda;
  */
 class ClassDescriptorUtil 
 {
-
-	function new() throw new hex.error.PrivateConstructorException();
+	/** @private */ function new() throw new hex.error.PrivateConstructorException();
 
 	static public function hasNextClass( classDescriptor : ClassDescriptor ) : Bool
         return classDescriptor.classIndex < classDescriptor.classDescriptors.length;
@@ -33,8 +32,7 @@ class ClassDescriptorUtil
 	{
 		var l = 0;
 		for ( descriptor in classDescriptor.classDescriptors ) l += length( descriptor );
-		l += classDescriptor.methodDescriptors.length;
-		return l;
+		return l + classDescriptor.methodDescriptors.length;
 	}
 		
 	public static function toString( classDescriptor : ClassDescriptor ) : String

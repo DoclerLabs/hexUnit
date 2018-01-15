@@ -6,9 +6,15 @@ package hex.unittest.description;
  */
 typedef MethodDescriptor =
 {
-    var methodName             : String;
-    var isAsync                : Bool;
-    var isIgnored              : Bool;
-    var description            : String;
-    var dataProvider           : Array<Dynamic>;
+    var methodName             	: String;
+    var isAsync                	: Bool;
+    var isIgnored              	: Bool;
+    var description            	: String;
+    var timeout 				: UInt;
+	
+	@:optional 
+	var dataProviderFieldName 	: String;
+	
+	@:optional 
+	var dataProviderIndex 		: UInt;
 }
