@@ -49,7 +49,7 @@ class ExMachinaUnitCore
         this._classDescriptors.push( this._parser.parse( testableClass ) );
     }
 	
-	#if genhexunit
+	#if genunit
 	public function addDescriptor( classDescriptor : ClassDescriptor ) : Void
     {
         this._classDescriptors.push( classDescriptor );

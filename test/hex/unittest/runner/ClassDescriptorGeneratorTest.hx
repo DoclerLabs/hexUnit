@@ -8,7 +8,7 @@ import hex.unittest.assertion.Assert;
  */
 class ClassDescriptorGeneratorTest 
 {
-	#if genhexunit
+	#if genunit
 	@Test( "test ClassDescriptor generation" )
 	public function testGenerate() : Void
 	{
