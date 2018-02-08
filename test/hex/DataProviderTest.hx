@@ -13,30 +13,33 @@ class DataProviderTest
 	public function new(){}
 
 	public static var testDataProvider = [
-		{stringValue:"string0", intValue:0},
-		{stringValue:"string1", intValue:1},
-		{stringValue:"string2", intValue:2},
-		{stringValue:"string3", intValue:3},
-		{stringValue:"string4", intValue:4}
+		{ stringValue:"string0", intValue:0 },
+		{ stringValue:"string1", intValue:1 },
+		{ stringValue:"string2", intValue:2 },
+		{ stringValue:"string3", intValue:3 },
+		{ stringValue:"string4", intValue:4 }
 	];
 	
 	@Test("Data provider test")
-	@DataProvider("testDataProvider")
+	@DataProvider( "testDataProvider" )
 	public function testWithProvider(o:{stringValue:String, intValue:Int})
 	{
-		Assert.equals(o.stringValue, "string" + o.intValue, "Values must be equal");
+		Assert.equals( o.stringValue, "string" + o.intValue, "Values must be equal" );
 	}
 
-	@Async("Async test with data provider")
-	@DataProvider("testDataProvider")
+	@Async( "Async test with data provider" )
+	@DataProvider( "testDataProvider" )
 	public function testAsyncWithDataProvider(o:{stringValue:String, intValue:Int})
 	{
 		Assert.equals(o.stringValue, "string" + o.intValue, "Values must be equal");
-		Timer.delay(MethodRunner.asyncHandler(this._onAsyncTestEnd), 10);
+		Timer.delay( MethodRunner.asyncHandler( function() { this._onAsyncTestEnd( o.intValue, o.stringValue ); } ),  500 );
+		
+		//Timer.delay( MethodRunner.asyncHandler( this._onAsyncTestEnd,  500 );
 	}
 	
-	function _onAsyncTestEnd()
+	function _onAsyncTestEnd( intValue : Int, stringValue : String )
 	{
-		Assert.isTrue(true, "true is true");
+		trace( intValue, stringValue );
+		Assert.equals( testDataProvider[ intValue ].stringValue, stringValue );
 	}
 }

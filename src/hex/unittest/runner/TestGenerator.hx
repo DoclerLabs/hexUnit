@@ -1,14 +1,14 @@
 package hex.unittest.runner;
-
-import hex.error.Exception;
-import hex.unittest.event.ITestClassResultListener;
-import hex.unittest.description.ClassDescriptor;
-import hex.util.MacroUtil;
+import hex.unittest.description.MethodDescriptor;
 
 #if macro
 import haxe.macro.*;
 import haxe.macro.Expr;
 import haxe.macro.Type;
+import hex.error.Exception;
+import hex.unittest.event.ITestClassResultListener;
+import hex.unittest.description.ClassDescriptor;
+import hex.util.MacroUtil;
 
 using hex.unittest.description.ClassDescriptorUtil;
 #end
@@ -20,11 +20,12 @@ using hex.unittest.description.ClassDescriptorUtil;
 class TestGenerator 
 {
 	/** @private */ function new() throw new hex.error.PrivateConstructorException();
-	#if genunit
+	#if gentest
 	macro public static function generate( testableClass : haxe.macro.Expr.ExprOf<Class<Dynamic>> )
 	{
-		var stringClassRepresentation = ClassDescriptorGenerator.getStringClassRepresentation( testableClass );
-		var classDescriptor = ClassDescriptorGenerator.parseClass( ClassDescriptorGenerator.getClassDescriptor( stringClassRepresentation ) );
+		var stringClassRepresentation 	= ClassDescriptorGenerator.getStringClassRepresentation( testableClass );
+		var classDescriptor 			= ClassDescriptorGenerator.parseClass( ClassDescriptorGenerator.getClassDescriptor( stringClassRepresentation ) );
+		
 		return TestGenerator.genCode( classDescriptor );
 	}
 	#end
@@ -33,8 +34,8 @@ class TestGenerator
 	static function genCode( classDescriptor : ClassDescriptor ) : ExprOf<hex.unittest.runner.ITestRunner>
 	{
 		var expressions = [ macro { } ];
-		var runnerBody = [ macro {} ];
-		var runnerTD = _generateRunner();
+		var runnerBody 	= [ macro {} ];
+		var runnerTD 	= _generateRunner();
 		
 		//Start Tests
 		var descriptor = ClassDescriptorGenerator.generateClass( classDescriptor );
@@ -81,8 +82,7 @@ class TestGenerator
 			( 
 				macro $b{ expressions },
 				macro :hex.unittest.runner.ITestRunner
-			),
-			pos: Context.currentPos()
+			), 	pos: Context.currentPos()
 		};
 	}
 	
@@ -141,49 +141,7 @@ class TestGenerator
 		
 		for ( m in classDescriptor.methodDescriptors ) 
 		{
-			var testBody = [ macro {} ];
-			
-			if ( classDescriptor.setUpFieldName != null )
-			{
-				var setup = classDescriptor.setUpFieldName;
-				testBody.push( macro @:mergeBlock { test.$setup(); } );
-			}
-			
-			var methodName = m.methodName;
-			var provider = m.dataProviderFieldName;
-			var methodCall;
-
-			if ( provider == '' )
-			{
-				methodCall = macro test.$methodName();
-			}
-			else
-			{
-				methodCall = macro test.$methodName( $p{ MacroUtil.getPack( classDescriptor.className ) }.$provider[ $v{m.dataProviderIndex} ] );
-			}
-
-			testBody.push( macro @:mergeBlock 
-				{
-					time = Date.now().getTime();
-					try
-					{
-						$methodCall;
-					}
-					catch ( err : Dynamic )
-					{
-						this._notifyError( d, Date.now().getTime() - time, err );
-					}
-				});
-			
-			testBody.push( macro @:mergeBlock { this.onSuccess( d, Date.now().getTime() - time ); } );
-			
-			if ( classDescriptor.tearDownFieldName != null )
-			{
-				var teardown = classDescriptor.tearDownFieldName;
-				testBody.push( macro @:mergeBlock { test.$teardown(); } );
-			}
-			
-			runnerBody.push( macro @:mergeBlock { runTest = function( d : hex.unittest.description.ClassDescriptor ) { $b{testBody}; }; runTest( descriptor ); descriptor.methodIndex++; } );
+			runnerBody = m.isAsync ? _parseAsyncMethod( m, classDescriptor, runnerBody ) : _parseSyncMethod( m, classDescriptor, runnerBody );
 		}
 		
 		if ( classDescriptor.afterClassFieldName != null )
@@ -193,6 +151,104 @@ class TestGenerator
 		}
 		
 		runnerBody.push( macro @:mergeBlock { this.onTestClassEndRun( descriptor ); } );
+	}
+	
+	static function _parseAsyncMethod( m : MethodDescriptor, classDescriptor : ClassDescriptor, runnerBody : Array<Expr> )
+	{
+		var testBody = [ macro {} ];
+		
+		if ( classDescriptor.setUpFieldName != null )
+		{
+			var setup = classDescriptor.setUpFieldName;
+			testBody.push( macro @:mergeBlock { test.$setup(); } );
+		}
+		
+		var methodName = m.methodName;
+		var provider = m.dataProviderFieldName;
+		var methodCall;
+
+		if ( provider == '' )
+		{
+			methodCall = macro test.$methodName();
+		}
+		else
+		{
+			methodCall = macro test.$methodName( $p{ MacroUtil.getPack( classDescriptor.className ) }.$provider[ $v{m.dataProviderIndex} ] );
+		}
+
+		testBody.push( macro @:mergeBlock 
+			{
+				time = Date.now().getTime();
+				try
+				{
+					$methodCall;
+				}
+				catch ( err : Dynamic )
+				{
+					this._notifyError( d, Date.now().getTime() - time, err );
+				}
+			});
+		
+		testBody.push( macro @:mergeBlock { this.onSuccess( d, Date.now().getTime() - time ); } );
+		
+		if ( classDescriptor.tearDownFieldName != null )
+		{
+			var teardown = classDescriptor.tearDownFieldName;
+			testBody.push( macro @:mergeBlock { test.$teardown(); } );
+		}
+		
+		runnerBody.push( macro @:mergeBlock { runTest = function( d : hex.unittest.description.ClassDescriptor ) { $b { testBody }; }; runTest( descriptor ); descriptor.methodIndex++; } );
+		
+		return runnerBody;
+	}
+	
+	static function _parseSyncMethod( m : MethodDescriptor, classDescriptor : ClassDescriptor, runnerBody : Array<Expr> )
+	{
+		var testBody = [ macro {} ];
+		
+		if ( classDescriptor.setUpFieldName != null )
+		{
+			var setup = classDescriptor.setUpFieldName;
+			testBody.push( macro @:mergeBlock { test.$setup(); } );
+		}
+		
+		var methodName = m.methodName;
+		var provider = m.dataProviderFieldName;
+		var methodCall;
+
+		if ( provider == '' )
+		{
+			methodCall = macro test.$methodName();
+		}
+		else
+		{
+			methodCall = macro test.$methodName( $p{ MacroUtil.getPack( classDescriptor.className ) }.$provider[ $v{m.dataProviderIndex} ] );
+		}
+
+		testBody.push( macro @:mergeBlock 
+			{
+				time = Date.now().getTime();
+				try
+				{
+					$methodCall;
+				}
+				catch ( err : Dynamic )
+				{
+					this._notifyError( d, Date.now().getTime() - time, err );
+				}
+			});
+		
+		testBody.push( macro @:mergeBlock { this.onSuccess( d, Date.now().getTime() - time ); } );
+		
+		if ( classDescriptor.tearDownFieldName != null )
+		{
+			var teardown = classDescriptor.tearDownFieldName;
+			testBody.push( macro @:mergeBlock { test.$teardown(); } );
+		}
+		
+		runnerBody.push( macro @:mergeBlock { runTest = function( d : hex.unittest.description.ClassDescriptor ) { $b { testBody }; }; runTest( descriptor ); descriptor.methodIndex++; } );
+		
+		return runnerBody;
 	}
 	
 	static function _generateRunner() : TypeDefinition
