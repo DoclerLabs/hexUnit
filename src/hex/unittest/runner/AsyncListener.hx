@@ -8,7 +8,9 @@ import hex.unittest.runner.MethodRunner.Trigger;
  */
 typedef AsyncListener =
 {
-	function getTimeElapsed() 		: Float;
+	function getTimeElapsed() 				: Float;
+	function _notifySuccess() 				: Void;
+	function _notifyError( e : Dynamic ) 	: Void;
 
 	var scope						: Dynamic;
 	var callback           			: Dynamic;

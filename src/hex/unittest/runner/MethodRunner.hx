@@ -25,6 +25,8 @@ class MethodRunner
 	public var endTime						: Float;
 	public var trigger ( default, never ) 	: Trigger = new Trigger();
 	
+	var _functionCall		: Dynamic->Void;
+	
     var _methodReference	: Dynamic;
     var _methodDescriptor	: MethodDescriptor;
 	var _startTime			: Float;
@@ -32,10 +34,11 @@ class MethodRunner
 	
     public function new( scope : Dynamic, methodDescriptor : MethodDescriptor, classType : Dynamic )
     {
-        this.scope             = scope;
+        this.scope             	= scope;
         this._methodReference   = Reflect.field( this.scope, methodDescriptor.methodName );
         this._methodDescriptor  = methodDescriptor;
 		this._classType			= classType;
+		this._functionCall		= methodDescriptor.functionCall;
     }
 
     public function run() : Void
@@ -55,9 +58,19 @@ class MethodRunner
         {
 			try
             {
-                Reflect.callMethod( this.scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
-                this.endTime = Date.now().getTime();
-                this.trigger.onSuccess( this.getTimeElapsed() );
+                
+				if ( this._functionCall != null )
+				{
+					trace( "_functionCall sync" );
+					this._functionCall( this.scope );
+					
+				}
+				else
+				{
+					Reflect.callMethod( this.scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
+				}
+				
+                this._notifySuccess();
 			}
             catch ( err : Dynamic )
             {
@@ -86,7 +99,16 @@ class MethodRunner
             
             try
             {
-                Reflect.callMethod( this.scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
+				if ( this._functionCall != null )
+				{
+					trace( "_functionCall async" );
+					this._functionCall( this.scope );
+					
+				}
+				else
+				{
+					Reflect.callMethod( this.scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
+				}
 			}
             catch ( err : Dynamic )
             {
@@ -97,7 +119,13 @@ class MethodRunner
         }
     }
 	
-	function _notifyError( e : Dynamic ) : Void
+	public function _notifySuccess() : Void
+	{
+		this.endTime = Date.now().getTime();
+		this.trigger.onSuccess( this.getTimeElapsed() );
+	}
+	
+	public function _notifyError( e : Dynamic ) : Void
 	{
 		this.endTime = Date.now().getTime();
 		
@@ -145,190 +173,33 @@ class MethodRunner
      * Async handling
      */
     public static var _CURRENT_RUNNER : AsyncListener;
-	
-	/*#if genunit
-	static function _getCallback( callback, ?passThroughArgs : ExprOf<Null<Array<Dynamic>>> )
+
+	static public function asyncHandler( closure : Void->Void ) : Void
 	{
-		var noArgs = ( MacroUtil.getIdent( passThroughArgs ) != 'null' ) ? false : true;
-
-		trace( noArgs );
-		return  
-		if ( noArgs )
+		var methodRunner = hex.unittest.runner.MethodRunner._CURRENT_RUNNER;
+		if ( methodRunner == null )
 		{
-			macro $callback();
-		}
-		else
-		{
-			macro $callback($passThroughArgs);
-		}
-	}
-	#end*/
-	
-	#if gentest
-	macro public static function asyncHandler( callback, ?passThroughArgs : ExprOf<Null<Array<Dynamic>>> )
-    {trace('gentest');
-		trace( passThroughArgs );
-		//var argz = [passThroughArgs];
-		//var expCallback = passThroughArgs == null ? macro $methodReference() : macro macro $methodReference( $a{passThroughArgs});
-		
-		var noArgs = if ( MacroUtil.getIdent( passThroughArgs ) != 'null' )
-		{
-			false;
-			/*switch( passThroughArgs.expr )
-			{
-				case EArrayDecl( a ): false;
-				case _:
-					Context.error( "MethodRunner.asyncHandler passed parameter should be inside an array instead of '" 
-					+ new Printer().printExpr( passThroughArgs ) + "'", Context.currentPos() );
-			}*/
-		}
-		else true;
-		
-		trace( noArgs );
-		var expCallback = 
-		if ( noArgs )
-		{
-			macro $callback();
-		}
-		else
-		{
-			macro $callback($passThroughArgs);
+			throw new hex.error.IllegalStateException( "AsyncHandler has been called after '@Async' test was released. Try to remove all your listeners in '@After' method to fix this error" );
 		}
 		
-		//var args = passThroughArgs;
-		trace( new Printer().printExpr(expCallback) );
-		
-		return macro 
-		{
-			//hex.unittest.runner.MethodRunner._CURRENT_RUNNER.callback          = $methodReference;
-			//hex.unittest.runner.MethodRunner._CURRENT_RUNNER.passThroughArgs   = $passThroughArgs;
-		
-			Reflect.makeVarArgs( function( rest:Array<Dynamic> ):Void
-			{
-				var m = hex.unittest.runner.MethodRunner;
-				if ( m._CURRENT_RUNNER == null )
-				{
-					//throw new hex.error.IllegalStateException( "AsyncHandler has been called after '@Async' test was released. Try to remove all your listeners in '@After' method to fix this error" );
-					return;
-				}
-
-				var listener = m._CURRENT_RUNNER;
-				listener.timer.stop();
-				listener.timer = null;
-
-				/*var args : Array<Dynamic> = [];
-
-				if ( rest != null )
-				{
-					args = args.concat( rest );
-				}
-
-				if ( listener.passThroughArgs != null )
-				{
-					args = args.concat( listener.passThroughArgs );
-				}*/
-
-				try
-				{
-					//Reflect.callMethod( listener.scope, listener.callback, args );
-					
-					//listener.scope.$methodReference( $a{passThroughArgs} );
-					//$mr( /*$a{args}*/ );
-					$expCallback;
-					listener.endTime = Date.now().getTime();
-					m._CURRENT_RUNNER = null;
-					listener.trigger.onSuccess( listener.getTimeElapsed() );
-				}
-				catch ( e : hex.error.Exception )
-				{
-					//m._CURRENT_RUNNER.timer.stop();
-					m._CURRENT_RUNNER = null;
-					listener.trigger.onFail( listener.getTimeElapsed(), e );
-				}
-			});
-		}
-    }
-	#elseif genunit
-	macro public static function asyncHandler( methodReference, ?passThroughArgs : ExprOf<Null<Array<Dynamic>>> )
-    {trace('genunit');
-	
-	trace( methodReference );
-		/*var argz = if ( MacroUtil.getIdent( passThroughArgs ) != 'null' )
-		{
-			switch( passThroughArgs.expr )
-			{
-				case EArrayDecl( a ): a;
-				case _:
-					Context.error( "MethodRunner.asyncHandler passed parameter should be inside an array instead of '" 
-					+ new Printer().printExpr( passThroughArgs ) + "'", Context.currentPos() );
-					[];
-			}
-		}
-		else
-		{
-			[];
-		}*/
-		
-		var expCallback = macro $methodReference();
-		return macro 
-		{
-			hex.unittest.runner.MethodRunner._CURRENT_RUNNER.callback          = $methodReference;
-			hex.unittest.runner.MethodRunner._CURRENT_RUNNER.passThroughArgs   = $passThroughArgs;
-		
-			Reflect.makeVarArgs( function( rest:Array<Dynamic> ):Void
-			{
-				var methodRunner = hex.unittest.runner.MethodRunner._CURRENT_RUNNER;
-				if ( methodRunner == null )
-				{
-					throw new hex.error.IllegalStateException( "AsyncHandler has been called after '@Async' test was released. Try to remove all your listeners in '@After' method to fix this error" );
-				}
-				methodRunner.timer.stop();
-				methodRunner.timer = null;
-
-				/*var args : Array<Dynamic> = [];
-
-				if ( rest != null )
-				{
-					args = args.concat( rest );
-				}
-
-				if ( methodRunner.passThroughArgs != null )
-				{
-					args = args.concat( methodRunner.passThroughArgs );
-				}*/
-	
-				try
-				{
-					$expCallback;
-					methodRunner.endTime = Date.now().getTime();
-					hex.unittest.runner.MethodRunner._CURRENT_RUNNER = null;
-					methodRunner.trigger.onSuccess( methodRunner.getTimeElapsed() );
-
-				}
-				catch ( e : hex.error.Exception )
-				{
-					hex.unittest.runner.MethodRunner._CURRENT_RUNNER = null;
-					methodRunner.trigger.onFail( methodRunner.getTimeElapsed(), e );
-				}
-			});
-		}
-    }
-	#else
-    public static function asyncHandler( methodReference : Dynamic ) : Dynamic
-    {
 		try
 		{
-			MethodRunner._CURRENT_RUNNER.callback          = methodReference;
-			//MethodRunner._CURRENT_RUNNER.passThroughArgs   = passThroughArgs;
+			closure();
+
+			methodRunner.timer.stop();
+			methodRunner.timer = null;
+			hex.unittest.runner.MethodRunner._CURRENT_RUNNER = null;
+			methodRunner._notifySuccess();
 		}
 		catch ( e : Dynamic )
 		{
-			throw new IllegalStateException( "Asynchronous test failed. Maybe you forgot to add '@Async' metadata to your test?" );
+			methodRunner.timer.stop();
+			methodRunner.timer = null;
+			hex.unittest.runner.MethodRunner._CURRENT_RUNNER = null;
+			
+			methodRunner._notifyError( e );
 		}
-		
-        return MethodRunner._createAsyncCallbackHandler();
-    }
-	#end
+	}
 	
     public static function registerAsyncMethodRunner( runner : MethodRunner ) : Void
     {

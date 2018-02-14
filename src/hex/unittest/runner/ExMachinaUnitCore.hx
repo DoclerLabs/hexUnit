@@ -22,8 +22,7 @@ class ExMachinaUnitCore
     var _runner                     : TestRunner;
     var _currentClassDescriptor     : Int;
 	
-    public var dispatcher ( default, never ) : hex.event.ITrigger<ITestClassResultListener>;
-
+    public var dispatcher ( default, never ) = new UnitCoreTrigger();
     public function new()
     {
         this._parser            = new MetadataParser();
@@ -44,25 +43,32 @@ class ExMachinaUnitCore
 		return length;
 	}
 
-    public function addTest( testableClass : Class<Dynamic> ) : Void
+    /*public function addTest( testableClass : Class<Dynamic> ) : Void
     {
         this._classDescriptors.push( this._parser.parse( testableClass ) );
+    }*/
+	
+	macro public function addTest( ethis : haxe.macro.Expr, testableClass : ExprOf<Class<Dynamic>> )
+    {
+        //this._classDescriptors.push( this._parser.parse( testableClass ) );
+		var descriptor = ClassDescriptorGenerator.doGeneration( testableClass );
+		return macro @:pos( ethis.pos ) $ethis.addDescriptor( $descriptor );
     }
 	
-	#if genunit
+	/*#if genunit*/
 	public function addDescriptor( classDescriptor : ClassDescriptor ) : Void
     {
         this._classDescriptors.push( classDescriptor );
     }
-	#end
+	/*#end*/
 	
-	public function addTestCollection( collection : Array<Class<Dynamic>> ) : Void
+	/*public function addTestCollection( collection : Array<Class<Dynamic>> ) : Void
     {
 		for ( testableClass in collection )
 		{
 			this.addTest( testableClass );
 		}
-    }
+    }*/
 	
 	public function addTestMethod( testableClass : Class<Dynamic>, methodName : String ) : Void
     {
@@ -165,4 +171,106 @@ class ExMachinaUnitCore
     {
         return this._currentClassDescriptor < this._classDescriptors.length;
     }
+}
+
+class UnitCoreTrigger implements ITestClassResultListener
+{ 
+	var _inputs : Array<ITestClassResultListener>;
+
+	public function new() 
+	{
+		this._inputs = [];
+	}
+
+	public function connect( input : ITestClassResultListener ) : Bool
+	{
+		if ( this._inputs.indexOf( input ) == -1 )
+		{
+			this._inputs.push( input );
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public function disconnect( input : ITestClassResultListener ) : Bool
+	{
+		var index : Int = this._inputs.indexOf( input );
+		
+		if ( index > -1 )
+		{
+			this._inputs.splice( index, 1 );
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public function disconnectAll() : Void
+	{
+		this._inputs = [];
+	}
+	
+	public function onStartRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onStartRun( descriptor );
+	}
+	public function onEndRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onEndRun( descriptor );
+	}
+
+	public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onSuiteClassStartRun( descriptor );
+	}
+
+	public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onSuiteClassEndRun( descriptor );
+	}
+
+	public function onTestClassStartRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onTestClassStartRun( descriptor );
+	}
+
+	public function onTestClassEndRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onTestClassEndRun( descriptor );
+	}
+	
+	public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onSuccess( descriptor, timeElapsed );
+	}
+	
+	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onFail( descriptor, timeElapsed, error );
+	}
+	
+	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onTimeout( descriptor, timeElapsed, error );
+	}
+	
+	public function onIgnore( descriptor : ClassDescriptor ) : Void 
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onIgnore( descriptor );
+	}
 }

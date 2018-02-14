@@ -26,20 +26,43 @@ class DataProviderTest
 	{
 		Assert.equals( o.stringValue, "string" + o.intValue, "Values must be equal" );
 	}
-
+	
 	@Async( "Async test with data provider" )
 	@DataProvider( "testDataProvider" )
 	public function testAsyncWithDataProvider(o:{stringValue:String, intValue:Int})
 	{
 		Assert.equals(o.stringValue, "string" + o.intValue, "Values must be equal");
-		Timer.delay( MethodRunner.asyncHandler( function() { this._onAsyncTestEnd( o.intValue, o.stringValue ); } ),  500 );
-		
-		//Timer.delay( MethodRunner.asyncHandler( this._onAsyncTestEnd,  500 );
+		Timer.delay( 
+
+			MethodRunner.asyncHandler.bind(
+
+				function() 
+				{
+					this._onAsyncTestEnd( o.intValue, o.stringValue ); 
+				} 
+			)
+			
+		,  500 );
+	
 	}
 	
 	function _onAsyncTestEnd( intValue : Int, stringValue : String )
 	{
-		trace( intValue, stringValue );
 		Assert.equals( testDataProvider[ intValue ].stringValue, stringValue );
 	}
+	
+	@Async
+	public function testAsyncWithArgument() : Void
+	{
+		var callback = DataProviderTest._registerCallback( 
+			function( s : String ) 
+			{
+				MethodRunner.asyncHandler( function() { this._onStringCallback( s, ' world' ); } );
+			}
+		);
+		callback( 'hello' );
+	}
+	
+	static function _registerCallback( callback : String->Void ) return callback;
+	function _onStringCallback( hello : String, world : String ) Assert.equals( 'hello world', hello + world );
 }

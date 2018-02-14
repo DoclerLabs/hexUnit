@@ -25,14 +25,14 @@ class TestRunner implements ITestRunner
     var _executedDescriptors        : HashMap<ClassDescriptor, Bool>;
 	var _lastRender					: Float = 0;
 
-    public var dispatcher ( default, never ) : ITrigger<ITestClassResultListener>;
+    public var dispatcher ( default, never )  = new TestRunnerTrigger();
 	
 	#if flash
 	static public var RENDER_DELAY 			: Int = 150;
 	#else
 	static public var RENDER_DELAY			: Int = 0;
 	#end
-
+	
     public function new( classDescriptor : ClassDescriptor )
     {
         this._classDescriptors          = new GenericStack();
@@ -66,7 +66,7 @@ class TestRunner implements ITestRunner
                 if ( !this._executedDescriptors.containsKey( classDescriptor ) )
                 {
                     this.dispatcher.onTestClassStartRun( classDescriptor );
-                    classDescriptor.instance = Type.createEmptyInstance( classDescriptor.type );
+                    classDescriptor.instance = classDescriptor.instanceCall != null ? classDescriptor.instanceCall() : Type.createEmptyInstance( classDescriptor.type );
                     this._executedDescriptors.put( classDescriptor, true );
                 }
 
@@ -116,7 +116,11 @@ class TestRunner implements ITestRunner
 
     function _tryToRunSetUp( classDescriptor : ClassDescriptor ) : Void
     {
-        if ( classDescriptor.setUpFieldName != null )
+		if ( classDescriptor.setUpCall != null )
+		{
+			classDescriptor.setUpCall( classDescriptor.instance );
+		}
+        else if ( classDescriptor.setUpFieldName != null )
         {
             Reflect.callMethod( classDescriptor.instance, Reflect.field( classDescriptor.instance, classDescriptor.setUpFieldName ), [] );
         }
@@ -124,7 +128,11 @@ class TestRunner implements ITestRunner
 
     function _tryToRunTearDown( classDescriptor : ClassDescriptor ) : Void
     {
-        if ( classDescriptor.tearDownFieldName != null )
+       if ( classDescriptor.tearDownCall != null )
+		{
+			classDescriptor.tearDownCall( classDescriptor.instance );
+		}
+        else if ( classDescriptor.tearDownFieldName != null )
         {
             Reflect.callMethod( classDescriptor.instance, Reflect.field( classDescriptor.instance, classDescriptor.tearDownFieldName ), [] );
         }
@@ -132,7 +140,11 @@ class TestRunner implements ITestRunner
 
     function _tryToRunBeforeClass( classDescriptor : ClassDescriptor ) : Void
     {
-        if ( classDescriptor.beforeClassFieldName != null )
+        if ( classDescriptor.beforeCall != null )
+		{
+			classDescriptor.beforeCall();
+		}
+        else if ( classDescriptor.beforeClassFieldName != null )
         {
            Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.type, classDescriptor.beforeClassFieldName ), [] );
         }
@@ -140,7 +152,11 @@ class TestRunner implements ITestRunner
 
     function _tryToRunAfterClass( classDescriptor : ClassDescriptor ) : Void
     {
-        if ( classDescriptor.afterClassFieldName != null )
+        if ( classDescriptor.afterCall != null )
+		{
+			classDescriptor.afterCall();
+		}
+        else if ( classDescriptor.afterClassFieldName != null )
         {
             Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.type, classDescriptor.afterClassFieldName ), [] );
         }
@@ -203,3 +219,107 @@ class TestRunner implements ITestRunner
 		}
     }
 }
+
+//Here we create trigger manually to prevent macro execution order errors
+class TestRunnerTrigger implements ITestClassResultListener
+{ 
+	var _inputs : Array<ITestClassResultListener>;
+
+	public function new() 
+	{
+		this._inputs = [];
+	}
+
+	public function connect( input : ITestClassResultListener ) : Bool
+	{
+		if ( this._inputs.indexOf( input ) == -1 )
+		{
+			this._inputs.push( input );
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public function disconnect( input : ITestClassResultListener ) : Bool
+	{
+		var index : Int = this._inputs.indexOf( input );
+		
+		if ( index > -1 )
+		{
+			this._inputs.splice( index, 1 );
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public function disconnectAll() : Void
+	{
+		this._inputs = [];
+	}
+	
+	public function onStartRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onStartRun( descriptor );
+	}
+	public function onEndRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onEndRun( descriptor );
+	}
+
+	public function onSuiteClassStartRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onSuiteClassStartRun( descriptor );
+	}
+
+	public function onSuiteClassEndRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onSuiteClassEndRun( descriptor );
+	}
+
+	public function onTestClassStartRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onTestClassStartRun( descriptor );
+	}
+
+	public function onTestClassEndRun( descriptor : ClassDescriptor ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onTestClassEndRun( descriptor );
+	}
+	
+	public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onSuccess( descriptor, timeElapsed );
+	}
+	
+	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onFail( descriptor, timeElapsed, error );
+	}
+	
+	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onTimeout( descriptor, timeElapsed, error );
+	}
+	
+	public function onIgnore( descriptor : ClassDescriptor ) : Void 
+	{
+		var inputs = this._inputs.copy();
+		for ( input in inputs ) input.onIgnore( descriptor );
+	}
+}
+	

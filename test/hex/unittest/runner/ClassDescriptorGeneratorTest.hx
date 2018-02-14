@@ -8,11 +8,11 @@ import hex.unittest.assertion.Assert;
  */
 class ClassDescriptorGeneratorTest 
 {
-	#if genunit
+	/*#if genunit*/
 	@Test( "test ClassDescriptor generation" )
 	public function testGenerate() : Void
 	{
 		Assert.isNotNull( ClassDescriptorGenerator.generate( HexUnitSuite ) );
 	}
-	#end
+	/*#end*/
 }
