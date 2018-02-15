@@ -216,7 +216,9 @@ class ClassDescriptorGenerator
 	}
 	
 	inline static function _getInstanceCall( className : Array<String> ) : ExprOf<Void->Dynamic>
-		return macro function() return Type.createInstance( $p{className}, [] );
+	{
+		return macro function() return Type.createEmptyInstance( $p { className } );
+	}
 	
 	inline static function _getBeforeCall( className : String, beforeField : String ) : ExprOf<Void->Void>
 		return beforeField != null? macro function() $p { MacroUtil.getPack( className ) } .$beforeField() : macro null;
