@@ -17,4 +17,7 @@ typedef MethodDescriptor =
 	
 	@:optional 
 	var dataProviderIndex 		: UInt;
+	
+	@:optional 
+	var functionCall 	: Dynamic->Void;
 }
