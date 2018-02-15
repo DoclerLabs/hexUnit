@@ -61,7 +61,6 @@ class MethodRunner
                 
 				if ( this._functionCall != null )
 				{
-					trace( "_functionCall sync" );
 					this._functionCall( this.scope );
 					
 				}
@@ -101,7 +100,6 @@ class MethodRunner
             {
 				if ( this._functionCall != null )
 				{
-					trace( "_functionCall async" );
 					this._functionCall( this.scope );
 					
 				}
