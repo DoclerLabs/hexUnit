@@ -1,16 +1,12 @@
 package hex.unittest.runner;
 
 import haxe.Timer;
-import haxe.macro.Context;
-import haxe.macro.Expr.ExprOf;
-import haxe.macro.Printer;
 import hex.error.Exception;
 import hex.error.IllegalArgumentException;
 import hex.error.IllegalStateException;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.MethodDescriptor;
 import hex.unittest.event.ITestResultListener;
-import hex.util.MacroUtil;
 
 /**
  * ...
@@ -18,24 +14,23 @@ import hex.util.MacroUtil;
  */
 class MethodRunner
 {
-	public var scope						: Dynamic;
-	public var callback           			: Dynamic;
-    public var passThroughArgs    			: Array<Dynamic>;
-    public var timer              			: Timer;
-	public var endTime						: Float;
-	public var trigger ( default, never ) 	: Trigger = new Trigger();
+	var _scope						: Dynamic;
+	var _methodDescriptor			: MethodDescriptor;
+	var _trigger ( default, never ) : Trigger = new Trigger();
 	
-	var _functionCall		: Dynamic->Void;
+	var _functionCall				: Dynamic->Void;
+    var _methodReference			: Dynamic;
 	
-    var _methodReference	: Dynamic;
-    var _methodDescriptor	: MethodDescriptor;
-	var _startTime			: Float;
-    var _classType			: Dynamic;
+	var _timer              		: Timer;
+	var _startTime					: Float;
+	var _endTime					: Float;
+	
+    var _classType					: Dynamic;
 	
     public function new( scope : Dynamic, methodDescriptor : MethodDescriptor, classType : Dynamic )
     {
-        this.scope             	= scope;
-        this._methodReference   = Reflect.field( this.scope, methodDescriptor.methodName );
+        this._scope             = scope;
+        this._methodReference   = Reflect.field( this._scope, methodDescriptor.methodName );
         this._methodDescriptor  = methodDescriptor;
 		this._classType			= classType;
 		this._functionCall		= methodDescriptor.functionCall;
@@ -47,8 +42,8 @@ class MethodRunner
 		
 		if ( this._methodDescriptor.isIgnored )
 		{
-			this.endTime = Date.now().getTime();
-			this.trigger.onIgnore( this.getTimeElapsed() );
+			this._endTime = Date.now().getTime();
+			this._trigger.onIgnore( this.getTimeElapsed() );
 			return;
 		}
 		
@@ -61,12 +56,12 @@ class MethodRunner
                 
 				if ( this._functionCall != null )
 				{
-					this._functionCall( this.scope );
+					this._functionCall( this._scope );
 					
 				}
 				else
 				{
-					Reflect.callMethod( this.scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
+					Reflect.callMethod( this._scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
 				}
 				
                 this._notifySuccess();
@@ -78,12 +73,12 @@ class MethodRunner
         }
         else
         {
-			if ( this.timer != null )
+			if ( this._timer != null )
 			{
-				this.timer.stop();
+				this._timer.stop();
 			}
-			this.timer = new Timer( this._methodDescriptor.timeout );
-			this.timer.run = MethodRunner._fireTimeout;
+			this._timer = new Timer( this._methodDescriptor.timeout );
+			this._timer.run = MethodRunner._fireTimeout;
 		
 			try
 			{
@@ -91,8 +86,8 @@ class MethodRunner
 			}
 			catch ( e : IllegalArgumentException )
 			{
-				this.endTime = Date.now().getTime();
-                this.trigger.onFail( this.getTimeElapsed(), e );
+				this._endTime = Date.now().getTime();
+                this._trigger.onFail( this.getTimeElapsed(), e );
 				return;
 			}
             
@@ -100,32 +95,32 @@ class MethodRunner
             {
 				if ( this._functionCall != null )
 				{
-					this._functionCall( this.scope );
+					this._functionCall( this._scope );
 					
 				}
 				else
 				{
-					Reflect.callMethod( this.scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
+					Reflect.callMethod( this._scope, this._methodReference, dataProvider.length > 0 ? [dataProvider[ this._methodDescriptor.dataProviderIndex ]] : [] );
 				}
 			}
             catch ( err : Dynamic )
             {
-				this.timer.stop();
+				this._timer.stop();
 				MethodRunner._CURRENT_RUNNER = null;
                 this._notifyError( err );
             }
         }
     }
 	
-	public function _notifySuccess() : Void
+	function _notifySuccess() : Void
 	{
-		this.endTime = Date.now().getTime();
-		this.trigger.onSuccess( this.getTimeElapsed() );
+		this._endTime = Date.now().getTime();
+		this._trigger.onSuccess( this.getTimeElapsed() );
 	}
 	
-	public function _notifyError( e : Dynamic ) : Void
+	function _notifyError( e : Dynamic ) : Void
 	{
-		this.endTime = Date.now().getTime();
+		this._endTime = Date.now().getTime();
 		
 		if ( !Std.is( e, Exception ) )
 		{
@@ -137,24 +132,24 @@ class MethodRunner
 			#else
 			err = new Exception( e.toString(), e.posInfos );
 			#end
-			this.trigger.onFail( this.getTimeElapsed(), err );
+			this._trigger.onFail( this.getTimeElapsed(), err );
 			Assert._logFailedAssertion();
 		}
 		else
 		{
-			this.trigger.onFail( this.getTimeElapsed(), e );
+			this._trigger.onFail( this.getTimeElapsed(), e );
 			Assert._logFailedAssertion();
 		}
 	}
 
     public function addListener( listener : ITestResultListener ) : Bool
     {
-		return this.trigger.connect( listener );
+		return this._trigger.connect( listener );
     }
 
     public function removeListener( listener : ITestResultListener ) : Bool
     {
-		return this.trigger.disconnect( listener );
+		return this._trigger.disconnect( listener );
     }
 
     public function getDescriptor() : MethodDescriptor
@@ -164,15 +159,15 @@ class MethodRunner
 
     public function getTimeElapsed() : Float
     {
-        return this.endTime - this._startTime;
+        return this._endTime - this._startTime;
     }
 
     /**
      * Async handling
      */
-    public static var _CURRENT_RUNNER : AsyncListener;
+    static var _CURRENT_RUNNER : MethodRunner;
 
-	static public function asyncHandler( closure : Void->Void ) : Void
+	public static function asyncHandler( closure : Void->Void ) : Void
 	{
 		var methodRunner = hex.unittest.runner.MethodRunner._CURRENT_RUNNER;
 		if ( methodRunner == null )
@@ -184,15 +179,15 @@ class MethodRunner
 		{
 			closure();
 
-			methodRunner.timer.stop();
-			methodRunner.timer = null;
+			methodRunner._timer.stop();
+			methodRunner._timer = null;
 			hex.unittest.runner.MethodRunner._CURRENT_RUNNER = null;
 			methodRunner._notifySuccess();
 		}
 		catch ( e : Dynamic )
 		{
-			methodRunner.timer.stop();
-			methodRunner.timer = null;
+			methodRunner._timer.stop();
+			methodRunner._timer = null;
 			hex.unittest.runner.MethodRunner._CURRENT_RUNNER = null;
 			
 			methodRunner._notifyError( e );
@@ -212,59 +207,13 @@ class MethodRunner
         }
     }
 
-    public static function _createAsyncCallbackHandler( ) : Array<Dynamic>->Void
-    {
-		var f:Array<Dynamic>->Void = function( rest:Array<Dynamic> ):Void
-		{
-			if ( MethodRunner._CURRENT_RUNNER == null )
-			{
-				return;
-				//throw new IllegalStateException( "AsyncHandler has been called after '@Async' test was released. Try to remove all your listeners in '@After' method to fix this error" );
-			}
-
-			MethodRunner._CURRENT_RUNNER.timer.stop();
-			MethodRunner._CURRENT_RUNNER.timer = null;
-		
-			var methodRunner = MethodRunner._CURRENT_RUNNER;
-
-			var args : Array<Dynamic> = [];
-
-			if ( rest != null )
-			{
-				args = args.concat( rest );
-			}
-
-			/*if ( methodRunner.passThroughArgs != null )
-			{
-				args = args.concat( methodRunner.passThroughArgs );
-			}*/
-
-			try
-			{
-				Reflect.callMethod( methodRunner.scope, methodRunner.callback, args );
-				methodRunner.endTime = Date.now().getTime();
-				MethodRunner._CURRENT_RUNNER = null;
-				methodRunner.trigger.onSuccess( methodRunner.getTimeElapsed() );
-
-			}
-			catch ( e : Exception )
-			{
-				//MethodRunner._CURRENT_RUNNER.timer.stop();
-				MethodRunner._CURRENT_RUNNER = null;
-				methodRunner.trigger.onFail( methodRunner.getTimeElapsed(), e );
-			}
-		}
-        
-		return Reflect.makeVarArgs( f );
-    }
-
     static function _fireTimeout() : Void
     {
-		MethodRunner._CURRENT_RUNNER.timer.stop();
-        var methodRunner = MethodRunner._CURRENT_RUNNER;
-		methodRunner.endTime = Date.now().getTime();
+		var methodRunner = MethodRunner._CURRENT_RUNNER;
+		methodRunner._timer.stop();
+		methodRunner._endTime = Date.now().getTime();
 		MethodRunner._CURRENT_RUNNER = null;
-        methodRunner.trigger.onTimeout( methodRunner.getTimeElapsed() );
+        methodRunner._trigger.onTimeout( methodRunner.getTimeElapsed() );
     }
 }
 

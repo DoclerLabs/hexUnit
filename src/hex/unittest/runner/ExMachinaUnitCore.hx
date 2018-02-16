@@ -1,11 +1,11 @@
 package hex.unittest.runner;
 
 import hex.error.Exception;
-import hex.util.Stringifier;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
 import hex.unittest.metadata.MetadataParser;
+import hex.util.Stringifier;
 
 using hex.unittest.description.ClassDescriptorUtil;
 
@@ -43,33 +43,22 @@ class ExMachinaUnitCore
 		return length;
 	}
 
-    /*public function addTest( testableClass : Class<Dynamic> ) : Void
+    public function addRuntimeTest( testableClass : Class<Dynamic> ) : Void
     {
         this._classDescriptors.push( this._parser.parse( testableClass ) );
-    }*/
+    }
 	
 	macro public function addTest( ethis : haxe.macro.Expr, testableClass : ExprOf<Class<Dynamic>> )
     {
-        //this._classDescriptors.push( this._parser.parse( testableClass ) );
 		var descriptor = ClassDescriptorGenerator.doGeneration( testableClass );
 		return macro @:pos( ethis.pos ) $ethis.addDescriptor( $descriptor );
     }
 	
-	/*#if genunit*/
 	public function addDescriptor( classDescriptor : ClassDescriptor ) : Void
     {
         this._classDescriptors.push( classDescriptor );
     }
-	/*#end*/
-	
-	/*public function addTestCollection( collection : Array<Class<Dynamic>> ) : Void
-    {
-		for ( testableClass in collection )
-		{
-			this.addTest( testableClass );
-		}
-    }*/
-	
+
 	public function addTestMethod( testableClass : Class<Dynamic>, methodName : String ) : Void
     {
 		this._classDescriptors.push( this._parser.parseMethod( testableClass, methodName ) );
