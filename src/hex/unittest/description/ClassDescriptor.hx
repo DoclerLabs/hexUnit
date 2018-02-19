@@ -51,5 +51,20 @@ typedef ClassDescriptor =
     var methodDescriptors  	: Array<MethodDescriptor>;
     var classIndex 			: Int;
     var methodIndex 		: Int;
-    var name				: String;	
+    var name				: String;
+	
+	@:optional 
+	var setUpCall 			: Dynamic->Void;
+	
+	@:optional 
+	var tearDownCall 		: Dynamic->Void;
+	
+	@:optional 
+	var beforeCall 			: Void->Void;
+	
+	@:optional 
+	var afterCall 			: Void->Void;
+	
+	@:optional 
+	var instanceCall 		: Void->Dynamic;
 }

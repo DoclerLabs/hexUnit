@@ -9,7 +9,6 @@ import hex.unittest.description.MethodDescriptor;
 import hex.unittest.metadata.MetadataList;
 import hex.util.MacroUtil;
 
-using hex.unittest.description.ClassDescriptorUtil;
 using Lambda;
 #end
 
@@ -20,17 +19,30 @@ using Lambda;
 class ClassDescriptorGenerator 
 {
 	/** @private */ function new() throw new hex.error.PrivateConstructorException();
-	#if genhexunit
-	macro public static function generate( testableClass : haxe.macro.Expr.ExprOf<Class<Dynamic>> )
-	{
-		var stringClassRepresentation = _getStringClassRepresentation( testableClass );
-		var classDescriptor = _parseClass( _getClassDescriptor( stringClassRepresentation ) );
-		return ExprUtil.genClass( classDescriptor );
-	}
-	#end
-	
+	macro public static function generate( testableClass : haxe.macro.Expr.ExprOf<Class<Dynamic>> ) return doGeneration( testableClass );
+
 	#if macro
-	static function _parseClass( classDescriptor : ClassDescriptor ) : ClassDescriptor
+	public static function doGeneration( testableClass : haxe.macro.Expr.ExprOf<Class<Dynamic>> )
+	{
+		var stringClassRepresentation = getStringClassRepresentation( testableClass );
+		var classDescriptor = ClassDescriptorGenerator.parseClass( ClassDescriptorGenerator.getClassDescriptor( stringClassRepresentation ) );
+		return generateClass( classDescriptor );
+	}
+	
+	public static function getStringClassRepresentation( clazz : haxe.macro.Expr.ExprOf<Class<Dynamic>> ) : String
+	{
+		switch( clazz.expr )
+		{
+			case EConst(CIdent( className )):
+				return MacroUtil.getFQCNFromComplexType( TypeTools.toComplexType(Context.getType( className )) );
+			case _:
+		}
+		
+		Context.error( "Invalid Class", clazz.pos );
+		return null;
+	}
+	
+	public static function parseClass( classDescriptor : ClassDescriptor ) : ClassDescriptor
 	{
 		var hasMeta = MetaUtil.hasMeta;
 		var description = MetaUtil.getDescription;
@@ -92,26 +104,40 @@ class ClassDescriptorGenerator
 		return classDescriptor;
 	}
 	
-	public static function _addTest( classDescriptor : ClassDescriptor, statics : Array<ClassField>, metaName : String, field, meta, description : String = "" )
+	static function _addTest( classDescriptor : ClassDescriptor, statics : Array<ClassField>, metaName : String, field, meta, description : String = "" )
 	{
 		var description = MetaUtil.getDescription;
 		var dataProvider = MetaUtil.getDataProvider;
 		var dataProviderFieldName = dataProvider( MetadataList.DATA_PROVIDER, meta );
-		var length = _getDataProviderLength( dataProviderFieldName, classDescriptor, statics );
+		var length = _getDataProviderLength( dataProviderFieldName, classDescriptor, statics, field.name, field.pos );
 		
-		for ( i in 0...length ) classDescriptor.methodDescriptors.push( _parseTest( _getMethodDescriptor( field.name ), field, description( metaName, meta ), dataProviderFieldName, i ) );
+		for ( i in 0...length ) classDescriptor.methodDescriptors.push( _parseTest( ClassDescriptorGenerator.getMethodDescriptor( field.name ), field, description( metaName, meta ), dataProviderFieldName, i ) );
 	}
 	
-	static function _getDataProviderLength( dataProviderFieldName, classDescriptor : ClassDescriptor, statics : Array<ClassField> )
+	static function _getDataProviderLength( dataProviderFieldName, classDescriptor : ClassDescriptor, statics : Array<ClassField>, methodName : String, pos )
 	{
 		return if ( dataProviderFieldName != "" )
 		{
 			var field = statics.find( function ( field ) return field.name == dataProviderFieldName );
 			if ( field != null )
 			{
+				var te = Context.getTypedExpr( field.expr() );
+				var testClass = MacroUtil.getTypePath( classDescriptor.className );
+				var e = macro { var a = $te;  var o = new $testClass();  for ( i in a ) o.$methodName( i ); };
+				
+				try
+				{
+					Context.typeof( e );
+				}
+				catch ( e : Dynamic )
+				{
+					var msg = '' + e;
+					if ( msg.indexOf( 'should be' ) != -1 ) Context.error( '' + e, field.pos );
+				}
+				
 				return switch( field.expr().expr )
 				{
-					case TArrayDecl( a ): a.length;
+					case TArrayDecl( a ):   a.length;
 					case _: 1;
 				}
 			} else 1;
@@ -146,26 +172,13 @@ class ClassDescriptorGenerator
 		{
 			case EArrayDecl( values ):
 				values.iter( 
-					function( value ) cd.classDescriptors.push( _parseClass( _getClassDescriptor( MacroUtil.compressField( value ) ) ) )
+					function( value ) cd.classDescriptors.push( ClassDescriptorGenerator.parseClass( ClassDescriptorGenerator.getClassDescriptor( MacroUtil.compressField( value ) ) ) )
 				);
 
 			case _:
 		}
 	}
-	
-	static function _getStringClassRepresentation( clazz : haxe.macro.Expr.ExprOf<Class<Dynamic>> ) : String
-	{
-		switch( clazz.expr )
-		{
-			case EConst(CIdent( className )):
-				return MacroUtil.getFQCNFromComplexType( TypeTools.toComplexType(Context.getType( className )) );
-			case _:
-		}
-		
-		Context.error( "Invalid Class", clazz.pos );
-		return null;
-	}
-	
+
 	static function _getFields( ct : ClassType, fields : Array<ClassField> )
 	{
 		fields = fields.concat( ct.fields.get() );
@@ -173,7 +186,102 @@ class ClassDescriptorGenerator
 		return fields;
 	}
 	
-	static function _getClassDescriptor( className ) : ClassDescriptor
+	public static function generateClass( classDescriptor : ClassDescriptor ) : ExprOf<ClassDescriptor>
+	{
+		return 
+		{
+			expr: EObjectDecl([
+					{ field: "instance", 				expr: macro $v { null } }, 
+					{ field: "type", 					expr: macro $p { MacroUtil.getPack( classDescriptor.className ) } }, 
+					{ field: "className", 				expr: macro $v { classDescriptor.className } }, 
+					{ field: "isSuiteClass", 			expr: macro $v { classDescriptor.isSuiteClass }}, 
+					{ field: "beforeClassFieldName", 	expr: macro $v { classDescriptor.beforeClassFieldName } },
+					{ field: "afterClassFieldName", 	expr: macro $v { classDescriptor.afterClassFieldName } }, 
+					{ field: "setUpFieldName", 			expr: macro $v { classDescriptor.setUpFieldName } }, 
+					{ field: "tearDownFieldName", 		expr: macro $v { classDescriptor.tearDownFieldName } }, 
+					{ field: "classDescriptors", 		expr: genClassDesc( classDescriptor.classDescriptors ) }, 
+					{ field: "methodDescriptors", 		expr: genMethodDesc( classDescriptor.methodDescriptors, classDescriptor.className ) }, 
+					{ field: "classIndex", 				expr: macro $v { classDescriptor.classIndex } }, 
+					{ field: "methodIndex", 			expr: macro $v { classDescriptor.methodIndex } }, 
+					{ field: "name", 					expr: macro $v { classDescriptor.name } }, 
+					{ field: "instanceCall", 			expr: _getInstanceCall( MacroUtil.getPack( classDescriptor.className ) ) },
+					{ field: "beforeCall", 				expr: _getBeforeCall( classDescriptor.className, classDescriptor.beforeClassFieldName ) },
+					{ field: "afterCall", 				expr: _getAfterCall( classDescriptor.className, classDescriptor.afterClassFieldName ) },
+					{ field: "setUpCall", 				expr: _getSetUpCall( classDescriptor.setUpFieldName ) },
+					{ field: "tearDownCall", 			expr: _getTearDownCall( classDescriptor.tearDownFieldName ) }
+					
+				]), 
+			pos: Context.currentPos() 
+		};
+	}
+	
+	inline static function _getInstanceCall( className : Array<String> ) : ExprOf<Void->Dynamic>
+	{
+		return macro function() return Type.createEmptyInstance( $p { className } );
+	}
+	
+	inline static function _getBeforeCall( className : String, beforeField : String ) : ExprOf<Void->Void>
+		return beforeField != null? macro function() $p { MacroUtil.getPack( className ) } .$beforeField() : macro null;
+		
+	inline static function _getAfterCall( className : String, afterField : String ) : ExprOf<Void->Void>
+		return afterField != null ? macro function() $p { MacroUtil.getPack( className ) } .$afterField() : macro null;
+		
+	inline static function _getSetUpCall( setUp : String ) : ExprOf<Dynamic->Void>
+		return setUp != null ? macro function ( test : Dynamic ) test.$setUp() : macro null;
+		
+	inline static function _getTearDownCall( tearDown : String ) : ExprOf<Dynamic->Void>
+		return tearDown != null ? macro function ( test : Dynamic ) test.$tearDown() : macro null;
+	
+	inline static function genClassDesc( a : Array<ClassDescriptor> )
+	{
+		var values = [ for ( e in a ) generateClass( e ) ];
+		return macro ($a { values } :Array<hex.unittest.description.ClassDescriptor>);
+	}
+	
+	inline static function genMethodDesc( a : Array<MethodDescriptor>, className : String )
+	{
+		var values = [ for ( e in a ) generateMethod( e, className ) ];
+		return macro ($a { values } :Array<hex.unittest.description.MethodDescriptor>);
+	}
+	
+	inline public static function generateMethod( methodDescriptor : MethodDescriptor, className : String )
+	{
+		return 
+		{
+			expr: EObjectDecl([
+					{ field: "methodName", 				expr: macro $v { methodDescriptor.methodName } }, 
+					{ field: "isAsync", 				expr: macro $v { methodDescriptor.isAsync }}, 
+					{ field: "isIgnored", 				expr: macro $v { methodDescriptor.isIgnored } },
+					{ field: "description", 			expr: macro $v { methodDescriptor.description } }, 
+					{ field: "timeout", 				expr: macro $v { methodDescriptor.timeout } }, 
+					{ field: "dataProviderFieldName", 	expr: macro $v { methodDescriptor.dataProviderFieldName } }, 
+					{ field: "dataProviderIndex", 		expr: macro $v { methodDescriptor.dataProviderIndex } },
+					{ field: "functionCall", 			expr: _getFunctionCall( methodDescriptor, className ) }
+										
+				]), 
+			pos: Context.currentPos() 
+		};
+	}
+
+	static function _getFunctionCall( methodDescriptor : MethodDescriptor, className : String )
+	{
+		var methodName = methodDescriptor.methodName;
+		var provider = methodDescriptor.dataProviderFieldName;
+		var methodCall;
+
+		if ( provider == '' )
+		{
+			methodCall = macro test.$methodName();
+		}
+		else
+		{
+			methodCall = macro test.$methodName( $p{ MacroUtil.getPack( className ) }.$provider[ $v{methodDescriptor.dataProviderIndex} ] );
+		}
+		
+		return macro function( test ) $methodCall;
+	}
+	
+	public static function getClassDescriptor( className ) : ClassDescriptor
 		return
 		{
 			instance: 				null,
@@ -190,7 +298,7 @@ class ClassDescriptorGenerator
 			name:					""
 		}
 		
-	static function _getMethodDescriptor( methodName : String ) : MethodDescriptor
+	public static function getMethodDescriptor( methodName : String ) : MethodDescriptor
 		return
 		{
 			methodName: 			methodName,
@@ -237,62 +345,6 @@ class MetaUtil
 		{
 			case EConst(CInt(value)): Std.parseInt( value );
 			case _: 1500;
-		};
-	}
-}
-
-class ExprUtil
-{
-	public static function genClass( classDescriptor : ClassDescriptor ) : ExprOf<ClassDescriptor>
-	{
-		return 
-		{
-			expr: EObjectDecl([
-					{ field: "instance", 				expr: macro $v { null } }, 
-					{ field: "type", 					expr: macro $p { MacroUtil.getPack( classDescriptor.className ) } }, 
-					{ field: "className", 				expr: macro $v { classDescriptor.className } }, 
-					{ field: "isSuiteClass", 			expr: macro $v { classDescriptor.isSuiteClass }}, 
-					{ field: "beforeClassFieldName", 	expr: macro $v { classDescriptor.beforeClassFieldName } },
-					{ field: "afterClassFieldName", 	expr: macro $v { classDescriptor.afterClassFieldName } }, 
-					{ field: "setUpFieldName", 			expr: macro $v { classDescriptor.setUpFieldName } }, 
-					{ field: "tearDownFieldName", 		expr: macro $v { classDescriptor.tearDownFieldName } }, 
-					{ field: "classDescriptors", 		expr: genClassDesc( classDescriptor.classDescriptors ) }, 
-					{ field: "methodDescriptors", 		expr: genMethodDesc( classDescriptor.methodDescriptors ) }, 
-					{ field: "classIndex", 				expr: macro $v { classDescriptor.classIndex } }, 
-					{ field: "methodIndex", 			expr: macro $v { classDescriptor.methodIndex } }, 
-					{ field: "name", 					expr: macro $v { classDescriptor.name } }, 
-					
-				]), 
-			pos: Context.currentPos() 
-		};
-	}
-	
-	inline public static function genClassDesc( a : Array<ClassDescriptor> )
-	{
-		var values = [ for ( e in a ) genClass( e ) ];
-		return macro ($a { values } :Array<hex.unittest.description.ClassDescriptor>);
-	}
-	
-	inline public static function genMethodDesc( a : Array<MethodDescriptor> )
-	{
-		var values = [ for ( e in a ) genMethod( e ) ];
-		return macro ($a { values } :Array<hex.unittest.description.MethodDescriptor>);
-	}
-	
-	inline public static function genMethod( methodDescriptor : MethodDescriptor )
-	{
-		return 
-		{
-			expr: EObjectDecl([
-					{ field: "methodName", 				expr: macro $v { methodDescriptor.methodName } }, 
-					{ field: "isAsync", 				expr: macro $v { methodDescriptor.isAsync }}, 
-					{ field: "isIgnored", 				expr: macro $v { methodDescriptor.isIgnored } },
-					{ field: "description", 			expr: macro $v { methodDescriptor.description } }, 
-					{ field: "timeout", 				expr: macro $v { methodDescriptor.timeout } }, 
-					{ field: "dataProviderFieldName", 	expr: macro $v { methodDescriptor.dataProviderFieldName } }, 
-					{ field: "dataProviderIndex", 		expr: macro $v { methodDescriptor.dataProviderIndex } }
-				]), 
-			pos: Context.currentPos() 
 		};
 	}
 }
