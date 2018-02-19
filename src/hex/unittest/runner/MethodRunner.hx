@@ -23,8 +23,6 @@ class MethodRunner
 	
 	var _timer              		: Timer;
 	var _startTime					: Float;
-	var _endTime					: Float;
-	
     var _classType					: Dynamic;
 	
     public function new( scope : Dynamic, methodDescriptor : MethodDescriptor, classType : Dynamic )
@@ -42,8 +40,7 @@ class MethodRunner
 		
 		if ( this._methodDescriptor.isIgnored )
 		{
-			this._endTime = Date.now().getTime();
-			this._trigger.onIgnore( this.getTimeElapsed() );
+			this._trigger.onIgnore( Date.now().getTime() - this._startTime );
 			return;
 		}
 		
@@ -86,8 +83,7 @@ class MethodRunner
 			}
 			catch ( e : IllegalArgumentException )
 			{
-				this._endTime = Date.now().getTime();
-                this._trigger.onFail( this.getTimeElapsed(), e );
+                this._trigger.onFail( Date.now().getTime() - this._startTime, e );
 				return;
 			}
             
@@ -114,14 +110,11 @@ class MethodRunner
 	
 	function _notifySuccess() : Void
 	{
-		this._endTime = Date.now().getTime();
-		this._trigger.onSuccess( this.getTimeElapsed() );
+		this._trigger.onSuccess( Date.now().getTime() - this._startTime );
 	}
 	
 	function _notifyError( e : Dynamic ) : Void
 	{
-		this._endTime = Date.now().getTime();
-		
 		if ( !Std.is( e, Exception ) )
 		{
 			var err : Exception = null;
@@ -132,12 +125,12 @@ class MethodRunner
 			#else
 			err = new Exception( e.toString(), e.posInfos );
 			#end
-			this._trigger.onFail( this.getTimeElapsed(), err );
+			this._trigger.onFail( Date.now().getTime() - this._startTime, err );
 			Assert._logFailedAssertion();
 		}
 		else
 		{
-			this._trigger.onFail( this.getTimeElapsed(), e );
+			this._trigger.onFail( Date.now().getTime() - this._startTime, e );
 			Assert._logFailedAssertion();
 		}
 	}
@@ -155,11 +148,6 @@ class MethodRunner
     public function getDescriptor() : MethodDescriptor
     {
         return this._methodDescriptor;
-    }
-
-    public function getTimeElapsed() : Float
-    {
-        return this._endTime - this._startTime;
     }
 
     /**
@@ -211,9 +199,9 @@ class MethodRunner
     {
 		var methodRunner = MethodRunner._CURRENT_RUNNER;
 		methodRunner._timer.stop();
-		methodRunner._endTime = Date.now().getTime();
 		MethodRunner._CURRENT_RUNNER = null;
-        methodRunner._trigger.onTimeout( methodRunner.getTimeElapsed() );
+		
+        methodRunner._trigger.onTimeout( Date.now().getTime() - methodRunner._startTime );
     }
 }
 
