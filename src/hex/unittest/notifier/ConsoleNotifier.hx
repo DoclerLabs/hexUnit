@@ -98,7 +98,7 @@ class ConsoleNotifier implements ITestClassResultListener
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
-        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+        var message = "FAILURE!!!	* " + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( this.setColor( message, "red" ) );
         this._addTab();
         this._log( this.setColor( error.toString(), "red+bold" ) );
@@ -115,7 +115,7 @@ class ConsoleNotifier implements ITestClassResultListener
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
-        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+        var message = "TIMEOUT!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( this.setColor( message, "red" ) );
         this._addTab();
         this._log( this.setColor( error.message, "red+bold" ) );
@@ -127,7 +127,7 @@ class ConsoleNotifier implements ITestClassResultListener
 		var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
         var time = this.setColor( " " + 0 + "ms", "yellow+bold" );
-        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
+        var message = "IGNORE	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
         this._log( this.setColor( message, "yellow" ) );
 	}
 

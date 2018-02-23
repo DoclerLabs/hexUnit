@@ -160,14 +160,13 @@ class TraceNotifier implements ITestClassResultListener
 				throw( error );
 			}
 		}
-		
     }
 
     public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
-        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+        var message = "TIMEOUT!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( message );
         this._addTab();
         this._removeTab();
