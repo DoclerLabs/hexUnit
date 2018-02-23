@@ -33,9 +33,11 @@ class ClassDescriptorGenerator
 	{
 		switch( clazz.expr )
 		{
-			case EConst(CIdent( className )):
+			case EConst( CIdent( className ) ):
 				return MacroUtil.getFQCNFromComplexType( TypeTools.toComplexType(Context.getType( className )) );
-			case _:
+			case EField( e, field ): 
+				return MacroUtil.compressField( e, field );
+			case wtf: trace( wtf ); 
 		}
 		
 		Context.error( "Invalid Class", clazz.pos );

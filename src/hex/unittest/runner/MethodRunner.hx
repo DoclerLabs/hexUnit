@@ -202,6 +202,7 @@ class MethodRunner
 		MethodRunner._CURRENT_RUNNER = null;
 		
         methodRunner._trigger.onTimeout( Date.now().getTime() - methodRunner._startTime );
+		Assert._logFailedAssertion();
     }
 }
 
