@@ -1,5 +1,6 @@
 package hex.unittest.notifier;
 
+#if travix
 import hex.error.Exception;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
@@ -175,3 +176,4 @@ class TravixNotifier implements ITestClassResultListener
         return 0;
     }
 }
+#end
