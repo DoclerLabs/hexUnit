@@ -15,7 +15,9 @@ class ExitingNotifier implements ITestClassResultListener
     {
 		if ( Assert.getAssertionFailedCount() > 0 )
 		{
-			#if flash
+			#if travix
+			travix.Logger.exit( 1 );
+			#elseif flash
 			flash.system.System.exit( 1 );
 			#elseif ( php || neko )
 			Sys.exit(1);
@@ -24,7 +26,9 @@ class ExitingNotifier implements ITestClassResultListener
 			#end
 		}
 
-		#if flash
+		#if travix
+		travix.Logger.exit( 0 );
+		#elseif flash
 		flash.system.System.exit( 0 );
 		#end
     }
