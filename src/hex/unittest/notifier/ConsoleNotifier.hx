@@ -17,8 +17,6 @@ class ConsoleNotifier implements ITestClassResultListener
     var _tabs   			: String;
     var _errorBubbling   	: Bool;
 	var _hideSuccessTest   	: Bool;
-	
-	static var _TRACE : Dynamic = haxe.Log.trace;
 
     public function new( errorBubbling : Bool = false, hideSuccessTest : Bool = false )
     {
@@ -28,7 +26,7 @@ class ConsoleNotifier implements ITestClassResultListener
 
     function _log( message : String, ?infos : haxe.PosInfos ) : Void
     {
-		_TRACE(this._tabs + message, infos);
+		haxe.Log.trace(this._tabs + message, infos);
     }
 
     function _addTab() : Void

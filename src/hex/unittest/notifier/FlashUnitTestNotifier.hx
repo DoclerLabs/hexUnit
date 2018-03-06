@@ -21,9 +21,6 @@ using hex.unittest.description.ClassDescriptorUtil;
  */
 class FlashUnitTestNotifier implements ITestClassResultListener
 {
-	static var _TRACE 		: Dynamic = haxe.Log.trace;
-	
-    var _trace  			: Dynamic;
     var _tabs   			: Int = 0;
 
 	var console				: TextField;

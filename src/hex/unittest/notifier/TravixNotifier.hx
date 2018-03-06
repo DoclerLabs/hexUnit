@@ -14,9 +14,7 @@ class TravixNotifier implements ITestClassResultListener
     var _errorBubbling   	: Bool;
 	var _hideSuccessTest   	: Bool;
 	
-	static var _TRACE : Dynamic = travix.Logger.println;
-
-    public function new( errorBubbling : Bool = false, hideSuccessTest : Bool = false )
+	public function new( errorBubbling : Bool = false, hideSuccessTest : Bool = false )
     {
 		this._errorBubbling = errorBubbling;
 		this._hideSuccessTest = hideSuccessTest;
@@ -24,7 +22,7 @@ class TravixNotifier implements ITestClassResultListener
 
     function _log( message : String, ?infos : haxe.PosInfos ) : Void
     {
-		_TRACE(this._tabs + message, infos);
+		travix.Logger.println(this._tabs + message);
     }
 
     function _addTab() : Void
