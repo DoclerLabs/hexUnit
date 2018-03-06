@@ -26,10 +26,10 @@ class ExitingNotifier implements ITestClassResultListener
 			#end
 		}
 
-		#if travix
-		travix.Logger.exit( 0 );
-		#elseif flash
+		#if flash
 		flash.system.System.exit( 0 );
+		#elseif travix
+		travix.Logger.exit( 0 );
 		#end
     }
 
