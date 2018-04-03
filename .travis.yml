@@ -5,7 +5,7 @@ language: haxe
 
 # haxe versions : http://haxe.org/website-content/downloads/versions.json
 haxe:
-  - "3.4.0"
+  - "3.4.7"
   - development
 
 matrix:
@@ -39,7 +39,7 @@ install:
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexCore.git ./hexcore
   - haxelib dev hexcore ./hexcore
 #tink_macro
-  - haxelib install tink_macro 0.16.1
+  - haxelib install tink_macro 0.16.4
 #hexUnit
   - haxelib dev hexunit .
   - export DISPLAY=:99.0;
