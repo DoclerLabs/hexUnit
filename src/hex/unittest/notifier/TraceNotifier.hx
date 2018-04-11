@@ -42,7 +42,7 @@ class TraceNotifier implements ITestClassResultListener
 		{
 			var error : Error = cast event.error;
 			// do something with the error
-			trace( "UNCAUGHT ERROR: " + error.message + ":" + error.getStackTrace() );
+			trace( "UNCAUGHT ERROR: " + error.message + ":" + error.callStack );
 		}
 		else if ( Std.is( event.error, ErrorEvent ) )
 		{
