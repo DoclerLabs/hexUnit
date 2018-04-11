@@ -122,7 +122,7 @@ class MethodRunner
 			#if php
 			err = new TypedError( "" + e, e.p );
 			#elseif flash
-			err = new TypedError( cast( e ).message );
+			err = new TypedError( Std.string( cast( e ).message ) );
 			#else
 			err = new TypedError( e.toString(), e.posInfos );
 			#end
