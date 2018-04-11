@@ -3,7 +3,6 @@ package hex.unittest.notifier;
 #if js
 import haxe.Json;
 import hex.data.GUID;
-import hex.error.Exception;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
 import hex.unittest.assertion.Assert;
@@ -13,6 +12,7 @@ import js.html.CloseEvent;
 import js.html.Event;
 import js.html.WebSocket;
 
+using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
 
 /**
@@ -183,7 +183,7 @@ class WebSocketNotifier
 		this.sendMessage( "testCaseRunSuccess", data );
 	}
 	
-	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
 	{
 		var methodDescriptor = descriptor.currentMethodDescriptor();
 		
@@ -209,7 +209,7 @@ class WebSocketNotifier
 		this.sendMessage( "testCaseRunFailed", data );
 	}
 	
-	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
 	{
 		this.onFail( descriptor, timeElapsed, error );
 	}

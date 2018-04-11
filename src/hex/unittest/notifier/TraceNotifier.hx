@@ -7,12 +7,12 @@ import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
 #end
 
-import hex.error.Exception;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 
+using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
 
 /**
@@ -137,7 +137,7 @@ class TraceNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
 		if ( descriptor != null )
 		{
@@ -162,7 +162,7 @@ class TraceNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;

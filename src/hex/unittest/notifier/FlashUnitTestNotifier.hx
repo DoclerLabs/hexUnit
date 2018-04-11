@@ -7,12 +7,12 @@ import flash.display.Sprite;
 import flash.text.StyleSheet;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import hex.error.Exception;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 
+using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
 
 /**
@@ -154,7 +154,7 @@ class FlashUnitTestNotifier implements ITestClassResultListener
     }
 	
 
-    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
 		var func = this.createElement( methodDescriptor.methodName + "() ", "red" );
@@ -172,7 +172,7 @@ class FlashUnitTestNotifier implements ITestClassResultListener
 		this.setGlobalResultFailed( );
     }
 
-    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
 		this.onFail( descriptor, timeElapsed, error );
     }

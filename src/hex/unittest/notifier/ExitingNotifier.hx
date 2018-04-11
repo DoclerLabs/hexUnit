@@ -1,9 +1,9 @@
 package hex.unittest.notifier;
 
-import hex.error.Exception;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
+using tink.CoreApi;
 
 class ExitingNotifier implements ITestClassResultListener
 {
@@ -22,7 +22,7 @@ class ExitingNotifier implements ITestClassResultListener
 			#elseif ( php || neko )
 			Sys.exit(1);
 			#else
-			throw ( new Exception( "Assertions failed: " + Assert.getAssertionFailedCount() ) );
+			throw ( new Error( "Assertions failed: " + Assert.getAssertionFailedCount() ) );
 			#end
 		}
 
@@ -43,9 +43,9 @@ class ExitingNotifier implements ITestClassResultListener
 
     public function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void {}
 
-    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void {}
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void {}
 
-    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void {}
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void {}
 
 	public function onIgnore( descriptor : ClassDescriptor ) : Void {}
 }
