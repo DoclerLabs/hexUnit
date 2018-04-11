@@ -1,11 +1,13 @@
 package hex.unittest.assertion;
 
 import haxe.PosInfos;
-import hex.error.Exception;
 import hex.error.PrivateConstructorException;
 import hex.util.ArrayUtil;
 import hex.util.Stringifier;
 import hex.unittest.error.AssertException;
+import tink.CoreApi.TypedError;
+
+using tink.CoreApi;
 
 /**
  * ...
@@ -324,18 +326,18 @@ class Assert
 	/**
      * Asserts constructor call throws 'expectedException'
      */
-    public static function constructorCallThrows<T>( expectedException : Class<Exception>, type : Class<T>, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    public static function constructorCallThrows<T>( expectedException : Class<Error>, type : Class<T>, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
-        var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Exception         = null;
+        var expectedExceptionType : String  = Type.getClassName( expectedException );
+        var exceptionCaught : Error   		= null;
 
         try
         {
             Type.createInstance( type, args );
         }
-        catch ( e : Exception )
+        catch ( e : Error )
         {
             exceptionCaught = e;
         }
@@ -353,13 +355,13 @@ class Assert
     {
         Assert._LOG_ASSERT( userMessage );
 		
-		var exceptionCaught : Exception  = null;
+		var exceptionCaught : Error = null;
 		
 		try
         {
             Type.createInstance( type, [] );
         }
-        catch ( e : Exception )
+        catch ( e : Error )
         {
             exceptionCaught = e;
         }
@@ -373,18 +375,18 @@ class Assert
     /**
      * Asserts method call throws 'expectedException'
      */
-    public static function methodCallThrows( expectedException : Class<Exception>, scope : Dynamic, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    public static function methodCallThrows( expectedException : Class<Error>, scope : Dynamic, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
-        var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Exception         	= null;
+        var expectedExceptionType : String  = Type.getClassName( expectedException );
+        var exceptionCaught : Error   		= null;
 
         try
         {
             Reflect.callMethod( scope, methodReference, args );
         }
-        catch ( e : Exception )
+        catch ( e : Error )
         {
             exceptionCaught = e;
         }
@@ -401,18 +403,18 @@ class Assert
 	 * setting the value.
      */
 	#if !flash
-    public static function setPropertyThrows( expectedException : Class<Exception>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    public static function setPropertyThrows( expectedException : Class<Error>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
 	{
 		Assert._LOG_ASSERT( userMessage );
 
-        var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Exception         = null;
+        var expectedExceptionType : String  = Type.getClassName( expectedException );
+        var exceptionCaught : Error 		= null;
 
         try
         {
 			Reflect.setProperty( instance, propertyName, value );
 		}
-		catch ( e : Exception )
+		catch ( e : Error )
         {
             exceptionCaught = e;
         }
