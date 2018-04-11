@@ -1,10 +1,10 @@
 package hex.unittest.notifier.junit;
 
-import hex.error.Exception;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
 
 using StringTools;
+using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
 
 /**
@@ -66,7 +66,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		
@@ -78,7 +78,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.output += this.getTestCaseEnd();
 	}
 	
-	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
 	{
 		var summary = this._testSuitesInExecution.first();
 		
