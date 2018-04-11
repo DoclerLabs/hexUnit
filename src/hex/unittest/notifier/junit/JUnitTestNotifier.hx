@@ -74,7 +74,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.failed++;
 		
 		summary.output += this.getTestCaseStart( descriptor, timeElapsed );
-		summary.output += "<failure type=\"" + error.name + "\" message=\"" + error.message.htmlEscape(true) + "\"><![CDATA[" + error + "]]></failure>";
+		summary.output += "<failure code=\"" + error.code + "\" message=\"" + error.message.htmlEscape(true) + "\"><![CDATA[" + error + "]]></failure>";
 		summary.output += this.getTestCaseEnd();
 	}
 	
@@ -86,7 +86,7 @@ class JUnitTestNotifier implements ITestClassResultListener
 		summary.errored++;
 		
 		summary.output += this.getTestCaseStart( descriptor, timeElapsed );
-		summary.output += "<error type=\"" + error.name + "\" message=\"" + error.message.htmlEscape(true) + "\"><![CDATA[" + error + "]]></error>";
+		summary.output += "<error code=\"" + error.code + "\" message=\"" + error.message.htmlEscape(true) + "\"><![CDATA[" + error + "]]></error>";
 		summary.output += this.getTestCaseEnd();
 	}
 	

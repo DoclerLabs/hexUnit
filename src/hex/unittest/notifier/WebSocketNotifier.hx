@@ -197,8 +197,8 @@ class WebSocketNotifier
 			timeElasped: timeElapsed,
 
 
-			fileName: error.posInfos != null ? error.posInfos.fileName : "unknown",
-			lineNumber: error.posInfos != null ? error.posInfos.lineNumber : 0,
+			fileName: error.pos != null ? error.pos.fileName : "unknown",
+			lineNumber: error.pos != null ? error.pos.lineNumber : 0,
 
 			success: false,
 			errorMsg: error.message 
