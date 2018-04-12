@@ -4,7 +4,6 @@ import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
 import hex.unittest.metadata.MetadataParser;
-import hex.util.Stringifier;
 
 using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
@@ -63,8 +62,6 @@ class ExMachinaUnitCore
     {
 		this._classDescriptors.push( this._parser.parseMethod( testableClass, methodName ) );
 	}
-
-    public function toString() return hex.util.Stringifier.stringify( this );
 
     /**
      * Event handling

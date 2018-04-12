@@ -3,7 +3,6 @@ package hex.unittest.assertion;
 import haxe.PosInfos;
 import hex.error.PrivateConstructorException;
 import hex.util.ArrayUtil;
-import hex.util.Stringifier;
 import hex.unittest.error.AssertException;
 import tink.CoreApi.TypedError;
 
@@ -105,7 +104,7 @@ class Assert
 
         if ( value != null )
         {
-            Assert._fail( "Expected null but was '" + Stringifier.stringify( value ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected null but was '" + value + "'", userMessage, posInfos );
         }
     }
 
@@ -131,7 +130,7 @@ class Assert
 
         if ( !Std.is( value, type ) )
         {
-            Assert._fail( "Expected '" + Type.getClassName( type ) + "' but was '" + Stringifier.stringify( value ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + Type.getClassName( type ) + "' but was '" + value + "'", userMessage, posInfos );
         }
     }
 
@@ -144,7 +143,7 @@ class Assert
 
         if ( Std.is( value, type ) )
         {
-            Assert._fail( "Value '" + Stringifier.stringify( value ) + "' was not of type '" + Type.getClassName( type ) + "'", userMessage, posInfos );
+            Assert._fail( "Value '" + value + "' was not of type '" + Type.getClassName( type ) + "'", userMessage, posInfos );
         }
     }
 
@@ -344,7 +343,7 @@ class Assert
 
         if ( exceptionCaught == null || ( exceptionCaught != null && ( Type.getClass( exceptionCaught ) != expectedException ) ) )
         {
-            Assert._fail( "Expected '" + expectedExceptionType +"' but was '" + Stringifier.stringify( exceptionCaught ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + expectedExceptionType +"' but was '" + exceptionCaught + "'", userMessage, posInfos );
         }
     }
 	
@@ -368,7 +367,7 @@ class Assert
 		
 		if ( exceptionCaught == null || ( exceptionCaught != null && ( Type.getClass( exceptionCaught ) != PrivateConstructorException ) ) )
         {
-            Assert._fail( "Expected 'PrivateConstructorException' but was '" + Stringifier.stringify( exceptionCaught ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected 'PrivateConstructorException' but was '" + exceptionCaught + "'", userMessage, posInfos );
         }
 	}
 
