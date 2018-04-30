@@ -97,7 +97,7 @@ class Assert
     /**
      * Asserts that 'value' is null
      */
-    public static function isNull( value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    public static function isNull<T>( value : Null<T>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
@@ -110,7 +110,7 @@ class Assert
     /**
      * Asserts that 'value' is not null
      */
-    public static function isNotNull( value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    public static function isNotNull<T>( value : Null<T>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
