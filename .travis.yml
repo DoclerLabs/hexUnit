@@ -55,7 +55,7 @@ script:
   - haxe build-neko.hxml         && neko bin/MainTest.n
   - haxe build-js.hxml           && node bin/MainTest.js
   - haxe build-flash.hxml -D fdb && haxe flash/run.hxml bin/MainTest.swf
-  - if [ $TRAVIS_HAXE_VERSION == development ]; haxe build-hl.hxml && hl bin/test.hl; fi
+  - if [ $TRAVIS_HAXE_VERSION == development ]; then haxe build-hl.hxml && hl bin/test.hl; fi
   
 notifications:
   email:
