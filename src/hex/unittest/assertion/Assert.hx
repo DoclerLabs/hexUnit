@@ -154,7 +154,7 @@ class Assert
     {
         Assert._LOG_ASSERT( userMessage );
 		
-		#if (neko || php)
+		#if (neko || php || hl)
 		if ( Reflect.isFunction( expected ) )
 		{
 			if ( !Reflect.compareMethods( expected, value ) )
@@ -177,7 +177,7 @@ class Assert
     {
         Assert._LOG_ASSERT( userMessage );
 		
-		#if (neko || php)
+		#if (neko || php || hl)
 		if ( Reflect.isFunction( expected ) )
 		{
 			if ( Reflect.compareMethods( expected, value ) )
