@@ -26,7 +26,11 @@ class ConsoleNotifier implements ITestClassResultListener
 
     function _log( message : String, ?infos : haxe.PosInfos ) : Void
     {
+		#if sys
+        Sys.println( this._tabs + message );
+		#else
 		haxe.Log.trace(this._tabs + message, infos);
+		#end
     }
 
     function _addTab() : Void

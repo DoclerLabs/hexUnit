@@ -67,7 +67,7 @@ class TraceNotifier implements ITestClassResultListener
 
     function _log( message : String ) : Void
     {
-		#if neko
+		#if sys
         Sys.println( this._tabs + message );
 		#else
 		trace( this._tabs + message );
