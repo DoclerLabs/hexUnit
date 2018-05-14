@@ -66,7 +66,7 @@ class TestRunner implements ITestRunner
                 if ( !this._executedDescriptors.containsKey( classDescriptor ) )
                 {
                     this.dispatcher.onTestClassStartRun( classDescriptor );
-                    classDescriptor.instance = classDescriptor.instanceCall != null ? classDescriptor.instanceCall() : Type.createEmptyInstance( classDescriptor.type );
+                    //classDescriptor.instance = classDescriptor.instanceCall != null ? classDescriptor.instanceCall() : Type.createEmptyInstance( classDescriptor.type );
                     this._executedDescriptors.put( classDescriptor, true );
                 }
 
@@ -100,6 +100,7 @@ class TestRunner implements ITestRunner
     {
         if ( classDescriptor.hasNextMethod() )
         {
+			classDescriptor.instance = classDescriptor.instanceCall != null ? classDescriptor.instanceCall() : Type.createEmptyInstance( classDescriptor.type );
             this._tryToRunSetUp( classDescriptor );
             var methodRunner = new MethodRunner( classDescriptor.instance, classDescriptor.nextMethod(), classDescriptor.type );
             methodRunner.addListener( this );
