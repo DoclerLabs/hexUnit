@@ -1,7 +1,7 @@
 package hex.unittest.event;
 
-import hex.error.Exception;
 import hex.unittest.description.ClassDescriptor;
+using tink.CoreApi;
 
 /**
  * ...
@@ -18,7 +18,7 @@ interface ITestClassResultListener
     function onTestClassEndRun( descriptor : ClassDescriptor ) : Void;
 	
 	function onSuccess( descriptor : ClassDescriptor, timeElapsed : Float ) : Void;
-    function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void;
-    function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void;
+    function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void;
+    function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void;
     function onIgnore( descriptor : ClassDescriptor ) : Void;
 }

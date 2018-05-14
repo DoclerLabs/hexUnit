@@ -1,6 +1,6 @@
 package hex.unittest.event;
 
-import hex.error.Exception;
+using tink.CoreApi;
 
 /**
  * ...
@@ -9,7 +9,7 @@ import hex.error.Exception;
 interface ITestResultListener
 {
 	function onSuccess( timeElapsed : Float ) : Void;
-	function onFail( timeElapsed : Float, error : Exception ) : Void;
+	function onFail( timeElapsed : Float, error : Error ) : Void;
 	function onTimeout( timeElapsed : Float ) : Void;
 	function onIgnore( timeElapsed : Float ) : Void;
 }

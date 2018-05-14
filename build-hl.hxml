@@ -1,0 +1,14 @@
+build-each.hxml
+
+--each
+
+--macro include('hex')
+-hl bin/test.hl
+-D hl-check
+-D HXCPP_M64
+
+--next
+
+-hl bin/test.hl
+-D hl-check
+-D HXCPP_M64

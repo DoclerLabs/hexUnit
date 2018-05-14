@@ -1,5 +1,6 @@
 package hex.unittest.notifier;
 
+#if travix
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.AssertException;
@@ -8,17 +9,13 @@ import hex.unittest.event.ITestClassResultListener;
 using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
 
-/**
- * ...
- * @author Francis Bourre
- */
-class ConsoleNotifier implements ITestClassResultListener
+class TravixNotifier implements ITestClassResultListener
 {
     var _tabs   			: String;
     var _errorBubbling   	: Bool;
 	var _hideSuccessTest   	: Bool;
-
-    public function new( errorBubbling : Bool = false, hideSuccessTest : Bool = false )
+	
+	public function new( errorBubbling : Bool = false, hideSuccessTest : Bool = false )
     {
 		this._errorBubbling = errorBubbling;
 		this._hideSuccessTest = hideSuccessTest;
@@ -26,11 +23,7 @@ class ConsoleNotifier implements ITestClassResultListener
 
     function _log( message : String, ?infos : haxe.PosInfos ) : Void
     {
-		#if sys
-        Sys.println( this._tabs + message );
-		#else
-		haxe.Log.trace(this._tabs + message, infos);
-		#end
+		travix.Logger.println(this._tabs + message);
     }
 
     function _addTab() : Void
@@ -100,7 +93,7 @@ class ConsoleNotifier implements ITestClassResultListener
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
-        var message = "FAILURE!!!	* " + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( this.setColor( message, "red" ) );
         this._addTab();
         this._log( this.setColor( error.toString(), "red+bold" ) );
@@ -117,7 +110,7 @@ class ConsoleNotifier implements ITestClassResultListener
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
-        var message = "TIMEOUT!!!	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
+        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "." );
         this._log( this.setColor( message, "red" ) );
         this._addTab();
         this._log( this.setColor( error.message, "red+bold" ) );
@@ -129,7 +122,7 @@ class ConsoleNotifier implements ITestClassResultListener
 		var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
         var time = this.setColor( " " + 0 + "ms", "yellow+bold" );
-        var message = "IGNORE	* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
+        var message = "* [" + methodDescriptor.methodName + "] " + ( description.length > 0 ? description : "" ) + time;
         this._log( this.setColor( message, "yellow" ) );
 	}
 
@@ -183,3 +176,4 @@ class ConsoleNotifier implements ITestClassResultListener
         return 0;
     }
 }
+#end
