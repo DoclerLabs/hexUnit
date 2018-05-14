@@ -1,12 +1,13 @@
 package hex.unittest.runner;
 
 import haxe.Timer;
-import hex.error.Exception;
 import hex.error.IllegalArgumentException;
 import hex.error.IllegalStateException;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.MethodDescriptor;
 import hex.unittest.event.ITestResultListener;
+
+using tink.CoreApi;
 
 /**
  * ...
@@ -115,15 +116,15 @@ class MethodRunner
 	
 	function _notifyError( e : Dynamic ) : Void
 	{
-		if ( !Std.is( e, Exception ) )
+		if ( !Std.is( e, TypedError ) )
 		{
-			var err : Exception = null;
+			var err : Error = null;
 			#if php
-			err = new Exception( "" + e, e.p );
+			err = new TypedError( "" + e, e.p );
 			#elseif flash
-			err = new Exception( cast( e ).message );
+			err = new TypedError( Std.string( cast( e ).message ) );
 			#else
-			err = new Exception( e.toString(), e.posInfos );
+			err = new TypedError( e.toString(), e.posInfos );
 			#end
 			this._trigger.onFail( Date.now().getTime() - this._startTime, err );
 			Assert._logFailedAssertion();
@@ -255,7 +256,7 @@ class Trigger implements ITestResultListener
 		for ( input in inputs ) input.onSuccess( timeElapsed );
 	}
 	
-	public function onFail( timeElapsed : Float, error : Exception ) : Void 
+	public function onFail( timeElapsed : Float, error : Error ) : Void 
 	{
 		var inputs = this._inputs.copy();
 		for ( input in inputs ) input.onFail( timeElapsed, error );

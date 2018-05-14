@@ -3,7 +3,6 @@ package hex.unittest.runner;
 import haxe.Timer;
 import haxe.ds.GenericStack;
 import hex.collection.HashMap;
-import hex.error.Exception;
 import hex.event.ITrigger;
 import hex.event.ITriggerOwner;
 import hex.unittest.description.ClassDescriptor;
@@ -11,6 +10,7 @@ import hex.unittest.error.TimeoutException;
 import hex.unittest.event.ITestClassResultListener;
 import hex.unittest.event.ITestResultListener;
 
+using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
 
 /**
@@ -182,7 +182,7 @@ class TestRunner implements ITestRunner
         this._endTestMethodCall( classDescriptor );
     }
 
-    public function onFail( timeElapsed : Float, error : Exception ) : Void
+    public function onFail( timeElapsed : Float, error : Error ) : Void
     {
 		var classDescriptor = this._classDescriptors.first();
 		this.dispatcher.onFail( classDescriptor, timeElapsed, error );
@@ -304,13 +304,13 @@ class TestRunnerTrigger implements ITestClassResultListener
 		for ( input in inputs ) input.onSuccess( descriptor, timeElapsed );
 	}
 	
-	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
 	{
 		var inputs = this._inputs.copy();
 		for ( input in inputs ) input.onFail( descriptor, timeElapsed, error );
 	}
 	
-	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
 	{
 		var inputs = this._inputs.copy();
 		for ( input in inputs ) input.onTimeout( descriptor, timeElapsed, error );

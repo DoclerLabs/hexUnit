@@ -1,11 +1,12 @@
 package hex.unittest.assertion;
 
 import haxe.PosInfos;
-import hex.error.Exception;
 import hex.error.PrivateConstructorException;
 import hex.util.ArrayUtil;
-import hex.util.Stringifier;
 import hex.unittest.error.AssertException;
+import tink.CoreApi.TypedError;
+
+using tink.CoreApi;
 
 /**
  * ...
@@ -103,7 +104,7 @@ class Assert
 
         if ( value != null )
         {
-            Assert._fail( "Expected null but was '" + Stringifier.stringify( value ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected null but was '" + value + "'", userMessage, posInfos );
         }
     }
 
@@ -129,7 +130,7 @@ class Assert
 
         if ( !Std.is( value, type ) )
         {
-            Assert._fail( "Expected '" + Type.getClassName( type ) + "' but was '" + Stringifier.stringify( value ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + Type.getClassName( type ) + "' but was '" + value + "'", userMessage, posInfos );
         }
     }
 
@@ -142,7 +143,7 @@ class Assert
 
         if ( Std.is( value, type ) )
         {
-            Assert._fail( "Value '" + Stringifier.stringify( value ) + "' was not of type '" + Type.getClassName( type ) + "'", userMessage, posInfos );
+            Assert._fail( "Value '" + value + "' was not of type '" + Type.getClassName( type ) + "'", userMessage, posInfos );
         }
     }
 
@@ -153,7 +154,7 @@ class Assert
     {
         Assert._LOG_ASSERT( userMessage );
 		
-		#if (neko || php)
+		#if (neko || php || hl)
 		if ( Reflect.isFunction( expected ) )
 		{
 			if ( !Reflect.compareMethods( expected, value ) )
@@ -176,7 +177,7 @@ class Assert
     {
         Assert._LOG_ASSERT( userMessage );
 		
-		#if (neko || php)
+		#if (neko || php || hl)
 		if ( Reflect.isFunction( expected ) )
 		{
 			if ( Reflect.compareMethods( expected, value ) )
@@ -324,25 +325,25 @@ class Assert
 	/**
      * Asserts constructor call throws 'expectedException'
      */
-    public static function constructorCallThrows<T>( expectedException : Class<Exception>, type : Class<T>, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    public static function constructorCallThrows<T>( expectedException : Class<Error>, type : Class<T>, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
-        var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Exception         = null;
+        var expectedExceptionType : String  = Type.getClassName( expectedException );
+        var exceptionCaught : Error   		= null;
 
         try
         {
             Type.createInstance( type, args );
         }
-        catch ( e : Exception )
+        catch ( e : Error )
         {
             exceptionCaught = e;
         }
 
         if ( exceptionCaught == null || ( exceptionCaught != null && ( Type.getClass( exceptionCaught ) != expectedException ) ) )
         {
-            Assert._fail( "Expected '" + expectedExceptionType +"' but was '" + Stringifier.stringify( exceptionCaught ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected '" + expectedExceptionType +"' but was '" + exceptionCaught + "'", userMessage, posInfos );
         }
     }
 	
@@ -353,38 +354,38 @@ class Assert
     {
         Assert._LOG_ASSERT( userMessage );
 		
-		var exceptionCaught : Exception  = null;
+		var exceptionCaught : Error = null;
 		
 		try
         {
             Type.createInstance( type, [] );
         }
-        catch ( e : Exception )
+        catch ( e : Error )
         {
             exceptionCaught = e;
         }
 		
 		if ( exceptionCaught == null || ( exceptionCaught != null && ( Type.getClass( exceptionCaught ) != PrivateConstructorException ) ) )
         {
-            Assert._fail( "Expected 'PrivateConstructorException' but was '" + Stringifier.stringify( exceptionCaught ) + "'", userMessage, posInfos );
+            Assert._fail( "Expected 'PrivateConstructorException' but was '" + exceptionCaught + "'", userMessage, posInfos );
         }
 	}
 
     /**
      * Asserts method call throws 'expectedException'
      */
-    public static function methodCallThrows( expectedException : Class<Exception>, scope : Dynamic, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    public static function methodCallThrows( expectedException : Class<Error>, scope : Dynamic, methodReference : Dynamic, args : Array<Dynamic>, userMessage : String = "", ?posInfos : PosInfos ) : Void
     {
         Assert._LOG_ASSERT( userMessage );
 
-        var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Exception         	= null;
+        var expectedExceptionType : String  = Type.getClassName( expectedException );
+        var exceptionCaught : Error   		= null;
 
         try
         {
             Reflect.callMethod( scope, methodReference, args );
         }
-        catch ( e : Exception )
+        catch ( e : Error )
         {
             exceptionCaught = e;
         }
@@ -401,18 +402,18 @@ class Assert
 	 * setting the value.
      */
 	#if !flash
-    public static function setPropertyThrows( expectedException : Class<Exception>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
+    public static function setPropertyThrows( expectedException : Class<Error>, instance : Dynamic, propertyName : String, value : Dynamic, userMessage : String = "", ?posInfos : PosInfos ) : Void
 	{
 		Assert._LOG_ASSERT( userMessage );
 
-        var expectedExceptionType : String      = Type.getClassName( expectedException );
-        var exceptionCaught : Exception         = null;
+        var expectedExceptionType : String  = Type.getClassName( expectedException );
+        var exceptionCaught : Error 		= null;
 
         try
         {
 			Reflect.setProperty( instance, propertyName, value );
 		}
-		catch ( e : Exception )
+		catch ( e : Error )
         {
             exceptionCaught = e;
         }

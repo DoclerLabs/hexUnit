@@ -2,7 +2,7 @@ package hex.unittest.metadata;
 
 import Reflect;
 import haxe.rtti.Meta;
-import hex.error.Exception;
+import hex.error.NoSuchElementException;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.description.MethodDescriptor;
 import hex.util.ClassUtil;
@@ -242,7 +242,7 @@ class MetadataParser
 			}
 			catch ( e : Dynamic )
 			{
-				throw new Exception( "Class " + testDescriptor.className + " is missing dataProvider '" + dataProviderFieldName + "' for method '" + fieldName + "'" );
+				throw new NoSuchElementException( "Class " + testDescriptor.className + " is missing dataProvider '" + dataProviderFieldName + "' for method '" + fieldName + "'" );
 			}
 			
             for ( dataProviderIndex in 0...length ) 

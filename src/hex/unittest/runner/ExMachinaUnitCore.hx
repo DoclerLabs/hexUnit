@@ -1,12 +1,11 @@
 package hex.unittest.runner;
 
-import hex.error.Exception;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.event.ITestClassResultListener;
 import hex.unittest.metadata.MetadataParser;
-import hex.util.Stringifier;
 
+using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
 
 /**
@@ -63,8 +62,6 @@ class ExMachinaUnitCore
     {
 		this._classDescriptors.push( this._parser.parseMethod( testableClass, methodName ) );
 	}
-
-    public function toString() return hex.util.Stringifier.stringify( this );
 
     /**
      * Event handling
@@ -126,12 +123,12 @@ class ExMachinaUnitCore
         this.dispatcher.onSuccess( descriptor, timeElapsed );
     }
 
-    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
         this.dispatcher.onFail( descriptor, timeElapsed, error );
     }
 
-    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
         this.dispatcher.onTimeout( descriptor, timeElapsed, error );
     }
@@ -245,13 +242,13 @@ class UnitCoreTrigger implements ITestClassResultListener
 		for ( input in inputs ) input.onSuccess( descriptor, timeElapsed );
 	}
 	
-	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
 	{
 		var inputs = this._inputs.copy();
 		for ( input in inputs ) input.onFail( descriptor, timeElapsed, error );
 	}
 	
-	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+	public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
 	{
 		var inputs = this._inputs.copy();
 		for ( input in inputs ) input.onTimeout( descriptor, timeElapsed, error );

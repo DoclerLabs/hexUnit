@@ -1,7 +1,6 @@
 package hex.unittest.notifier;
 
 #if js
-import hex.error.Exception;
 import hex.error.IllegalArgumentException;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
@@ -13,6 +12,7 @@ import js.html.Element;
 import js.html.HRElement;
 import js.html.SpanElement;
 
+using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
 
 /**
@@ -161,7 +161,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
     }
 	
 
-    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
 		this._failedCount++;
         var methodDescriptor = descriptor.currentMethodDescriptor();
@@ -180,7 +180,7 @@ class BrowserUnitTestNotifier implements ITestClassResultListener
 		this.setGlobalResultFailed( );
     }
 
-    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
 		this.onFail( descriptor, timeElapsed, error );
     }

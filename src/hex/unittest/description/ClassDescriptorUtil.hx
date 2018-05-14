@@ -36,5 +36,5 @@ class ClassDescriptorUtil
 	}
 		
 	public static function toString( classDescriptor : ClassDescriptor ) : String
-		return hex.util.Stringifier.stringify( classDescriptor ) + ':[$classDescriptor.instance, $classDescriptor.type, $classDescriptor.className]';
+		return '' + classDescriptor + ':[$classDescriptor.instance, $classDescriptor.type, $classDescriptor.className]';
 }

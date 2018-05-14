@@ -1,12 +1,12 @@
 package hex.unittest.notifier;
 
 #if travix
-import hex.error.Exception;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.error.AssertException;
 import hex.unittest.event.ITestClassResultListener;
 
+using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
 
 class TravixNotifier implements ITestClassResultListener
@@ -89,7 +89,7 @@ class TravixNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onFail( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
@@ -106,7 +106,7 @@ class TravixNotifier implements ITestClassResultListener
 		}
     }
 
-    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Exception ) : Void
+    public function onTimeout( descriptor : ClassDescriptor, timeElapsed : Float, error : Error ) : Void
     {
         var methodDescriptor = descriptor.currentMethodDescriptor();
         var description = methodDescriptor.description;
