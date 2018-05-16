@@ -47,6 +47,7 @@ class ClassDescriptorGenerator
 	public static function parseClass( classDescriptor : ClassDescriptor ) : ClassDescriptor
 	{
 		var hasMeta = MetaUtil.hasMeta;
+		var getMetaPos = MetaUtil.getMetaPos;
 		var description = MetaUtil.getDescription;
 		
 		switch( Context.getType( classDescriptor.className ) )
@@ -84,6 +85,14 @@ class ClassDescriptorGenerator
 					else if ( hasMeta( MetadataList.AFTER, meta )  )
 					{
 						classDescriptor.tearDownFieldName = field.name;
+					}
+					else if ( hasMeta( MetadataList.BEFORE_CLASS, meta ) )
+					{
+						Context.warning( '@' + MetadataList.BEFORE_CLASS + ' should be used on a static field', getMetaPos( MetadataList.BEFORE_CLASS, meta ) );
+					}
+					else if ( hasMeta( MetadataList.AFTER_CLASS, meta )  )
+					{
+						Context.warning( '@' + MetadataList.AFTER_CLASS + ' should be used on a static field', getMetaPos( MetadataList.AFTER_CLASS, meta ) );
 					}
 				}
 				
@@ -319,6 +328,9 @@ class MetaUtil
 {
 	inline public static function hasMeta( name : String, m : Expr.Metadata )
 		return m.find( function f(m) return m.name == name ) != null;
+		
+	inline public static function getMetaPos( name : String, m : Expr.Metadata ) : Position
+		return m.find( function f(m) return m.name == name ).pos;
 		
 	inline public static function getDescription( name : String, m : Expr.Metadata )
 	{

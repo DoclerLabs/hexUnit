@@ -66,7 +66,6 @@ class TestRunner implements ITestRunner
                 if ( !this._executedDescriptors.containsKey( classDescriptor ) )
                 {
                     this.dispatcher.onTestClassStartRun( classDescriptor );
-                    //classDescriptor.instance = classDescriptor.instanceCall != null ? classDescriptor.instanceCall() : Type.createEmptyInstance( classDescriptor.type );
                     this._executedDescriptors.put( classDescriptor, true );
                 }
 
@@ -147,7 +146,7 @@ class TestRunner implements ITestRunner
 		}
         else if ( classDescriptor.beforeClassFieldName != null )
         {
-           Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.type, classDescriptor.beforeClassFieldName ), [] );
+           Reflect.callMethod( classDescriptor.type, Reflect.field( null, classDescriptor.beforeClassFieldName ), [] );
         }
     }
 
@@ -159,7 +158,7 @@ class TestRunner implements ITestRunner
 		}
         else if ( classDescriptor.afterClassFieldName != null )
         {
-            Reflect.callMethod( classDescriptor.type, Reflect.field( classDescriptor.type, classDescriptor.afterClassFieldName ), [] );
+            Reflect.callMethod( classDescriptor.type, Reflect.field( null, classDescriptor.afterClassFieldName ), [] );
         }
     }
 
