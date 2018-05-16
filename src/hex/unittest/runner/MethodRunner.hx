@@ -126,13 +126,14 @@ class MethodRunner
 			#else
 			err = new TypedError( e.toString(), e.posInfos );
 			#end
-			this._trigger.onFail( Date.now().getTime() - this._startTime, err );
+			
 			Assert._logFailedAssertion();
+			this._trigger.onFail( Date.now().getTime() - this._startTime, err );
 		}
 		else
 		{
-			this._trigger.onFail( Date.now().getTime() - this._startTime, e );
 			Assert._logFailedAssertion();
+			this._trigger.onFail( Date.now().getTime() - this._startTime, e );
 		}
 	}
 
@@ -202,8 +203,8 @@ class MethodRunner
 		methodRunner._timer.stop();
 		MethodRunner._CURRENT_RUNNER = null;
 		
-        methodRunner._trigger.onTimeout( Date.now().getTime() - methodRunner._startTime );
 		Assert._logFailedAssertion();
+        methodRunner._trigger.onTimeout( Date.now().getTime() - methodRunner._startTime );
     }
 }
 

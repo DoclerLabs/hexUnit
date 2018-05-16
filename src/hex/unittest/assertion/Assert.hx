@@ -439,14 +439,6 @@ class Assert
     }
 	
 	/**
-	 * This method is used to test hexUnit framework
-	 */
-	static public function revertFailure() : Void
-	{
-		Assert._assertFailedCount--;
-	}
-	
-	/**
 	 * This method is used to report system exception that
 	 * is not caught by assertion.
 	 */
@@ -459,7 +451,6 @@ class Assert
 	//
 	static function _fail( assertMessage : String, userMessage : String, ?posInfos : PosInfos ) : Void
     {
-		Assert._assertFailedCount++;
         throw new AssertException( assertMessage + ( userMessage.length < 0 ? ": " + userMessage : "" ), posInfos );
     }
 }

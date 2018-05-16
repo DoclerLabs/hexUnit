@@ -27,7 +27,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -50,7 +50,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -73,7 +73,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -96,7 +96,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -119,7 +119,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -142,7 +142,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -165,7 +165,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -188,7 +188,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -215,7 +215,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -238,7 +238,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -268,7 +268,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -298,7 +298,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -333,7 +333,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -362,7 +362,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -391,7 +391,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -420,7 +420,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -457,7 +457,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -494,7 +494,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -520,7 +520,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -549,7 +549,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -575,7 +575,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -613,7 +613,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -641,7 +641,7 @@ class AssertionTest
 		}
 		catch (e:AssertException)
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch (e:Dynamic)
 		{
@@ -664,7 +664,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -687,7 +687,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -704,7 +704,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -730,7 +730,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -749,7 +749,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -776,7 +776,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -795,7 +795,7 @@ class AssertionTest
 		}
 		catch ( e : AssertException )
 		{
-			Assert.revertFailure();
+			//Do Nothing
 		}
 		catch ( e : Dynamic )
 		{
@@ -810,7 +810,7 @@ class AssertionTest
 		var exception : AssertException = null;
 		
 		var expectedFailedAssertionsCount = Assert.getAssertionFailedCount();
-		expectedFailedAssertionsCount++;
+		//expectedFailedAssertionsCount++;
 		
 		var expectedAssertionsCount = Assert.getAssertionCount();
 		expectedAssertionsCount++;
@@ -822,13 +822,12 @@ class AssertionTest
 		catch ( e : AssertException )
 		{
 			exception = e;
-			Assert.equals( expectedAssertionsCount, Assert.getAssertionCount(), "assertions count should not have been incremented" );
-			Assert.equals( expectedFailedAssertionsCount, Assert.getAssertionFailedCount(), "assertions failures count should have been incremented" );
+			Assert.equals( expectedAssertionsCount, Assert.getAssertionCount(), "assertions count should NOT have been incremented" );
+			Assert.equals( expectedFailedAssertionsCount, Assert.getAssertionFailedCount(), "assertions failures count should NOT have been incremented" );
 			
+			//Do Nothing
 			
-			Assert.revertFailure();
-			
-			Assert.equals( expectedFailedAssertionsCount -1, Assert.getAssertionFailedCount(), "assertions failures count should have been decremented after 'revertFailure' call" );
+			Assert.equals( expectedFailedAssertionsCount /*-1*/, Assert.getAssertionFailedCount(), "assertions failures count should NOT have been decremented after 'revertFailure' call" );
 			Assert.equals( expectedAssertionsCount+3, Assert.getAssertionCount(), "assertions count should be the same after 'revertFailure' call" );
 		}
 		catch ( e : Dynamic )
