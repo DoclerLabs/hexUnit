@@ -32,7 +32,7 @@ class ExMachinaUnitCore
     {
         this._currentClassDescriptor = 0;
         Assert.resetAssertionLog();
-        this._runNext();
+        if ( _classDescriptors.length > 0 ) this._runNext();
     }
 	
 	public function getTestLength() : UInt
