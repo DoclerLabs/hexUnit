@@ -14,6 +14,7 @@ matrix:
 
 before_install:
   - echo $TRAVIS_BRANCH
+  - export DEPENDENCIES_BRANCH=$TRAVIS_BRANCH
   - echo $TRAVIS_TAG
   - if [[ "$TRAVIS_TAG" != "" ]]; then export DEPENDENCIES_BRANCH=$TRAVIS_TAG; fi
   - echo $DEPENDENCIES_BRANCH
