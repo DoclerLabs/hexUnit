@@ -3,14 +3,39 @@ dist: trusty
 
 language: haxe
 
+os:
+  - linux
+  - osx
+
 # haxe versions : http://haxe.org/website-content/downloads/versions.json
 haxe:
   - "3.4.7"
   - development
 
+env:
+  - HAXE_TARGET=cpp
+  - HAXE_TARGET=cs
+  - HAXE_TARGET=flash
+  - HAXE_TARGET=lua
+  - HAXE_TARGET=neko
+  - HAXE_TARGET=node
+  - HAXE_TARGET=php
+  - HAXE_TARGET=php7
+  - HAXE_TARGET=python
+  - HAXE_TARGET=js
+  - HAXE_TARGET=java
+  - HAXE_TARGET=hl
+
 matrix:
+  fast_finish: true
   allow_failures:
-  - haxe: development
+    - haxe: development
+    - os: osx
+    - env: HAXE_TARGET=cpp # Not supported yet
+    - env: HAXE_TARGET=cs # Not supported yet
+    - env: HAXE_TARGET=lua # Not supported yet
+    - env: HAXE_TARGET=python # Not supported yet
+    - env: HAXE_TARGET=java # Not supported yet
 
 before_install:
   - echo $TRAVIS_BRANCH
@@ -38,11 +63,7 @@ install:
   - haxelib dev hexunit .
 
 script:
-  - haxelib run travix php
-  - haxelib run travix neko
-  - haxelib run travix js
-  - haxelib run travix flash -swf-version 10.1 -D swf-script-timeout=180
-  - if [ $TRAVIS_HAXE_VERSION == development ]; then haxelib run travix hl; fi
+  - haxelib run travix $HAXE_TARGET
   
 notifications:
   email:
