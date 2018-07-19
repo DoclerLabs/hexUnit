@@ -42,7 +42,7 @@ script:
   - haxelib run travix neko
   - haxelib run travix js
   - haxelib run travix flash -swf-version 10.1 -D swf-script-timeout=180
-  - if [ $TRAVIS_HAXE_VERSION == development ]; then haxe build-hl.hxml && hl bin/test.hl; fi
+  - if [ $TRAVIS_HAXE_VERSION == development ]; then haxelib run travix hl; fi
   
 notifications:
   email:
