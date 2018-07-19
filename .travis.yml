@@ -37,7 +37,7 @@ matrix:
     - env: HAXE_TARGET=hl # Not supported yet
   exclude:
     - haxe: "3.4.7"
-      os: hl
+      env: HAXE_TARGET=hl
 
 before_install:
   - echo $TRAVIS_BRANCH
