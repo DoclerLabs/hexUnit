@@ -29,6 +29,7 @@ matrix:
   fast_finish: true
   allow_failures:
     - haxe: development
+    - env: HAXE_TARGET=flash # cannot trust that guy
     - env: HAXE_TARGET=cpp # Not supported yet
     - env: HAXE_TARGET=cs # Not supported yet
     - env: HAXE_TARGET=lua # Not supported yet
@@ -62,6 +63,7 @@ install:
   - haxelib dev hexcore ./hexcore
 #hexUnit
   - haxelib dev hexunit .
+  - haxelib path hexunit
 
 script:
   - haxelib run travix $HAXE_TARGET
