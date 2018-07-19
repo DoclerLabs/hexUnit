@@ -50,7 +50,8 @@ install:
   - haxelib newrepo
   - export BRANCH_REF=$DEPENDENCIES_BRANCH
   #- haxelib install travix --always
-  - haxelib git travix https://github.com/aliokan/travix.git hx-global-install --always
+  - haxelib git travix https://github.com/aliokan/travix.git hx-global-install --always && pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml && popd
+  - haxelib run travix install
 # hexLog
   - if [ $( git ls-remote https://github.com/DoclerLabs/hexLog.git $BRANCH_REF --heads | wc -l ) == "0" ]; then export DEPENDENCIES_BRANCH=master; else export DEPENDENCIES_BRANCH=$BRANCH_REF; fi
   - echo Checking out $DEPENDENCIES_BRANCH
