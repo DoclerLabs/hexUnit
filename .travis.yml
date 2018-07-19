@@ -49,8 +49,6 @@ before_install:
 install:
   - haxelib git travix https://github.com/aliokan/travix.git --always
   - pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml && popd
-  - haxelib install travix
-  - haxelib newrepo
   - export BRANCH_REF=$DEPENDENCIES_BRANCH
   #- haxelib install travix --always
 # hexLog
