@@ -5,7 +5,6 @@ language: haxe
 
 os:
   - linux
-  - osx
 
 # haxe versions : http://haxe.org/website-content/downloads/versions.json
 haxe:
@@ -30,12 +29,15 @@ matrix:
   fast_finish: true
   allow_failures:
     - haxe: development
-    - os: osx
     - env: HAXE_TARGET=cpp # Not supported yet
     - env: HAXE_TARGET=cs # Not supported yet
     - env: HAXE_TARGET=lua # Not supported yet
     - env: HAXE_TARGET=python # Not supported yet
     - env: HAXE_TARGET=java # Not supported yet
+    - env: HAXE_TARGET=hl # Not supported yet
+  exclude:
+    - haxe: "3.4.7"
+      os: hl
 
 before_install:
   - echo $TRAVIS_BRANCH
