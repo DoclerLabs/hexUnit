@@ -50,7 +50,7 @@ install:
   - haxelib newrepo
   - export BRANCH_REF=$DEPENDENCIES_BRANCH
   #- haxelib install travix --always
-  - haxelib git travix https://github.com/aliokan/travix.git hx-global-install --always
+  - haxelib git travix https://github.com/aliokan/travix.git hx-global-install --always --global
   - pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml && popd
   - haxelib run travix install
 # hexLog
