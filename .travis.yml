@@ -18,43 +18,30 @@ before_install:
   - echo $TRAVIS_TAG
   - if [[ "$TRAVIS_TAG" != "" ]]; then export DEPENDENCIES_BRANCH=$TRAVIS_TAG; fi
   - echo $DEPENDENCIES_BRANCH
-  - sudo sed -i -e 's/deb http/deb [arch=amd64] http/' "/etc/apt/sources.list.d/google-chrome.list" "/opt/google/chrome/cron/google-chrome"
-  - sudo dpkg --add-architecture i386
-  - sudo apt-get update
-  - sudo apt-get install -qq libcurl3:i386
-  - sudo apt-get install -qq libglib2.0-0:i386
-  - sudo apt-get install -qq libx11-6:i386
-  - sudo apt-get install -qq libxext6:i386
-  - sudo apt-get install -qq libxt6:i386
-  - sudo apt-get install -qq libxcursor1:i386
-  - sudo apt-get install -qq libnss3:i386
-  - sudo apt-get install -qq libgtk2.0-0:i386
 
 install:
   - haxelib newrepo
   - export BRANCH_REF=$DEPENDENCIES_BRANCH
+  - haxelib install travix --always
 # hexLog
-  - if [[ $( git ls-remote https://github.com/DoclerLabs/hexLog.git $DEPENDENCIES_BRANCH --heads | wc -l ) == "0" ]]; then export DEPENDENCIES_BRANCH=master; else export DEPENDENCIES_BRANCH=$BRANCH_REF; fi
+  - if [ $( git ls-remote https://github.com/DoclerLabs/hexLog.git $BRANCH_REF --heads | wc -l ) == "0" ]; then export DEPENDENCIES_BRANCH=master; else export DEPENDENCIES_BRANCH=$BRANCH_REF; fi
   - echo Checking out $DEPENDENCIES_BRANCH
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexLog.git ./hexlog
   - haxelib dev hexlog ./hexlog
 # hexCore
-  - if [[ $( git ls-remote https://github.com/DoclerLabs/hexCore.git $DEPENDENCIES_BRANCH --heads | wc -l ) == "0" ]]; then export DEPENDENCIES_BRANCH=master; else export DEPENDENCIES_BRANCH=$BRANCH_REF; fi
+  - if [ $( git ls-remote https://github.com/DoclerLabs/hexCore.git $BRANCH_REF --heads | wc -l ) == "0" ]; then export DEPENDENCIES_BRANCH=master; else export DEPENDENCIES_BRANCH=$BRANCH_REF; fi
   - echo Checking out $DEPENDENCIES_BRANCH
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexCore.git ./hexcore
   - haxelib install ./hexcore/haxelib.json --always
   - haxelib dev hexcore ./hexcore
 #hexUnit
   - haxelib dev hexunit .
-  - export DISPLAY=:99.0;
-  - export AUDIODEV=null;
-  - haxe flash/install.hxml
 
 script:
-  - haxe build-php.hxml && php bin/index.php
-  - haxe build-neko.hxml         && neko bin/MainTest.n
-  - haxe build-js.hxml           && node bin/MainTest.js
-  - haxe build-flash.hxml -D fdb && haxe flash/run.hxml bin/MainTest.swf
+  - haxelib run travix php
+  - haxelib run travix neko
+  - haxelib run travix js
+  - haxelib run travix flash -swf-version 10.1 -D swf-script-timeout=180
   - if [ $TRAVIS_HAXE_VERSION == development ]; then haxe build-hl.hxml && hl bin/test.hl; fi
   
 notifications:
