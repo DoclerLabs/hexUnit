@@ -63,28 +63,34 @@ class ClassDescriptorGenerator
 					if ( hasMeta( MetadataList.SUITE, meta ) )
 					{
 						_parseSuite( classDescriptor, field, description( MetadataList.SUITE, meta ) );
+						field.meta.add( ':keep', [], field.pos );
 					}
 					
 					//This is a test method
 					else if ( hasMeta( MetadataList.TEST, meta ) )
 					{
 						_addTest( classDescriptor, instance.get().statics.get(), MetadataList.TEST, field, meta );
+						field.meta.add( ':keep', [], field.pos );
 					}
 					else if ( hasMeta( MetadataList.ASYNC, meta ) )
 					{
 						_addTest( classDescriptor, instance.get().statics.get(), MetadataList.ASYNC, field, meta );
+						field.meta.add( ':keep', [], field.pos );
 					}
 					else if ( hasMeta( MetadataList.IGNORE, meta ) )
 					{
 						_addTest( classDescriptor, instance.get().statics.get(), MetadataList.IGNORE, field, meta );
+						field.meta.add( ':keep', [], field.pos );
 					}
 					else if ( hasMeta( MetadataList.BEFORE, meta )  )
 					{
 						classDescriptor.setUpFieldName = field.name;
+						field.meta.add( ':keep', [], field.pos );
 					}
 					else if ( hasMeta( MetadataList.AFTER, meta )  )
 					{
 						classDescriptor.tearDownFieldName = field.name;
+						field.meta.add( ':keep', [], field.pos );
 					}
 					else if ( hasMeta( MetadataList.BEFORE_CLASS, meta ) )
 					{
@@ -102,10 +108,12 @@ class ClassDescriptorGenerator
 					if ( hasMeta( MetadataList.BEFORE_CLASS, meta ) )
 					{
 						classDescriptor.beforeClassFieldName = field.name;
+						field.meta.add( ':keep', [], field.pos );
 					}
 					else if ( hasMeta( MetadataList.AFTER_CLASS, meta )  )
 					{
 						classDescriptor.afterClassFieldName = field.name;
+						field.meta.add( ':keep', [], field.pos );
 					}
 				}
 				
@@ -192,6 +200,7 @@ class ClassDescriptorGenerator
 
 	static function _getFields( ct : ClassType, fields : Array<ClassField> )
 	{
+		ct.meta.add( ':keep', [], ct.pos );
 		fields = fields.concat( ct.fields.get() );
 		if ( ct.superClass != null ) _getFields( ct.superClass.t.get(), fields );
 		return fields;
