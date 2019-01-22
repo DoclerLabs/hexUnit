@@ -1,7 +1,7 @@
 package hex.unittest.notifier;
 
 #if js
-import hex.error.IllegalArgumentException;
+import hex.error.*;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.description.MethodDescriptor;
@@ -14,6 +14,7 @@ import js.html.SpanElement;
 
 using tink.CoreApi;
 using hex.unittest.description.ClassDescriptorUtil;
+using hex.error.Error;
 
 /**
  * ...

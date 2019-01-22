@@ -1,12 +1,11 @@
 package hex.unittest.runner;
 
 import haxe.Timer;
-import hex.error.IllegalArgumentException;
-import hex.error.IllegalStateException;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.MethodDescriptor;
 import hex.unittest.event.ITestResultListener;
 
+using hex.error.Error;
 using tink.CoreApi;
 
 /**

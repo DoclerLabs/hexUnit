@@ -1,12 +1,12 @@
 package hex.unittest.assertion;
 
 import haxe.PosInfos;
-import hex.error.PrivateConstructorException;
 import hex.util.ArrayUtil;
 import hex.unittest.error.AssertException;
 import tink.CoreApi.TypedError;
 
 using tink.CoreApi;
+using hex.error.Error;
 
 /**
  * ...

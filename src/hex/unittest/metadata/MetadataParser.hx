@@ -2,11 +2,11 @@ package hex.unittest.metadata;
 
 import Reflect;
 import haxe.rtti.Meta;
-import hex.error.NoSuchElementException;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.description.MethodDescriptor;
 import hex.util.ClassUtil;
 
+using hex.error.Error;
 using hex.unittest.description.ClassDescriptorUtil;
 
 /**

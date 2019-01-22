@@ -1,6 +1,7 @@
 package hex.unittest.description;
 
 using Lambda;
+using hex.error.Error;
 
 /**
  * ...
@@ -8,7 +9,7 @@ using Lambda;
  */
 class ClassDescriptorUtil 
 {
-	/** @private */ function new() throw new hex.error.PrivateConstructorException();
+	/** @private */ function new() throw new PrivateConstructorException();
 
 	static public function hasNextClass( classDescriptor : ClassDescriptor ) : Bool
         return classDescriptor.classIndex < classDescriptor.classDescriptors.length;

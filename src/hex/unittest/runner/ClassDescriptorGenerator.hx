@@ -10,6 +10,7 @@ import hex.unittest.metadata.MetadataList;
 import hex.util.MacroUtil;
 
 using Lambda;
+using hex.error.Error;
 #end
 
 /**
@@ -18,7 +19,7 @@ using Lambda;
  */
 class ClassDescriptorGenerator 
 {
-	/** @private */ function new() throw new hex.error.PrivateConstructorException();
+	/** @private */ function new() throw new PrivateConstructorException();
 	macro public static function generate( testableClass : haxe.macro.Expr.ExprOf<Class<Dynamic>> ) return doGeneration( testableClass );
 
 	#if macro
