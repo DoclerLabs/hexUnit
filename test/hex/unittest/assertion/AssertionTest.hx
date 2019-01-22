@@ -1,5 +1,6 @@
 package hex.unittest.assertion;
 
+import hex.unittest.error.AssertException;
 import jsonStream.testUtil.JsonEquality;
 
 using hex.error.Error;
