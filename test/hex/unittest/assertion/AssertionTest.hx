@@ -1,10 +1,8 @@
 package hex.unittest.assertion;
 
-import hex.error.IllegalArgumentException;
-import hex.error.NoSuchElementException;
-import hex.error.PrivateConstructorException;
-import hex.unittest.error.AssertException;
 import jsonStream.testUtil.JsonEquality;
+
+using hex.error.Error;
 
 /**
  * ...
