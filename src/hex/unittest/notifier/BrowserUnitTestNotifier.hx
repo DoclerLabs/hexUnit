@@ -1,7 +1,6 @@
 package hex.unittest.notifier;
 
 #if js
-import hex.error.*;
 import hex.unittest.assertion.Assert;
 import hex.unittest.description.ClassDescriptor;
 import hex.unittest.description.MethodDescriptor;

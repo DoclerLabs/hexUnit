@@ -8,9 +8,10 @@ import hex.unittest.description.ClassDescriptor;
 import hex.unittest.description.MethodDescriptor;
 import hex.unittest.metadata.MetadataList;
 import hex.util.MacroUtil;
-#end
 
 using Lambda;
+#end
+
 using hex.error.Error;
 
 /**

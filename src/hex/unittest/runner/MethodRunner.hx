@@ -161,7 +161,7 @@ class MethodRunner
 		var methodRunner = hex.unittest.runner.MethodRunner._CURRENT_RUNNER;
 		if ( methodRunner == null )
 		{
-			throw new hex.error.IllegalStateException( "AsyncHandler has been called after '@Async' test was released. Try to remove all your listeners in '@After' method to fix this error" );
+			throw new IllegalStateException( "AsyncHandler has been called after '@Async' test was released. Try to remove all your listeners in '@After' method to fix this error" );
 		}
 		
 		try

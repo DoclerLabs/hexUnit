@@ -914,10 +914,7 @@ private class MockClassWithPropertyThatThrowsException
 
 private class MockClassWithPrivateConstructorException
 {
-	public function new()
-	{
-		throw new PrivateConstructorException();
-	}
+	/** @private */ function new() throw new PrivateConstructorException();
 }
 
 private class MockClassWithoutPrivateConstructorException
